@@ -1,0 +1,4 @@
+{
+    "editor.acceptSuggestionOnCommitCharacter": false,
+    "files.autoSave": "onFocusChange"
+}

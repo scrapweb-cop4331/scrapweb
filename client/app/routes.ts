@@ -1,14 +1,10 @@
 import {
   type RouteConfig,
-  type RouteConfigEntry,
-  route,
+  index,
 } from "@react-router/dev/routes";
 import { flatRoutes } from "@react-router/fs-routes";
-
-console.log((await flatRoutes()));
+console.log(await flatRoutes());
 export default [
-  route("/", "./routes/home.tsx"),
-
-//   ...(await flatRoutes()),
+  index("routes/index/index.tsx"),
+  ...(await flatRoutes({ ignoredRouteFiles: ["routes/index/index.tsx"] })),
 ] satisfies RouteConfig;
-
