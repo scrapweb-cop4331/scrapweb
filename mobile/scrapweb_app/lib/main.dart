@@ -117,7 +117,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Container(
       color: Color.fromARGB(255, 0, 128, 128),
-      padding: EdgeInsets.symmetric(horizontal: 70.0, vertical: 200.0),
+      padding: EdgeInsets.symmetric(horizontal: 70.0, vertical: 250.0),
       child: Material( 
         shape: Border(
           right: BorderSide(
@@ -230,17 +230,20 @@ class _LoginPageState extends State<LoginPage> {
                       )
                     )
                   ),
-                  Spacer(),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: Win95Button(
-                      text: 'Log In', 
-                      onTap: () {
-                        print("Button pressed.");
-                        return;
-                      },
-                      width: 150,
-                      height: 50
+                  SizedBox(height: 26),
+                  Padding(
+                    padding: EdgeInsetsGeometry.all(3.0),
+                      child: Align(
+                        alignment: Alignment.bottomRight,
+                        child: Win95Button(
+                          text: 'Log In', 
+                          onTap: () {
+                            print("Button pressed.");
+                            return;
+                          },
+                          width: 150,
+                          height: 50
+                        )
                     )
                   )
                 ]
