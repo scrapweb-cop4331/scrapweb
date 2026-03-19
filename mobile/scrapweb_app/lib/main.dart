@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
   Button Widget 
   Creates Win95-esque button
   Required parameters:
-    - text: 'string'
+    - text: 'String'
     - onTap: () {
       <function>
     }
@@ -102,23 +102,28 @@ class _Win95ButtonState extends State<Win95Button> {
   }
 }
 
+/*
+  Window Widget
+  Create a Windows 95 style box ("window")
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  Required parameters:
+  - child: Widget (whatever goes into the window)
+*/
+class Win95Window extends StatefulWidget {
+  final Widget child;
   
-  @override
-  State<LoginPage> createState() => _LoginPageState();
-} 
+  const Win95Window({
+    super.key,
+    required this.child
+  });
 
-class _LoginPageState extends State<LoginPage> {
-  Color buttonTopLeftColor = Colors.white;
-  Color buttonBottomRightColor = Colors.black;
+  @override
+  State<Win95Window> createState() => _Win95WindowState();
+}
+class _Win95WindowState extends State<Win95Window> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Color.fromARGB(255, 0, 128, 128),
-      padding: EdgeInsets.symmetric(horizontal: 70.0, vertical: 250.0),
-      child: Material( 
+    return Material(
         shape: Border(
           right: BorderSide(
             width: 2,
@@ -142,116 +147,184 @@ class _LoginPageState extends State<LoginPage> {
           body: Center(
             child: Container(
               padding: EdgeInsets.all(4.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    color: Color.fromARGB(255, 2, 21, 119),
-                    width: double.infinity,
-                    height: 35,
-                    child: RichText(text: TextSpan(text: '  ScrapWeb - Login', style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 20, height: 1.6)))
-                  ),
-                  Center(
-                    child: Container(
-                      padding: EdgeInsets.all(10.0),
-                      child: Image(image: AssetImage('images/placeholderSquare.png'), width: 100)
-                    )
-                  ),
-                  RichText(text: TextSpan(text: '   Username:', style: TextStyle(fontFamily: 'W95', fontSize: 16, color: Colors.black))),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 10),
-                    child: Material(
-                      shape: Border(
-                        right: BorderSide(
-                          width: 2,
-                          color: Color.fromARGB(255, 221, 228, 234)
-                        ),
-                        left: BorderSide(
-                          width: 2,
-                          color: Color.fromARGB(255, 134, 138, 142)
-                        ),
-                        top: BorderSide(
-                          width: 2,
-                          color: Color.fromARGB(255, 134, 138, 142)
-                        ),
-                        bottom: BorderSide(
-                          width: 2,
-                          color: Color.fromARGB(255, 221, 228, 234)
-                        )
-                      ),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: ' Username',
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-                          filled: true,
-                          isDense: true,
-                          fillColor: Color.fromARGB(255, 255, 255, 255),
-                          hintStyle: TextStyle(fontFamily: 'W95')
-                        ),
-                      )
-                    )
-                  ),
-                  SizedBox(
-                    height: 20, 
-                  ),
-                  RichText(text: TextSpan(text: '   Password:', style: TextStyle(fontFamily: 'W95', fontSize: 16, color: Colors.black))),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 10),
-                    child: Material(
-                      shape: Border(
-                        right: BorderSide(
-                          width: 2,
-                          color: Color.fromARGB(255, 221, 228, 234)
-                        ),
-                        left: BorderSide(
-                          width: 2,
-                          color: Color.fromARGB(255, 134, 138, 142)
-                        ),
-                        top: BorderSide(
-                          width: 2,
-                          color: Color.fromARGB(255, 134, 138, 142)
-                        ),
-                        bottom: BorderSide(
-                          width: 2,
-                          color: Color.fromARGB(255, 221, 228, 234)
-                        )
-                      ),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: ' Password',
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-                          filled: true,
-                          isDense: true,
-                          fillColor: Color.fromARGB(255, 255, 255, 255),
-                          hintStyle: TextStyle(fontFamily: 'W95')
-                        ),
-                      )
-                    )
-                  ),
-                  SizedBox(height: 26),
-                  Padding(
-                    padding: EdgeInsetsGeometry.all(3.0),
-                      child: Align(
-                        alignment: Alignment.bottomRight,
-                        child: Win95Button(
-                          text: 'Log In', 
-                          onTap: () {
-                            print("Button pressed.");
-                            return;
-                          },
-                          width: 150,
-                          height: 50
-                        )
-                    )
-                  )
-                ]
-              )
+              child: widget.child
             )
-          ),
+          )
         )
+      );
+  }
+}
+
+/*
+  Entry Border Widget
+  Creates the Windows 95 borders and internals for an entry (which is swappable)
+
+  Required parameters:
+  - child: Widget (whatever goes inside the border)
+  - paddingHorizontal: float
+  - paddingVertical: float
+*/
+class Win95Entry extends StatefulWidget {
+  final Widget child;
+  final double paddingHorizontal;
+  final double paddingVertical;
+  
+  const Win95Entry({
+    super.key,
+    required this.child,
+    required this.paddingHorizontal,
+    required this.paddingVertical
+  });
+
+  @override
+  State<Win95Entry> createState() => _Win95EntryState();
+}
+class _Win95EntryState extends State<Win95Entry> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: widget.paddingHorizontal, vertical: widget.paddingVertical),
+      child: Material(
+        shape: Border(
+          right: BorderSide(
+            width: 2,
+            color: Color.fromARGB(255, 221, 228, 234)
+          ),
+          left: BorderSide(
+            width: 2,
+            color: Color.fromARGB(255, 134, 138, 142)
+          ),
+          top: BorderSide(
+            width: 2,
+            color: Color.fromARGB(255, 134, 138, 142)
+          ),
+          bottom: BorderSide(
+            width: 2,
+            color: Color.fromARGB(255, 221, 228, 234)
+          )
+        ),
+        child: widget.child
       )
+    );
+  }
+}
+
+/*
+  Input Box Widget
+  Creates a stylized input text box
+
+  Required paramters:
+  - text: 'String'
+*/
+class Win95InputBox extends StatefulWidget {
+  final String text;
+  final ValueChanged<String> onChanged;
+  
+  const Win95InputBox({
+    super.key,
+    required this.text,
+    required this.onChanged
+  });
+
+  @override
+  State<Win95InputBox> createState() => _Win95InputBoxState();
+}
+class _Win95InputBoxState extends State<Win95InputBox> {
+  String inputText ='';
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+        decoration: InputDecoration(
+          hintText: widget.text,
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+          filled: true,
+          fillColor: Color.fromARGB(255, 255, 255, 255),
+          isDense: true,
+          hintStyle: TextStyle(fontFamily: 'W95')
+        ),
+        onChanged: widget.onChanged
+      );
+  }
+}
+
+
+// Login Page
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+  
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+} 
+class _LoginPageState extends State<LoginPage> {
+  String username = '';
+  String password = '';
+
+  Color buttonTopLeftColor = Colors.white;
+  Color buttonBottomRightColor = Colors.black;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Color.fromARGB(255, 0, 128, 128),
+      padding: EdgeInsets.symmetric(horizontal: 70.0, vertical: 250.0),
+        child: Win95Window(        
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                color: Color.fromARGB(255, 2, 21, 119),
+                width: double.infinity,
+                height: 35,
+                child: RichText(text: TextSpan(text: '  ScrapWeb - Login', style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 20, height: 1.6)))
+              ),
+              Center(
+                child: Container(
+                  padding: EdgeInsets.all(10.0),
+                  child: Image(image: AssetImage('images/placeholderSquare.png'), width: 100)
+                )
+              ),
+              RichText(text: TextSpan(text: '   Username:', style: TextStyle(fontFamily: 'W95', fontSize: 16, color: Colors.black))),
+              Win95Entry(
+                paddingHorizontal: 10, 
+                paddingVertical: 0,
+                child: Win95InputBox(
+                  text: ' Username',
+                  onChanged: (value) => setState(() => username = value),
+                )
+              ),
+              SizedBox(
+                height: 20, 
+              ),
+              RichText(text: TextSpan(text: '   Password:', style: TextStyle(fontFamily: 'W95', fontSize: 16, color: Colors.black))),
+              Win95Entry(
+                paddingHorizontal: 10, 
+                paddingVertical: 0,
+                child: Win95InputBox(
+                  text: ' Password',
+                  onChanged: (value) => setState(() => password = value),
+                )
+              ),
+              SizedBox(height: 18),
+              Padding(
+                padding: EdgeInsetsGeometry.symmetric(vertical: 3.0, horizontal: 10.0),
+                  child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: Win95Button(
+                      text: 'Log In', 
+                      onTap: () {
+                        print("Button pressed. $username, $password");
+                        return;
+                      },
+                      width: 150,
+                      height: 50
+                    )
+                )
+              )
+            ]
+          )
+      ),
     );
   }
 }
