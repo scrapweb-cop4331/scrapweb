@@ -47,7 +47,7 @@ jobs:
     password: ${{ secrets.SERVER_PASSWORD }}
     port: ${{ secrets.SERVER_PORT }}
     source: "server.js,package.json,package-lock.json"
-    target: "/var/cardsServer"
+    target: "/var/scrapweb"
     overwrite: true
   # Install backend dependencies and restart PM2
   - name: Install dependencies and restart server
