@@ -14,7 +14,7 @@ jobs:
   - name: Setup Node.js
     uses: actions/setup-node@v3
     with:
-    node-version: '22.18'
+    node-version: '22.22'
     cache: 'npm'
     cache-dependency-path: |
       package-lock.json
@@ -59,7 +59,7 @@ jobs:
     port: ${{ secrets.SERVER_PORT }}
     script: |
       # Navigate to backend directory
-      cd /var/cardsServer
+      cd /var/scrapweb
       # Install dependencies
       npm ci --production
       # Ensure PM2 is installed globally
