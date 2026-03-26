@@ -11,15 +11,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: '/',
+      initialRoute: '/SongPage',
       onGenerateRoute: (RouteSettings settings) {
         switch (settings.name) {
           case '/':
             return MaterialPageRoute(builder: (context) => LoginPage());
           /* case '/HomePage':
-            return MaterialPageRoute(builder: (context) => HomePage());
+            return MaterialPageRoute(builder: (context) => HomePage()); */
           case '/SongPage':
-            return MaterialPageRoute(builder: (context) => SongPage()); */
+            return MaterialPageRoute(builder: (context) => SongPage()); 
           default:
             return null;
         }
@@ -50,15 +50,17 @@ class MyApp extends StatelessWidget {
 class Win95Button extends StatefulWidget {
   final String text;
   final VoidCallback onTap;
-  final double width;
-  final double height;
+  final double? width;
+  final double? height;
+  final String? icon;
 
   const Win95Button({
     super.key,
     required this.text,
     required this.onTap,
-    this.width = 100,
-    this.height = 35,
+    this.width,
+    this.height,
+    this.icon
   });
 
   @override
@@ -76,8 +78,8 @@ class _Win95ButtonState extends State<Win95Button> {
       onTapCancel: () => setState(() => isPressed = false),
 
       child: Container(
-        width: widget.width,
-        height: widget.height,
+        width: widget.width ?? double.infinity,
+        height: widget.height ?? double.infinity,
         decoration: BoxDecoration(
           color: Color.fromARGB(255, 195, 199, 203),
           border: Border(
@@ -88,14 +90,16 @@ class _Win95ButtonState extends State<Win95Button> {
           ),
         ),
         child: Center(
-          child: Text(
-            widget.text,
-            style: const TextStyle(
-              fontFamily: 'W95',
-              color: Colors.black,
-              fontSize: 14,
-            ),
-          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if(widget.icon != null) ... [
+                Image(image: AssetImage(widget.icon!), height:17),
+                SizedBox(width: 3)
+              ],
+              RichText(text: TextSpan(text: widget.text, style: TextStyle(fontFamily: 'W95', fontSize: 16, color: Colors.black)))
+            ]
+          )
         ),
       )
     );
@@ -249,6 +253,39 @@ class _Win95InputBoxState extends State<Win95InputBox> {
   }
 }
 
+/*
+  Divider Widget
+  Creates a stylized divider
+
+  No Parameters
+*/
+class Win95Divider extends StatefulWidget { 
+  const Win95Divider({
+    super.key,
+  });
+
+  @override
+  State<Win95Divider> createState() => _Win95DividerState();
+}
+class _Win95DividerState extends State<Win95Divider> {
+  @override
+  Widget build(BuildContext context) {
+    return 
+      Container(
+        margin: EdgeInsets.symmetric(horizontal: 3),
+        height: 2,
+        color: const Color.fromARGB(255, 230, 230, 230),
+        alignment: Alignment.topLeft,
+        child: Container(
+          height: 1,
+          color: const Color.fromARGB(255, 134, 138, 142)
+        )
+      )
+    ;
+  }
+}
+
+
 
 // Login Page
 class LoginPage extends StatefulWidget {
@@ -260,6 +297,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String username = '';
   String password = '';
+  bool loginError = false;
 
   Color buttonTopLeftColor = Colors.white;
   Color buttonBottomRightColor = Colors.black;
@@ -268,7 +306,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Container(
       color: Color.fromARGB(255, 0, 128, 128),
-      padding: EdgeInsets.symmetric(horizontal: 70.0, vertical: 250.0),
+      padding: EdgeInsets.symmetric(horizontal: 70.0, vertical: 240.0),
         child: Win95Window(        
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -306,6 +344,23 @@ class _LoginPageState extends State<LoginPage> {
                   onChanged: (value) => setState(() => password = value),
                 )
               ),
+              SizedBox(height: 5),
+              Visibility(
+                visible: loginError,
+                maintainSize: true,
+                maintainAnimation: true,
+                maintainState: true,
+                child: RichText(
+                  text: TextSpan(
+                    text: "   Incorrect Username or Password.", 
+                    style: TextStyle(
+                      fontFamily: 'W95', 
+                      fontSize: 16, 
+                      color: Colors.red
+                    )
+                  )
+                )
+              ),
               SizedBox(height: 18),
               Padding(
                 padding: EdgeInsetsGeometry.symmetric(vertical: 3.0, horizontal: 10.0),
@@ -314,7 +369,10 @@ class _LoginPageState extends State<LoginPage> {
                     child: Win95Button(
                       text: 'Log In', 
                       onTap: () {
-                        print("Button pressed. $username, $password");
+                        setState(() {
+                          loginError = !loginError;
+                        });
+                        print("Login button pressed. $username, $password. $loginError");
                         return;
                       },
                       width: 150,
@@ -325,6 +383,116 @@ class _LoginPageState extends State<LoginPage> {
             ]
           )
       ),
+    );
+  }
+}
+
+class SongPage extends StatefulWidget {
+  const SongPage({super.key});
+
+  @override
+  State<SongPage> createState() => _SongPageState();
+}
+class _SongPageState extends State<SongPage> {
+  bool editing = false;
+  bool playing = false;
+  String songText = "This is a test! If you can see this, you are testing!";
+  String songImage = "images/placeholderSquare.png";
+  String audio = "";
+  String date = "00/00/0000";
+
+  @override
+  void initState() {
+    super.initState();
+    //fetchData();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        color: Color.fromARGB(255, 0, 128, 128),
+        child: Column(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: EdgeInsetsGeometry.directional(start: 10.0, end: 10.0, top: 60.0, bottom: 15.0),
+                child: Win95Window(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        color: Color.fromARGB(255, 2, 21, 119),
+                        width: double.infinity,
+                        height: 35,
+                        child: RichText(text: TextSpan(text: "  $date", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 20, height: 1.6)))
+                      ),
+                      Center(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                          child: Image(image: AssetImage(songImage))
+                        ),
+                      ),
+                      Center(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Win95Button(
+                              height: 50,
+                              width: 50,
+                              icon: playing ? 'images/pause.png' : 'images/play.png',
+                              text: "", 
+                              onTap: () {
+                                setState(() {
+                                  playing = !playing;
+                                });
+                              }
+                            )
+                          ],
+                        )
+                      ),
+                      SizedBox(height: 10),
+                      Win95Divider(),
+
+                    ],
+                  )
+                )
+              )
+            ),
+            SizedBox(
+              height: 70,
+              child: Win95Window(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Win95Button(
+                        height: 60,
+                        text: "< Back", 
+                        onTap: () {
+                          print("Back button pressed.");
+                          return;
+                        } 
+                      )
+                    ),
+                    SizedBox(width: 2.0),
+                    Expanded(
+                      child: Win95Button(
+                        height: 60,
+                        icon: 'images/edit.png',
+                        text: "Edit", 
+                        onTap: () {
+                          print("Edit button pressed.");
+                          return;
+                        } 
+                      )
+                    )
+                  ],
+                )      
+              )
+            )
+          ]
+        )
+      )
     );
   }
 }
@@ -345,7 +513,4 @@ class _LoginPageState extends State<LoginPage> {
       )
     );
   }
-} */
-/* class SongPage extends StatefulWidget {
-  const SongPage({super.key});
 } */
