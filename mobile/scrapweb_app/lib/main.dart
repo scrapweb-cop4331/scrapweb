@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+// TODO: reminder to make API calls with UTF-8 formatting
+
 void main() {
   runApp(const MyApp());
 }
@@ -446,6 +448,7 @@ class _SongPageState extends State<SongPage> {
                                 setState(() {
                                   playing = !playing;
                                 });
+                                print("Play/pause button pressed. Playing: $playing");
                               }
                             )
                           ],
