@@ -87,10 +87,10 @@ class ProgressBar extends LeafRenderObjectWidget {
     this.progressBarColor,
     this.bufferedBarColor,
     this.barCapShape = BarCapShape.round,
-    this.thumbRadius = 10.0,
+    this.thumbRadius = 15.0,
     this.thumbColor,
     this.thumbGlowColor,
-    this.thumbGlowRadius = 30.0,
+    this.thumbGlowRadius = 45.0,
     this.thumbCanPaintOutsideBar = true,
     this.timeLabelLocation,
     this.timeLabelType,
@@ -113,57 +113,15 @@ class ProgressBar extends LeafRenderObjectWidget {
   final Duration? buffered;
 
   /// A callback when user moves the thumb.
-  ///
-  /// When the user moved the thumb on the progress bar this callback will
-  /// run. It will not run until after the user has finished the touch event.
-  ///
-  /// You will get the chosen duration to start playing at which you can pass
-  /// on to your media player.
-  ///
-  /// If you want continuous duration updates as the user moves the thumb,
-  /// see [onDragUpdate], where the provided [ThumbDragDetails] has a
-  /// `timeStamp` with the seek duration on it.
   final ValueChanged<Duration>? onSeek;
 
   /// A callback when the user starts to move the thumb.
-  ///
-  /// This will be called only once when the drag begins. This provides you
-  /// with the [ThumbDragDetails].
-  ///
-  /// This method is useful if you are planning to do something like add a time
-  /// label and/or video preview over the thumb and you need to do some
-  /// initialization.
-  ///
-  /// Use [onSeek] if you only want to seek to a new audio position when the
-  /// drag event has finished.
   final ThumbDragStartCallback? onDragStart;
 
   /// A callback when the user is moving the thumb.
-  ///
-  /// This will be called repeatedly as the thumb position changes. This
-  /// provides you with the [ThumbDragDetails], which notify you of the global
-  /// and local positions of the drag event as well as the current thumb
-  /// duration. The current thumb duration will not go beyond [total] or less
-  /// that `Duration.zero` so you can use this information to clamp the drag
-  /// position values.
-  ///
-  /// This method is useful if you are planning to do something like add a time
-  /// label and/or video preview over the thumb and need to update the position
-  /// to stay in sync with the thumb position.
-  ///
-  /// Use [onSeek] if you only want to seek to a new audio position when the
-  /// drag event has finished.
   final ThumbDragUpdateCallback? onDragUpdate;
 
   /// A callback when the user is finished moving the thumb.
-  ///
-  /// This will be called only once when the drag ends.
-  ///
-  /// This method is useful if you are planning to do something like add a time
-  /// label and/or video preview over the thumb and you need to dispose of
-  /// something when the drag is finished.
-  ///
-  /// This method is called directly before [onSeek].
   final VoidCallback? onDragEnd;
 
   /// The vertical thickness of the progress bar.
@@ -171,85 +129,47 @@ class ProgressBar extends LeafRenderObjectWidget {
 
   /// The color of the progress bar before playback has started.
   ///
-  /// By default it is a transparent version of your theme's primary color.
+  /// Defaults to black for the Windows 95 aesthetic.
   final Color? baseBarColor;
 
   /// The color of the progress bar to the left of the current playing
   /// [progress].
-  ///
-  /// By default it is your theme's primary color.
   final Color? progressBarColor;
 
   /// The color of the progress bar between the [progress] location and the
   /// [buffered] location.
-  ///
-  /// By default it is a transparent version of your theme's primary color,
-  /// a shade darker than [baseBarColor].
   final Color? bufferedBarColor;
 
   /// The shape of the bar at the left and right ends.
-  ///
-  /// This affects the base bar for the total time, the current progress bar,
-  /// and the buffered progress bar. The default is [BarCapShape.round].
   final BarCapShape barCapShape;
 
   /// The radius of the circle for the moveable progress bar thumb.
   final double thumbRadius;
 
   /// The color of the circle for the moveable progress bar thumb.
-  ///
-  /// By default it is your theme's primary color.
   final Color? thumbColor;
 
   /// The color of the pressed-down effect of the moveable progress bar thumb.
-  ///
-  /// By default it is [thumbColor] with an alpha value of 80.
   final Color? thumbGlowColor;
 
   /// The radius of the circle for the pressed-down effect of the moveable
   /// progress bar thumb.
-  ///
-  /// By default it is 30.
   final double thumbGlowRadius;
 
   /// Whether the thumb radius will before the start of the bar when at the
   /// beginning or after the end of the bar when at the end.
-  ///
-  /// The default is `true` and this means that the thumb will be painted
-  /// outside of the bounds of the widget if there are no side labels. You can
-  /// wrap [ProgressBar] with a `Padding` widget if your layout needs to leave
-  /// some extra room for the thumb.
-  ///
-  /// When set to `false` the thumb will be clamped within the width of the
-  /// bar. This is nice for aligning the thumb with vertical labels at the start
-  /// and end of playback. However, because of the clamping, the thumb won't
-  /// move during audio/video playback when near the ends. Depending on the
-  /// size of the thumb and the length of the song, this usually only lasts
-  /// a few seconds. The progress label still indicates that playback
-  /// is happening during this time, though.
   final bool thumbCanPaintOutsideBar;
 
   /// The location for the [progress] and [total] duration text labels.
-  ///
-  /// By default the labels appear under the progress bar but you can also
-  /// put them above, on the sides, or remove them altogether.
   final TimeLabelLocation? timeLabelLocation;
 
-  /// What to display for the time label on the right
-  ///
-  /// The right time label can show the total time or the remaining time as a
-  /// negative number. The default is [TimeLabelType.totalTime].
+  /// What to display for the time label on the right.
   final TimeLabelType? timeLabelType;
 
   /// The [TextStyle] used by the time labels.
-  ///
-  /// By default it is [TextTheme.bodyLarge].
   final TextStyle? timeLabelTextStyle;
 
   /// The extra space between the time labels and the progress bar.
-  ///
-  /// The default is 0.0. A positive number will move the labels further from
-  /// the progress bar and a negative number will move them closer.
   final double timeLabelPadding;
 
   @override
@@ -267,15 +187,16 @@ class ProgressBar extends LeafRenderObjectWidget {
       onDragUpdate: onDragUpdate,
       onDragEnd: onDragEnd,
       barHeight: barHeight,
-      baseBarColor: baseBarColor ?? primaryColor.withOpacity(0.24),
-      progressBarColor: progressBarColor ?? primaryColor,
+      // Win95: default base bar is black
+      baseBarColor: baseBarColor ?? Colors.black,
+      progressBarColor: progressBarColor ?? Colors.black,
       bufferedBarColor: bufferedBarColor ?? primaryColor.withOpacity(0.24),
       barCapShape: barCapShape,
       thumbRadius: thumbRadius,
       thumbColor: thumbColor ?? primaryColor,
       thumbGlowColor:
           thumbGlowColor ?? (thumbColor ?? primaryColor).withAlpha(80),
-      thumbGlowRadius: thumbGlowRadius,
+      thumbGlowRadius: 0.0,
       thumbCanPaintOutsideBar: thumbCanPaintOutsideBar,
       timeLabelLocation: timeLabelLocation ?? TimeLabelLocation.below,
       timeLabelType: timeLabelType ?? TimeLabelType.totalTime,
@@ -300,15 +221,15 @@ class ProgressBar extends LeafRenderObjectWidget {
       ..onDragUpdate = onDragUpdate
       ..onDragEnd = onDragEnd
       ..barHeight = barHeight
-      ..baseBarColor = baseBarColor ?? primaryColor.withOpacity(0.24)
-      ..progressBarColor = progressBarColor ?? primaryColor
+      ..baseBarColor = baseBarColor ?? Colors.black
+      ..progressBarColor = progressBarColor ?? Colors.black
       ..bufferedBarColor = bufferedBarColor ?? primaryColor.withOpacity(0.24)
       ..barCapShape = barCapShape
       ..thumbRadius = thumbRadius
       ..thumbColor = thumbColor ?? primaryColor
       ..thumbGlowColor =
           thumbGlowColor ?? (thumbColor ?? primaryColor).withAlpha(80)
-      ..thumbGlowRadius = thumbGlowRadius
+      ..thumbGlowRadius = 0.0
       ..thumbCanPaintOutsideBar = thumbCanPaintOutsideBar
       ..timeLabelLocation = timeLabelLocation ?? TimeLabelLocation.below
       ..timeLabelType = timeLabelType ?? TimeLabelType.totalTime
@@ -391,9 +312,7 @@ class ThumbDragDetails {
       'local: $localPosition)';
 }
 
-// Handles all gestures so that it will always win a the gesture arena.
-// Without doing this, if you used this widget in a swipable tab layout,
-// you would cause a swipe rather than a drag when trying to move the thumb.
+// Handles all gestures so that it will always win the gesture arena.
 class _EagerHorizontalDragGestureRecognizer
     extends HorizontalDragGestureRecognizer {
   @override
@@ -462,22 +381,10 @@ class _RenderProgressBar extends RenderBox {
     }
   }
 
-  // This is the gesture recognizer used to move the thumb.
   _EagerHorizontalDragGestureRecognizer? _drag;
-
-  // This is a value between 0.0 and 1.0 used to indicate the position on
-  // the bar.
   late double _thumbValue;
-
-  // The thumb can move for two reasons. One is that the [progress] changed.
-  // The other is that the user is dragging the thumb. This variable keeps
-  // track of that so that while the user is dragging the thumb at the same
-  // time as a [progress] update there won't be a conflict.
   bool _userIsDraggingThumb = false;
 
-  // This padding is always used between the time labels and the progress bar
-  // when the time labels are on the sides. Any user defined [timeLabelPadding]
-  // is in addition to this.
   double get _defaultSidePadding {
     const minPadding = 5.0;
     return (_thumbCanPaintOutsideBar) ? thumbRadius + minPadding : minPadding;
@@ -518,10 +425,6 @@ class _RenderProgressBar extends RenderBox {
     return Duration(milliseconds: thumbMilliseconds.round());
   }
 
-  // This needs to stay in sync with the layout. This could be a potential
-  // source of bugs if there is a layout change but we forget to update this.
-  // It might be a good idea to redesign the architecture so that there is
-  // only one place to make changes.
   void _updateThumbPosition(Offset localPosition) {
     final dx = localPosition.dx;
     double lengthBefore = 0.0;
@@ -532,9 +435,6 @@ class _RenderProgressBar extends RenderBox {
       lengthAfter =
           _rightLabelSize.width + _defaultSidePadding + _timeLabelPadding;
     }
-    // The paint used to draw the bar line draws half of the cap before the
-    // start of the line (and after the end of the line). The cap radius is
-    // equal to half of the line width, which in this case is the bar height.
     final barCapRadius = _barHeight / 2;
     double barStart = lengthBefore + barCapRadius;
     double barEnd = size.width - lengthAfter - barCapRadius;
@@ -545,19 +445,12 @@ class _RenderProgressBar extends RenderBox {
     markNeedsPaint();
   }
 
-  /// The play location of the media.
-  ///
-  /// This is used to update the thumb value and the left time label.
   Duration get progress => _progress;
   Duration _progress = Duration.zero;
   set progress(Duration value) {
     final clamp = _clampDuration(value);
-    if (_progress == clamp) {
-      return;
-    }
-    if (_labelLengthDifferent(_progress, clamp)) {
-      _clearLabelCache();
-    }
+    if (_progress == clamp) return;
+    if (_labelLengthDifferent(_progress, clamp)) _clearLabelCache();
     if (!_userIsDraggingThumb) {
       _progress = clamp;
       _thumbValue = _proportionOfTotal(clamp);
@@ -609,26 +502,42 @@ class _RenderProgressBar extends RenderBox {
   }
 
   TextPainter _layoutText(String text) {
-    TextPainter textPainter = TextPainter(
-      text: TextSpan(text: text, style: _timeLabelTextStyle),
+    // Mirror the way RichText() builds its span tree: the root span carries
+    // theme-sourced properties (size, color, weight) and a child span locks
+    // the fontFamily to W95 with inherit:false so no ambient theme font
+    // can bleed through and override it.
+    final base = _timeLabelTextStyle ?? const TextStyle();
+    final span = TextSpan(
+      children: [
+        TextSpan(
+          text: text,
+          style: TextStyle(
+            inherit: false,
+            fontFamily: 'W95',
+            fontSize: base.fontSize,
+            color: base.color ?? const Color(0xFFFFFFFF),
+            fontWeight: base.fontWeight ?? FontWeight.normal,
+            letterSpacing: base.letterSpacing,
+            height: base.height,
+          ),
+        ),
+      ],
+    );
+    final painter = TextPainter(
+      text: span,
       textDirection: TextDirection.ltr,
       textScaleFactor: textScaleFactor,
     );
-    textPainter.layout(minWidth: 0, maxWidth: double.infinity);
-    return textPainter;
+    painter.layout(minWidth: 0, maxWidth: double.infinity);
+    return painter;
   }
 
-  /// The total time length of the media.
   Duration get total => _total;
   Duration _total;
   set total(Duration value) {
     final clamp = (value.isNegative) ? Duration.zero : value;
-    if (_total == clamp) {
-      return;
-    }
-    if (_labelLengthDifferent(_total, clamp)) {
-      _clearLabelCache();
-    }
+    if (_total == clamp) return;
+    if (_labelLengthDifferent(_total, clamp)) _clearLabelCache();
     _total = clamp;
     if (!_userIsDraggingThumb) {
       _thumbValue = _proportionOfTotal(progress);
@@ -636,14 +545,11 @@ class _RenderProgressBar extends RenderBox {
     markNeedsPaint();
   }
 
-  /// The buffered length of the media when streaming.
   Duration get buffered => _buffered;
   Duration _buffered;
   set buffered(Duration value) {
     final clamp = _clampDuration(value);
-    if (_buffered == clamp) {
-      return;
-    }
+    if (_buffered == clamp) return;
     _buffered = clamp;
     markNeedsPaint();
   }
@@ -654,47 +560,34 @@ class _RenderProgressBar extends RenderBox {
     return value;
   }
 
-  /// A callback for the audio duration position to where the thumb was moved.
   ValueChanged<Duration>? get onSeek => _onSeek;
   ValueChanged<Duration>? _onSeek;
   set onSeek(ValueChanged<Duration>? value) {
-    if (value == _onSeek) {
-      return;
-    }
+    if (value == _onSeek) return;
     _onSeek = value;
   }
 
-  /// A callback when the thumb starts being dragged.
   ThumbDragStartCallback? get onDragStart => _onDragStartUserCallback;
   ThumbDragStartCallback? _onDragStartUserCallback;
   set onDragStart(ThumbDragStartCallback? value) {
-    if (value == _onDragStartUserCallback) {
-      return;
-    }
+    if (value == _onDragStartUserCallback) return;
     _onDragStartUserCallback = value;
   }
 
-  /// A callback when the thumb is being dragged.
   ThumbDragUpdateCallback? get onDragUpdate => _onDragUpdateUserCallback;
   ThumbDragUpdateCallback? _onDragUpdateUserCallback;
   set onDragUpdate(ThumbDragUpdateCallback? value) {
-    if (value == _onDragUpdateUserCallback) {
-      return;
-    }
+    if (value == _onDragUpdateUserCallback) return;
     _onDragUpdateUserCallback = value;
   }
 
-  /// A callback when the thumb drag is finished.
   VoidCallback? get onDragEnd => _onDragEndUserCallback;
   VoidCallback? _onDragEndUserCallback;
   set onDragEnd(VoidCallback? value) {
-    if (value == _onDragEndUserCallback) {
-      return;
-    }
+    if (value == _onDragEndUserCallback) return;
     _onDragEndUserCallback = value;
   }
 
-  /// The vertical thickness of the bar that the thumb moves along.
   double get barHeight => _barHeight;
   double _barHeight;
   set barHeight(double value) {
@@ -703,7 +596,6 @@ class _RenderProgressBar extends RenderBox {
     markNeedsPaint();
   }
 
-  /// The color of the progress bar before any playing or buffering.
   Color get baseBarColor => _baseBarColor;
   Color _baseBarColor;
   set baseBarColor(Color value) {
@@ -712,7 +604,6 @@ class _RenderProgressBar extends RenderBox {
     markNeedsPaint();
   }
 
-  /// The color of the played portion of the progress bar.
   Color get progressBarColor => _progressBarColor;
   Color _progressBarColor;
   set progressBarColor(Color value) {
@@ -721,7 +612,6 @@ class _RenderProgressBar extends RenderBox {
     markNeedsPaint();
   }
 
-  /// The color of the visible buffered portion of the progress bar.
   Color get bufferedBarColor => _bufferedBarColor;
   Color _bufferedBarColor;
   set bufferedBarColor(Color value) {
@@ -738,7 +628,6 @@ class _RenderProgressBar extends RenderBox {
     markNeedsPaint();
   }
 
-  /// The color of the moveable thumb.
   Color get thumbColor => _thumbColor;
   Color _thumbColor;
   set thumbColor(Color value) {
@@ -747,7 +636,6 @@ class _RenderProgressBar extends RenderBox {
     markNeedsPaint();
   }
 
-  /// The length of the radius for the circular thumb.
   double get thumbRadius => _thumbRadius;
   double _thumbRadius;
   set thumbRadius(double value) {
@@ -756,7 +644,6 @@ class _RenderProgressBar extends RenderBox {
     markNeedsLayout();
   }
 
-  /// The color of the pressed-down effect of the moveable thumb.
   Color get thumbGlowColor => _thumbGlowColor;
   Color _thumbGlowColor;
   set thumbGlowColor(Color value) {
@@ -765,7 +652,6 @@ class _RenderProgressBar extends RenderBox {
     if (_userIsDraggingThumb) markNeedsPaint();
   }
 
-  /// The length of the radius of the pressed-down effect of the moveable thumb.
   double get thumbGlowRadius => _thumbGlowRadius;
   double _thumbGlowRadius;
   set thumbGlowRadius(double value) {
@@ -774,7 +660,6 @@ class _RenderProgressBar extends RenderBox {
     markNeedsLayout();
   }
 
-  /// Whether the thumb will paint before the start or after the end of the bar.
   bool get thumbCanPaintOutsideBar => _thumbCanPaintOutsideBar;
   bool _thumbCanPaintOutsideBar;
   set thumbCanPaintOutsideBar(bool value) {
@@ -783,7 +668,6 @@ class _RenderProgressBar extends RenderBox {
     markNeedsPaint();
   }
 
-  /// The position of the duration text labels for the progress and total time.
   TimeLabelLocation get timeLabelLocation => _timeLabelLocation;
   TimeLabelLocation _timeLabelLocation;
   set timeLabelLocation(TimeLabelLocation value) {
@@ -792,10 +676,6 @@ class _RenderProgressBar extends RenderBox {
     markNeedsLayout();
   }
 
-  /// What to display for the time label on the right
-  ///
-  /// The right time label can show the total time or the remaining time as a
-  /// negative number. The default is [TimeLabelType.totalTime].
   TimeLabelType get timeLabelType => _timeLabelType;
   TimeLabelType _timeLabelType;
   set timeLabelType(TimeLabelType value) {
@@ -805,8 +685,6 @@ class _RenderProgressBar extends RenderBox {
     markNeedsLayout();
   }
 
-  /// The text style for the duration text labels. By default this style is
-  /// taken from the theme's [textStyle.bodyText1].
   TextStyle? get timeLabelTextStyle => _timeLabelTextStyle;
   TextStyle? _timeLabelTextStyle;
   set timeLabelTextStyle(TextStyle? value) {
@@ -816,7 +694,6 @@ class _RenderProgressBar extends RenderBox {
     markNeedsLayout();
   }
 
-  /// The length of the radius for the circular thumb.
   double get timeLabelPadding => _timeLabelPadding;
   double _timeLabelPadding;
   set timeLabelPadding(double value) {
@@ -825,8 +702,6 @@ class _RenderProgressBar extends RenderBox {
     markNeedsLayout();
   }
 
-  /// The text scale factor for the `progress` and `total` text labels.
-  /// By default the value is 1.0.
   double get textScaleFactor => _textScaleFactor;
   double _textScaleFactor;
   set textScaleFactor(double value) {
@@ -836,7 +711,6 @@ class _RenderProgressBar extends RenderBox {
     markNeedsLayout();
   }
 
-  // The smallest that this widget would ever want to be.
   static const _minDesiredWidth = 100.0;
 
   @override
@@ -875,8 +749,6 @@ class _RenderProgressBar extends RenderBox {
     return constraints.constrain(desiredSize);
   }
 
-  // When changing these remember to keep the gesture recognizer for the
-  // thumb in sync.
   double _calculateDesiredHeight() {
     switch (_timeLabelLocation) {
       case TimeLabelLocation.below:
@@ -929,58 +801,36 @@ class _RenderProgressBar extends RenderBox {
     canvas.restore();
   }
 
-  ///  Draw the progress bar and labels vertically aligned:
-  ///
-  ///  | -------O---------------- |
-  ///  | 01:23              05:00 |
-  ///
-  /// Or like this:
-  ///
-  ///  | 01:23              05:00 |
-  ///  | -------O---------------- |
   void _drawProgressBarWithLabelsAboveOrBelow(Canvas canvas) {
-    // calculate sizes
     final barWidth = size.width;
     final barHeight = _heightWhenNoLabels();
-
-    // whether to paint the labels below the progress bar or above it
     final isLabelBelow = _timeLabelLocation == TimeLabelLocation.below;
 
-    // current time label
     final labelDy = (isLabelBelow) ? barHeight + _timeLabelPadding : 0.0;
     final leftLabelOffset = Offset(0, labelDy);
     _leftTimeLabel().paint(canvas, leftLabelOffset);
 
-    // total or remaining time label
     final rightLabelDx = size.width - _rightLabelSize.width;
     final rightLabelOffset = Offset(rightLabelDx, labelDy);
     _rightTimeLabel().paint(canvas, rightLabelOffset);
 
-    // progress bar
     final barDy =
         (isLabelBelow) ? 0.0 : _leftLabelSize.height + _timeLabelPadding;
     _drawProgressBar(canvas, Offset(0, barDy), Size(barWidth, barHeight));
   }
 
-  ///  Draw the progress bar and labels horizontally aligned:
-  ///
-  ///  | 01:23 -------O---------------- 05:00 |
-  ///
   void _drawProgressBarWithLabelsOnSides(Canvas canvas) {
-    // left time label
     final leftLabelSize = _leftLabelSize;
     final verticalOffset = size.height / 2 - leftLabelSize.height / 2;
     final leftLabelOffset = Offset(0, verticalOffset);
     _leftTimeLabel().paint(canvas, leftLabelOffset);
 
-    // right time label
     final rightLabelSize = _rightLabelSize;
     final rightLabelWidth = rightLabelSize.width;
     final totalLabelDx = size.width - rightLabelWidth;
     final totalLabelOffset = Offset(totalLabelDx, verticalOffset);
     _rightTimeLabel().paint(canvas, totalLabelOffset);
 
-    // progress bar
     final leftLabelWidth = leftLabelSize.width;
     final barHeight = _heightWhenNoLabels();
     final barWidth = size.width -
@@ -993,10 +843,6 @@ class _RenderProgressBar extends RenderBox {
     _drawProgressBar(canvas, Offset(barDx, barDy), Size(barWidth, barHeight));
   }
 
-  /// Draw the progress bar without labels like this:
-  ///
-  /// | -------O---------------- |
-  ///
   void _drawProgressBarWithoutLabels(Canvas canvas) {
     final barWidth = size.width;
     final barHeight = _heightWhenNoLabels();
@@ -1040,46 +886,86 @@ class _RenderProgressBar extends RenderBox {
     );
   }
 
-  void _drawBar(
-      {required Canvas canvas,
-      required Size availableSize,
-      required double widthProportion,
-      required Color color}) {
-    final strokeCap = (_barCapShape == BarCapShape.round)
-        ? StrokeCap.round
-        : StrokeCap.square;
-    final baseBarPaint = Paint()
-      ..color = color
-      ..strokeCap = strokeCap
-      ..strokeWidth = _barHeight;
-    final capRadius = _barHeight / 2;
-    final adjustedWidth = availableSize.width - barHeight;
-    final dx = widthProportion * adjustedWidth + capRadius;
-    final startPoint = Offset(capRadius, availableSize.height / 2);
-    var endPoint = Offset(dx, availableSize.height / 2);
-    canvas.drawLine(startPoint, endPoint, baseBarPaint);
+  void _drawBar({
+    required Canvas canvas,
+    required Size availableSize,
+    required double widthProportion,
+    required Color color,
+  }) {
+    final top = (availableSize.height - _barHeight) / 2;
+    final bottom = top + _barHeight;
+    final dx = widthProportion * availableSize.width;
+
+    final barRect = Rect.fromLTRB(0, top, dx, bottom);
+    final paint = Paint()..color = color;
+    canvas.drawRect(barRect, paint);
   }
 
+  /// Draws a Windows 95-style rectangular seek thumb.
+  ///
+  /// The thumb is a vertically-oriented rectangle centered on the bar, filled
+  /// with the classic Win95 button grey and bordered with a raised-edge effect:
+  ///   - Top & Left edges: white (highlight)
+  ///   - Bottom & Right edges: black (shadow)
   void _drawThumb(Canvas canvas, Size localSize) {
-    final thumbPaint = Paint()..color = thumbColor;
+    // --- Position ---
     final barCapRadius = _barHeight / 2;
     final availableWidth = localSize.width - _barHeight;
     var thumbDx = _thumbValue * availableWidth + barCapRadius;
     if (!_thumbCanPaintOutsideBar) {
       thumbDx = thumbDx.clamp(_thumbRadius, localSize.width - _thumbRadius);
     }
-    final center = Offset(thumbDx, localSize.height / 2);
+
+    // Visual thumb: width is halved (thumbRadius * 1), height unchanged (thumbRadius * 4).
+    // The clickable area is unaffected — hitTestSelf returns true for the whole
+    // widget, so the drag recognizer covers the full bar regardless of visual size.
+    final thumbWidth = _thumbRadius;           // 0.5× previous width
+    final thumbHeight = localSize.height - 2;  // 1px inset top and bottom
+    final thumbLeft = thumbDx - thumbWidth / 2; // keep visually centered on position
+    final thumbTop = (localSize.height - thumbHeight) / 2;
+    final thumbRect = Rect.fromLTWH(thumbLeft, thumbTop, thumbWidth, thumbHeight);
+
+    // --- Glow when dragging (subtle rect highlight behind the thumb) ---
     if (_userIsDraggingThumb) {
-      final thumbGlowPaint = Paint()..color = thumbGlowColor;
-      canvas.drawCircle(center, thumbGlowRadius, thumbGlowPaint);
+      final glowPaint = Paint()..color = thumbGlowColor;
+      canvas.drawRect(thumbRect.inflate(4), glowPaint);
     }
-    canvas.drawCircle(center, thumbRadius, thumbPaint);
+
+    // --- Fill: Win95 button grey ---
+    const win95Grey = Color.fromARGB(255, 195, 199, 203);
+    canvas.drawRect(thumbRect, Paint()..color = win95Grey);
+
+    // --- Win95 raised border ---
+    const borderWidth = 2.0;
+    final highlightPaint = Paint()..color = Colors.white;
+    final shadowPaint = Paint()..color = Colors.black;
+
+    // Top edge (white)
+    canvas.drawRect(
+      Rect.fromLTWH(thumbLeft, thumbTop, thumbWidth, borderWidth),
+      highlightPaint,
+    );
+    // Left edge (white)
+    canvas.drawRect(
+      Rect.fromLTWH(thumbLeft, thumbTop, borderWidth, thumbHeight),
+      highlightPaint,
+    );
+    // Bottom edge (black)
+    canvas.drawRect(
+      Rect.fromLTWH(
+          thumbLeft, thumbTop + thumbHeight - borderWidth, thumbWidth, borderWidth),
+      shadowPaint,
+    );
+    // Right edge (black)
+    canvas.drawRect(
+      Rect.fromLTWH(
+          thumbLeft + thumbWidth - borderWidth, thumbTop, borderWidth, thumbHeight),
+      shadowPaint,
+    );
   }
 
   double _proportionOfTotal(Duration duration) {
-    if (total.inMilliseconds == 0) {
-      return 0.0;
-    }
+    if (total.inMilliseconds == 0) return 0.0;
     return duration.inMilliseconds / total.inMilliseconds;
   }
 
@@ -1098,25 +984,17 @@ class _RenderProgressBar extends RenderBox {
   @override
   void describeSemanticsConfiguration(SemanticsConfiguration config) {
     super.describeSemanticsConfiguration(config);
-
-    // description
     config.textDirection = TextDirection.ltr;
     config.label = 'Progress bar';
     config.value = '${(_thumbValue * 100).round()}%';
-
-    // increase action
     config.onIncrease = increaseAction;
     final increased = _thumbValue + _semanticActionUnit;
     config.increasedValue = '${((increased).clamp(0.0, 1.0) * 100).round()}%';
-
-    // decrease action
     config.onDecrease = decreaseAction;
     final decreased = _thumbValue - _semanticActionUnit;
     config.decreasedValue = '${((decreased).clamp(0.0, 1.0) * 100).round()}%';
   }
 
-  // This is how much to move the thumb if the move is triggered by a
-  // semantic action rather than a touch event.
   static const double _semanticActionUnit = 0.05;
 
   void increaseAction() {

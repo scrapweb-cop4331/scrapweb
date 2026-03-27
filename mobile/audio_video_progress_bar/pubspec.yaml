@@ -23,7 +23,13 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-flutter: null
+flutter: 
+  fonts:
+    - family: W95
+      fonts:
+        - asset: fonts/W95.ttf
+        - asset: fonts/W95Bold.ttf
+          weight: 700
 
 screenshots:
   - description: 'Examples of a working progress bar.'

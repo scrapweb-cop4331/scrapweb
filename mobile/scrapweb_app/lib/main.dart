@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:rxdart/rxdart.dart';
 
 // TODO: reminder to make API calls with UTF-8 formatting
 
@@ -31,6 +34,9 @@ class MyApp extends StatelessWidget {
         splashColor: Colors.transparent,
         highlightColor: Colors.transparent,
         hoverColor: Colors.transparent,
+        focusColor: Colors.transparent,
+
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap
       )
     );
   }
@@ -287,7 +293,49 @@ class _Win95DividerState extends State<Win95Divider> {
   }
 }
 
+/*
+  Border Color
+  Used to create Win95 borders on objects that dont support individual borders on each side
 
+  No parameters
+*/
+class Win95BackupOutline extends OutlinedBorder{
+  const Win95BackupOutline();
+  
+  @override
+  OutlinedBorder copyWith({BorderSide? side}) => const Win95BackupOutline();
+  @override
+  Path getInnerPath(Rect rect, {TextDirection? textDirection}) => Path()..addRect(rect);
+  @override
+  Path getOuterPath(Rect rect, {TextDirection? textDirection}) => Path()..addRect(rect);
+
+  @override
+  void paint(Canvas canvas, Rect rect, {TextDirection? textDirection}) {
+    final Paint paint = Paint()..style = PaintingStyle.stroke..strokeWidth = 2.0;
+
+    canvas.drawLine(rect.topLeft, rect.topRight, paint..color = Colors.white);
+    canvas.drawLine(rect.topLeft, rect.bottomLeft, paint..color = Colors.white);
+    canvas.drawLine(rect.bottomLeft, rect.bottomRight, paint..color = Colors.black);
+    canvas.drawLine(rect.topRight, rect.bottomRight, paint..color = Colors.black);
+  }
+
+  @override
+  ShapeBorder scale(double t) => const Win95BackupOutline();
+}
+
+/*
+  Duration information for song playing
+*/
+class DurationState {
+  const DurationState({
+    this.progress = Duration.zero, 
+    this.buffered = Duration.zero, 
+    this.total = Duration.zero
+  });
+  final Duration progress;
+  final Duration buffered;
+  final Duration total;
+}
 
 // Login Page
 class LoginPage extends StatefulWidget {
@@ -398,16 +446,45 @@ class SongPage extends StatefulWidget {
 class _SongPageState extends State<SongPage> {
   bool editing = false;
   bool playing = false;
-  String songText = "This is a test! If you can see this, you are testing!";
-  String songImage = "images/placeholderSquare.png";
-  String audio = "";
+  String? songText = "This is a test! If you can see this, you are testing! This time its REAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALY LONG. LIKE I NEED IT TO REACH THE BOTTOM OF THE PAGE SO HERES LOREM IPSUM ! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce justo arcu, sollicitudin vehicula lectus eu, ultricies ullamcorper nibh. Mauris facilisis sapien eget turpis laoreet rutrum. Donec pharetra varius fermentum. Fusce nec suscipit ipsum. Etiam condimentum ullamcorper quam vestibulum tincidunt. Phasellus pretium leo ut massa finibus accumsan. Morbi nec bibendum diam. Proin ultricies sodales feugiat. Morbi semper eu odio ultricies blandit. Donec nec sem et ipsum tristique eleifend non non orci. Donec sodales quam eget felis tristique, nec porta metus fringilla. In finibus maximus vulputate. Nam blandit cursus dignissim. Duis rutrum at nisi eu aliquam. Proin nisl turpis, rhoncus luctus eros aliquet, efficitur congue dolor. Donec rutrum, ipsum iaculis commodo dapibus, augue elit porttitor elit, vitae eleifend diam est vel quam. Nam fringilla sed sem non efficitur. Proin sed mi aliquet, semper metus a, accumsan diam.";
+  String? songImage;
+  String? audio;
   String date = "00/00/0000";
+  
+  final AudioPlayer player = AudioPlayer();
+  late Stream<DurationState>? durationState;
 
   @override
   void initState() {
     super.initState();
     //fetchData();
+
+    durationState = Rx.combineLatest3<Duration, Duration, Duration?, DurationState>(
+      player.positionStream,
+      player.bufferedPositionStream,
+      player.durationStream,
+      (progress, buffered, total) => DurationState(
+        progress: progress,
+        buffered: buffered,
+        total: total ?? Duration.zero
+      )
+    );
+
+    setupAudio();
   }
+
+  Future<void> setupAudio() async {
+    if (audio != null && audio!.isNotEmpty) {
+      try {
+        await player.setUrl(audio!);
+      } catch (e) {
+        print("Error loading audio URL: $e");
+      }
+    } else {
+      print("Audio URL is null or empty.");
+    }
+  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -432,31 +509,106 @@ class _SongPageState extends State<SongPage> {
                       Center(
                         child: Container(
                           padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                          child: Image(image: AssetImage(songImage))
+                          child: Image(
+                            image: songImage != null ? NetworkImage(songImage!) as ImageProvider : const AssetImage('images/placeholderSquare.png'),
+                            errorBuilder: (context, error, stackTract) => Image.asset('images/placeholderSquare.png'),
+                          )
                         ),
                       ),
                       Center(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Win95Button(
-                              height: 50,
-                              width: 50,
-                              icon: playing ? 'images/pause.png' : 'images/play.png',
-                              text: "", 
-                              onTap: () {
-                                setState(() {
-                                  playing = !playing;
-                                });
-                                print("Play/pause button pressed. Playing: $playing");
-                              }
-                            )
-                          ],
+                        child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: 40),
+                          child: StreamBuilder<DurationState>(
+                            stream: durationState,
+                            builder: (context, snapshot) {
+                              final durationState = snapshot.data;
+                              final progress = durationState?.progress ?? Duration.zero;
+                              //final buffered = durationState?.buffered ?? Duration.zero;
+                              final total = durationState?.total ?? Duration.zero;
+
+                              return ProgressBar(
+                                progress: progress,
+                                total: total,
+                                thumbGlowColor: Colors.transparent,
+                                thumbGlowRadius: 0.0,
+                                onSeek: (duration) {
+                                  player.seek(duration);
+                                  print("User seek to $duration");
+                                }
+                              );
+                            }
+                          )
                         )
+                      ),
+                      SizedBox(
+                        height: 30, // 50px (button height) - 20px (desired overlap)
+                        child: Stack(
+                          clipBehavior: Clip.none, // Allows the button to "leak" outside the 30px box
+                          children: [
+                            Positioned(
+                              top: -20, // Pulls the button UP by 20px to intersect the item above
+                              left: 0,
+                              right: 0,
+                              child: Center(
+                                child: Win95Button(
+                                  height: 50,
+                                  width: 50,
+                                  icon: playing ? 'images/pause.png' : 'images/play.png',
+                                  text: "",
+                                  onTap: () {
+                                    if(audio == null || audio!.isEmpty) return;
+                                    if(playing) {
+                                      player.pause();
+                                    } else {
+                                      player.play();
+                                    }
+                                    setState(() {
+                                      playing = !playing;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       SizedBox(height: 10),
                       Win95Divider(),
-
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.all(5),
+                          child: Material(
+                            shape: Border.all(
+                              color: const Color.fromARGB(255, 134, 138, 142)
+                            ),
+                            child: Container(
+                              padding: EdgeInsets.all(5),
+                              color: Color.fromARGB(255, 195, 199, 203),
+                              child: RawScrollbar(
+                                thumbVisibility: true,
+                                trackVisibility: true,
+                                thickness: 16,
+                                thumbColor: Color.fromARGB(255, 195, 199, 203),
+                                trackColor: Color.fromARGB(255, 224, 224, 224),
+                                trackBorderColor: const Color.fromARGB(255, 0, 0, 0),
+                                mainAxisMargin: 0,
+                                padding: EdgeInsets.zero,
+                                shape: Win95BackupOutline(),
+                                child: ScrollConfiguration(
+                                  behavior: ScrollConfiguration.of(context).copyWith(overscroll: false), 
+                                  child: SingleChildScrollView(
+                                    physics: const ClampingScrollPhysics(),
+                                    child: Padding(
+                                      padding: EdgeInsets.only(right: 20), 
+                                      child: RichText(text: TextSpan(text: "$songText", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 0, 0, 0), fontSize: 15, height: 1.0)))
+                                    )
+                                  )
+                                )
+                              )
+                            )
+                          )
+                        )
+                      )
                     ],
                   )
                 )
@@ -517,3 +669,4 @@ class _SongPageState extends State<SongPage> {
     );
   }
 } */
+
