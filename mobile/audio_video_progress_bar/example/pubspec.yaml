@@ -1,0 +1,23 @@
+name: audio_video_progress_bar_example
+description: Demonstrates how to use the audio_video_progress_bar plugin.
+version: 1.0.0
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  audio_video_progress_bar:
+    path: ../
+  just_audio: ^0.9.31
+  rxdart: ^0.27.7
+
+dev_dependencies:
+  flutter_lints: ^2.0.1
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

@@ -32,6 +32,8 @@ dependencies:
     sdk: flutter
   go_router: ^17.1.0
   http: ^1.6.0
+  audio_video_progress_bar: 
+    path: ../audio_video_progress_bar
   
   # flutter95: ^1.4.0  # <-- just in case needed
 
