@@ -503,7 +503,6 @@ class _SongPageState extends State<SongPage> {
   @override
   void initState() {
     super.initState();
-    textController = TextEditingController(text: songText);
     //fetchData();
 
     initDurationStream();
@@ -515,6 +514,7 @@ class _SongPageState extends State<SongPage> {
       setState(() {
         durationState = null;
         songText = textController.text;
+        textController.dispose();
         editing = false;
       });
       // TODO: await UpdateScrapAPI(songText);
@@ -526,6 +526,7 @@ class _SongPageState extends State<SongPage> {
         initDurationStream();
       });
     } else {
+      textController = TextEditingController(text: songText);
       setState(() => editing = true);
     }
   }
@@ -584,8 +585,10 @@ class _SongPageState extends State<SongPage> {
                         child: Center(
                           child: GestureDetector( 
                             onTap: () {
-                              // TODO: Image Upload Prompt
-                              print("Image upload prompt");
+                              if(editing) {
+                                // TODO: Image Upload Prompt
+                                print("Image upload prompt");
+                              }
                             },
                             child: Container(
                               padding: EdgeInsets.symmetric(horizontal: 30.h, vertical: 10.w),
@@ -717,7 +720,6 @@ class _SongPageState extends State<SongPage> {
                                           
                                           onTapOutside: (_) {
                                             setState(() {
-                                              songText = textController.text;
                                               currentlyTyping = false;
                                             });
                                             FocusScope.of(context).unfocus();
@@ -748,9 +750,10 @@ class _SongPageState extends State<SongPage> {
                       Expanded(
                         child: Win95Button(
                           height: 60.h,
-                          text: "< Back", 
+                          text: editing ? "< Discard" : "< Back", 
                           onTap: () {
-                            print("Back button pressed.");
+                            if(editing) setState(() => editing = false);
+                            print("Back button pressed. editing: $editing");
                             return;
                           } 
                         )
