@@ -36,6 +36,8 @@ dependencies:
     path: ../audio_video_progress_bar
   just_audio: ^0.10.5
   rxdart: ^0.28.0
+  flutter_keyboard_visibility: ^6.0.0
+  flutter_screenutil: ^5.9.3
   
   # flutter95: ^1.4.0  # <-- just in case needed
 
