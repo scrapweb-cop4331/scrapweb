@@ -115,7 +115,7 @@ class _Win95ButtonState extends State<Win95Button> {
                 Image(image: AssetImage(widget.icon!), height:widget.iconSize),
                 SizedBox(width: 3)
               ],
-              RichText(text: TextSpan(text: widget.text, style: TextStyle(fontFamily: 'W95', fontSize: 16, color: Colors.black)))
+              RichText(text: TextSpan(text: widget.text, style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, color: Colors.black)))
             ]
           )
         ),
@@ -393,15 +393,15 @@ class _LoginPageState extends State<LoginPage> {
               color: Color.fromARGB(255, 2, 21, 119),
               width: double.infinity,
               height: 35.h,
-              child: RichText(text: TextSpan(text: '  ScrapWeb - Login', style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 20, height: 1.6)))
+              child: RichText(text: TextSpan(text: '  ScrapWeb - Login', style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 20.sp, height: 1.6.h)))
             ),
             Center(
               child: Container(
                 padding: EdgeInsets.all(10.0),
-                child: Image(image: AssetImage('images/placeholderSquare.png'), width: 100)
+                child: Image(image: AssetImage('images/placeholderSquare.png'), width: 100.w)
               )
             ),
-            RichText(text: TextSpan(text: '   Username:', style: TextStyle(fontFamily: 'W95', fontSize: 16, color: Colors.black))),
+            RichText(text: TextSpan(text: '   Username:', style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, color: Colors.black))),
             Win95Entry(
               paddingHorizontal: 10.w, 
               paddingVertical: 0,
@@ -412,9 +412,9 @@ class _LoginPageState extends State<LoginPage> {
               )
             ),
             SizedBox(
-              height: 20, 
+              height: 20.h, 
             ),
-            RichText(text: TextSpan(text: '   Password:', style: TextStyle(fontFamily: 'W95', fontSize: 16, color: Colors.black))),
+            RichText(text: TextSpan(text: '   Password:', style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, color: Colors.black))),
             Win95Entry(
               paddingHorizontal: 10.w, 
               paddingVertical: 0,
@@ -425,7 +425,7 @@ class _LoginPageState extends State<LoginPage> {
                 isPassword: true,
               )
             ),
-            SizedBox(height: 5),
+            SizedBox(height: 5.h),
             Visibility(
               visible: loginError,
               maintainSize: true,
@@ -436,7 +436,7 @@ class _LoginPageState extends State<LoginPage> {
                   text: "   Incorrect Username or Password.", 
                   style: TextStyle(
                     fontFamily: 'W95', 
-                    fontSize: 16, 
+                    fontSize: 16.sp, 
                     color: Colors.red
                   )
                 )
@@ -561,9 +561,9 @@ class _SongPageState extends State<SongPage> {
                         color: Color.fromARGB(255, 2, 21, 119),
                         width: double.infinity,
                         height: 35.h,
-                        child: RichText(text: TextSpan(text: "  $date", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 20, height: 1.6)))
+                        child: RichText(text: TextSpan(text: "  $date", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 20.sp, height: 1.6.h)))
                       ),
-                      Visibility(visible: currentlyTyping, child: SizedBox(height: 10,)),
+                      Visibility(visible: currentlyTyping, child: SizedBox(height: 10.h)),
                       Visibility(
                         visible: currentlyTyping,
                         child: Win95Button(
@@ -698,7 +698,7 @@ class _SongPageState extends State<SongPage> {
                                         ? TextField(
                                           controller: textController,
                                           maxLines: null,
-                                          style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 0, 0, 0), fontSize: 15, height: 1.0),
+                                          style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 0, 0, 0), fontSize: 15.sp, height: 1.0.h),
                                           decoration: InputDecoration(
                                             border: InputBorder.none,
                                             isDense: true,
@@ -718,7 +718,7 @@ class _SongPageState extends State<SongPage> {
                                             FocusScope.of(context).unfocus();
                                           }
                                         )
-                                        : RichText(text: TextSpan(text: "$songText", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 0, 0, 0), fontSize: 15, height: 1.0)))
+                                        : RichText(text: TextSpan(text: "$songText", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 0, 0, 0), fontSize: 15.sp, height: 1.0.h)))
                                     )
                                   )
                                 )
