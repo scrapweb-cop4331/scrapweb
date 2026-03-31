@@ -560,17 +560,22 @@ class _SongPageState extends State<SongPage> {
                       Container(
                         color: Color.fromARGB(255, 2, 21, 119),
                         width: double.infinity,
-                        height: 35.h,
-                        child: RichText(text: TextSpan(text: "  $date", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 20.sp, height: 1.6.h)))
+                        height: 38.h,
+                        child: RichText(text: TextSpan(text: "  $date", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 23.sp, height: 1.6.h)))
                       ),
                       Visibility(visible: currentlyTyping, child: SizedBox(height: 10.h)),
                       Visibility(
                         visible: currentlyTyping,
-                        child: Win95Button(
-                          text: "< Back to Edit Page", 
-                          height: 50.h,
-                          width: 150.w,
-                          onTap: () {}
+                        child: Row(
+                          children: [
+                            SizedBox(width: 10.w),
+                            Win95Button(
+                              text: "< Back to Edit Page", 
+                              height: 50.h,
+                              width: 150.w,
+                              onTap: () {}
+                            )
+                          ]
                         )
                       ),
                       Visibility(
@@ -698,7 +703,7 @@ class _SongPageState extends State<SongPage> {
                                         ? TextField(
                                           controller: textController,
                                           maxLines: null,
-                                          style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 0, 0, 0), fontSize: 15.sp, height: 1.0.h),
+                                          style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 0, 0, 0), fontSize: 18.sp, height: 1.0.h),
                                           decoration: InputDecoration(
                                             border: InputBorder.none,
                                             isDense: true,
@@ -718,7 +723,7 @@ class _SongPageState extends State<SongPage> {
                                             FocusScope.of(context).unfocus();
                                           }
                                         )
-                                        : RichText(text: TextSpan(text: "$songText", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 0, 0, 0), fontSize: 15.sp, height: 1.0.h)))
+                                        : RichText(text: TextSpan(text: "$songText", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 0, 0, 0), fontSize: 18.sp, height: 1.0.h)))
                                     )
                                   )
                                 )
