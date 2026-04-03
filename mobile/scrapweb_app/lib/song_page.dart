@@ -3,7 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:image_picker_plus/image_picker_plus.dart';
+import 'package:http/http.dart' as http;
+import 'package:file_picker/file_picker.dart';
+import 'dart:io';
 import 'win95_style.dart';
+import 'home_page.dart';
 
 // Duration information for song playing
 class DurationState {
@@ -18,7 +23,8 @@ class DurationState {
 }
 
 class SongPage extends StatefulWidget {
-  const SongPage({super.key});
+  final Entry entry;
+  const SongPage({super.key, required this.entry});
 
   @override
   State<SongPage> createState() => _SongPageState();
@@ -32,9 +38,75 @@ class _SongPageState extends State<SongPage> {
   String? audio;
   String date = "00/00/0000";
   late TextEditingController textController;
+  final FocusNode focusNode = FocusNode();
+  File? pickedImageFile;
+  File? pickedAudioFile;
   
   final AudioPlayer player = AudioPlayer();
   Stream<DurationState>? durationState;
+
+  Future<void> openImagePicker() async {
+    ImagePickerPlus picker = ImagePickerPlus(context);
+
+    SelectedImagesDetails? details = await picker.pickImage(
+      source: ImageSource.both,
+      galleryDisplaySettings: GalleryDisplaySettings(
+        appTheme: AppTheme(
+          focusColor: Color.fromARGB(255, 0, 128, 128),
+          primaryColor: Color.fromARGB(255, 0, 128, 128),
+        )
+      )
+    );
+
+    if (details != null && details.selectedFiles.isNotEmpty) {
+      setState(() {
+        final selectedFile = details.selectedFiles.first;
+
+        pickedImageFile = selectedFile.selectedFile;
+        songImage = null;
+      });
+    }
+  }
+
+  Future<void> saveChanges() async {
+    var request = http.MultipartRequest(
+      'POST', 
+      Uri.parse('https://your-api.com{widget.entry.id}')
+    );
+
+    request.fields['id'] = widget.entry.id;
+    request.fields['date'] = widget.entry.dateString;
+    request.fields['text'] = songText ?? "";
+
+    if(pickedImageFile != null) {
+      request.files.add(await http.MultipartFile.fromPath(
+        'imageURL',
+        pickedImageFile!.path
+      ));
+    }
+
+    if (pickedAudioFile != null) {
+      request.files.add(await http.MultipartFile.fromPath('audio', pickedAudioFile!.path));
+    } else {
+      request.fields['audioURL'] = audio ?? "";
+    }
+
+    request.send();
+  }
+
+  Future<void> openAudioPicker() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.audio,
+      allowMultiple: false,
+    );
+
+    if (result != null && result.files.single.path != null) {
+      setState(() {
+        pickedAudioFile = File(result.files.single.path!);
+        audio = null; 
+      });
+    }
+  }
 
   void initDurationStream() {
     durationState = Rx.combineLatest3<Duration, Duration, Duration?, DurationState>(
@@ -52,7 +124,10 @@ class _SongPageState extends State<SongPage> {
   @override
   void initState() {
     super.initState();
-    //fetchData();
+    songText = widget.entry.text;
+    songImage = widget.entry.imageURL;
+    audio = widget.entry.audioURL;
+    date = widget.entry.dateString;
 
     initDurationStream();
     setupAudio();
@@ -66,8 +141,6 @@ class _SongPageState extends State<SongPage> {
         textController.dispose();
         editing = false;
       });
-      // TODO: await UpdateScrapAPI(songText);
-      print("API Save complete");
 
       await setupAudio();
 
@@ -137,11 +210,15 @@ class _SongPageState extends State<SongPage> {
                               if(editing) {
                                 // TODO: Image Upload Prompt
                                 print("Image upload prompt");
+                                openImagePicker();
                               }
                             },
                             child: Container(
                               padding: EdgeInsets.symmetric(horizontal: 30.h, vertical: 10.w),
+                              height: 300.h,
+                              width: 350.w,
                               child: Image(
+                                fit: BoxFit.contain,
                                 image: songImage != null ? NetworkImage(songImage!) as ImageProvider : const AssetImage('images/placeholderSquare.png'),
                                 errorBuilder: (context, error, stackTract) => Image.asset('images/placeholderSquare.png'),
                               )
@@ -214,6 +291,7 @@ class _SongPageState extends State<SongPage> {
                                       } else {
                                         //TODO: media upload prompt
                                         print("Media Upload Prompt.");
+                                        openAudioPicker();
                                       }
                                     },
                                   ),
@@ -238,7 +316,7 @@ class _SongPageState extends State<SongPage> {
                               child: RawScrollbar(
                                 thumbVisibility: true,
                                 trackVisibility: true,
-                                thickness: 16,
+                                thickness: 16.w,
                                 thumbColor: Color.fromARGB(255, 195, 199, 203),
                                 trackColor: Color.fromARGB(255, 224, 224, 224),
                                 trackBorderColor: const Color.fromARGB(255, 0, 0, 0),
@@ -247,34 +325,50 @@ class _SongPageState extends State<SongPage> {
                                 shape: Win95BackupOutline(),
                                 child: ScrollConfiguration(
                                   behavior: ScrollConfiguration.of(context).copyWith(overscroll: false), 
-                                  child: SingleChildScrollView(
-                                    physics: const ClampingScrollPhysics(),
-                                    child: Padding(
-                                      padding: EdgeInsets.only(right: 20), 
-                                      child: editing
-                                        ? TextField(
-                                          controller: textController,
-                                          maxLines: null,
-                                          style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 0, 0, 0), fontSize: 18.sp, height: 1.0.h),
-                                          decoration: InputDecoration(
-                                            border: InputBorder.none,
-                                            isDense: true,
-                                            contentPadding: EdgeInsets.zero
-                                          ),
-                                          onTap: () {
-                                            setState(() {
-                                              currentlyTyping = true;
-                                            });
-                                          },
-                                          
-                                          onTapOutside: (_) {
-                                            setState(() {
-                                              currentlyTyping = false;
-                                            });
-                                            FocusScope.of(context).unfocus();
-                                          }
+                                  child: GestureDetector(
+                                    behavior: HitTestBehavior.opaque,
+                                    onTap: () {
+                                      if(editing) {
+                                        focusNode.requestFocus();
+                                        textController.selection = TextSelection.fromPosition(
+                                          TextPosition(offset: textController.text.length),
+                                        );
+                                        setState(() => currentlyTyping = true);
+                                      }
+                                    },
+                                    child: SingleChildScrollView(
+                                      physics: const ClampingScrollPhysics(),
+                                      child: Container(
+                                        width: double.infinity,
+                                        child: Padding(
+                                          padding: EdgeInsets.only(right: 20), 
+                                          child: editing
+                                            ? TextField(
+                                              focusNode: focusNode,
+                                              controller: textController,
+                                              maxLines: null,
+                                              style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 0, 0, 0), fontSize: 18.sp, height: 1.0.h),
+                                              decoration: InputDecoration(
+                                                border: InputBorder.none,
+                                                isDense: true,
+                                                contentPadding: EdgeInsets.zero
+                                              ),
+                                              onTap: () {
+                                                setState(() {
+                                                  currentlyTyping = true;
+                                                });
+                                              },
+                                              
+                                              onTapOutside: (_) {
+                                                setState(() {
+                                                  currentlyTyping = false;
+                                                });
+                                                FocusScope.of(context).unfocus();
+                                              }
+                                            )
+                                            : RichText(text: TextSpan(text: "$songText", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 0, 0, 0), fontSize: 18.sp, height: 1.0.h)))
                                         )
-                                        : RichText(text: TextSpan(text: "$songText", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 0, 0, 0), fontSize: 18.sp, height: 1.0.h)))
+                                      )
                                     )
                                   )
                                 )
@@ -301,7 +395,11 @@ class _SongPageState extends State<SongPage> {
                           height: 60.h,
                           text: editing ? "< Discard" : "< Back", 
                           onTap: () {
-                            if(editing) setState(() => editing = false);
+                            if(editing) {
+                              setState(() => editing = false);
+                            } else {
+                              Navigator.pop(context);
+                            }
                             print("Back button pressed. editing: $editing");
                             return;
                           } 

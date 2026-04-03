@@ -38,6 +38,9 @@ dependencies:
   rxdart: ^0.28.0
   flutter_keyboard_visibility: ^6.0.0
   flutter_screenutil: ^5.9.3
+  image_picker_plus: ^0.5.10+1
+  file_picker: ^10.3.10
+  permission_handler: ^12.0.1
   
   # flutter95: ^1.4.0  # <-- just in case needed
 
