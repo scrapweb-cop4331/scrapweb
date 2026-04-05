@@ -6,9 +6,10 @@ import 'package:rxdart/rxdart.dart';
 import 'package:image_picker_plus/image_picker_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
 import 'win95_style.dart';
-import 'home_page.dart';
+import 'entry.dart';
 
 // Duration information for song playing
 class DurationState {
@@ -33,7 +34,7 @@ class _SongPageState extends State<SongPage> {
   bool editing = false;
   bool playing = false;
   bool currentlyTyping = false;
-  String? songText = "This is a test! If you can see this, you are testing! This time its REAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALY LONG. LIKE I NEED IT TO REACH THE BOTTOM OF THE PAGE SO HERES LOREM IPSUM ! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce justo arcu, sollicitudin vehicula lectus eu, ultricies ullamcorper nibh. Mauris facilisis sapien eget turpis laoreet rutrum. Donec pharetra varius fermentum. Fusce nec suscipit ipsum. Etiam condimentum ullamcorper quam vestibulum tincidunt. Phasellus pretium leo ut massa finibus accumsan. Morbi nec bibendum diam. Proin ultricies sodales feugiat. Morbi semper eu odio ultricies blandit. Donec nec sem et ipsum tristique eleifend non non orci. Donec sodales quam eget felis tristique, nec porta metus fringilla. In finibus maximus vulputate. Nam blandit cursus dignissim. Duis rutrum at nisi eu aliquam. Proin nisl turpis, rhoncus luctus eros aliquet, efficitur congue dolor. Donec rutrum, ipsum iaculis commodo dapibus, augue elit porttitor elit, vitae eleifend diam est vel quam. Nam fringilla sed sem non efficitur. Proin sed mi aliquet, semper metus a, accumsan diam.";
+  String? songText = "";
   String? songImage;
   String? audio;
   String date = "00/00/0000";
@@ -248,6 +249,7 @@ class _SongPageState extends State<SongPage> {
                                   total: total,
                                   thumbGlowColor: Colors.transparent,
                                   thumbGlowRadius: 0.0,
+                                  timeLabelLocation: TimeLabelLocation.sides,
                                   onSeek: (duration) {
                                     player.seek(duration);
                                     print("User seek to $duration");
@@ -262,12 +264,12 @@ class _SongPageState extends State<SongPage> {
                         visible: !currentlyTyping,
                         maintainState: true,
                         child: SizedBox(
-                          height: editing ? 50.h : 30.h, 
+                          height: editing ? 50.h : 55.h, 
                           child: Stack(
                             clipBehavior: Clip.none, 
                             children: [
                               Positioned(
-                                top: editing ? 0 : -20.h, 
+                                top: editing ? 0 : 7.h, 
                                 left: 0,
                                 right: 0,
                                 child: Center(
@@ -366,7 +368,7 @@ class _SongPageState extends State<SongPage> {
                                                 FocusScope.of(context).unfocus();
                                               }
                                             )
-                                            : RichText(text: TextSpan(text: "$songText", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 0, 0, 0), fontSize: 18.sp, height: 1.0.h)))
+                                            : RichText(text: TextSpan(text: (songText == null) ? "" : "$songText", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 0, 0, 0), fontSize: 18.sp, height: 1.0.h)))
                                         )
                                       )
                                     )

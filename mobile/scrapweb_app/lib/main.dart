@@ -1,18 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'login.dart';
 import 'song_page.dart';
 import 'home_page.dart';
+import 'account.dart';
+import 'entry.dart';
 
 // TODO: reminder to make API calls with UTF-8 formatting
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
+
+  final prefs = await SharedPreferences.getInstance();
+  final String? token = prefs.getString('jwt_token');
+
+  runApp(MyApp(loggedIn: token != null));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool loggedIn;
+  const MyApp({super.key, required this.loggedIn});
 
   Future<void> requestAllPermissions() async {
     Map<Permission, PermissionStatus> statuses = await [
@@ -38,7 +49,8 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp(
           scrollBehavior: const ScrollBehavior().copyWith(overscroll: false),
-          initialRoute: '/HomePage',
+          initialRoute: //loggedIn ? '/HomePage' : 
+          '/',
           onGenerateRoute: (RouteSettings settings) {
             switch (settings.name) {
               case '/':
@@ -46,8 +58,10 @@ class MyApp extends StatelessWidget {
                case '/HomePage':
                 return MaterialPageRoute(builder: (context) => HomePage()); 
               case '/SongPage':
-              final entry = settings.arguments as Entry;
+                final entry = settings.arguments as Entry;
                 return MaterialPageRoute(builder: (context) => SongPage(entry: entry)); 
+              case '/AccountPage':
+                return MaterialPageRoute(builder: (context) => AccountPage());
               default:
                 return null;
             }

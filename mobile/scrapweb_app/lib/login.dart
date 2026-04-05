@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'win95_style.dart';
+import 'dart:convert';
 
 // Login Page
 class LoginPage extends StatefulWidget {
@@ -13,9 +17,80 @@ class _LoginPageState extends State<LoginPage> {
   String username = '';
   String password = '';
   bool loginError = false;
+  String loginErrorMessage = "Incorrect Username or Password.";
 
   Color buttonTopLeftColor = Colors.white;
   Color buttonBottomRightColor = Colors.black;
+
+  Future<void> handleLogin() async {
+    final String host = dotenv.env['SERVER_HOST'] ?? '127.0.0.1';
+    final String port = dotenv.env['SERVER_PORT'] ?? '80';
+    final url = Uri.http('$host:$port', '/api/login');
+
+    if (username.isEmpty || password.isEmpty) {
+      setState(() {
+        loginError = true;
+        loginErrorMessage = "Please enter a username and password.";
+      });
+      return;
+    }
+ 
+    setState(() => loginError = false);
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
+        body: utf8.encode(jsonEncode({
+          'username': username,
+          'password': password,
+        })),
+      );
+ 
+      if (!mounted) return;
+ 
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
+
+        final List<dynamic> APIEntries = data['user']['media'] ?? [];
+
+        final String token = data['token'];
+        final Map<String, dynamic> user = data['user'];
+ 
+        // Store token and user info for use elsewhere in the app
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('jwt_token', token);
+        await prefs.setString('user_id', user['id']);
+        await prefs.setString('username', user['username']);
+        await prefs.setString('first_name', user['first_name']);
+        await prefs.setString('last_name', user['last_name']);
+        await prefs.setString('email', user['email']);
+ 
+        if (!mounted) return;
+        Navigator.pushReplacementNamed(context, '/HomePage', arguments: APIEntries);
+      } else {
+        String errorMsg = "Incorrect Username or Password.";
+        try {
+          final Map<String, dynamic> errorData = jsonDecode(utf8.decode(response.bodyBytes));
+          if (errorData['error'] != null) {
+            errorMsg = "${errorData['error']}";
+          }
+        } catch (e) {
+          print("Error parsing error response: $e");
+        }
+ 
+        setState(() {
+          loginError = true;
+          loginErrorMessage = errorMsg;
+        });
+      }
+    } catch (e) {
+      print(e);
+      setState(() {
+        loginError = true;
+        loginErrorMessage = "Could not connect to server. Try again.";
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,15 +148,9 @@ class _LoginPageState extends State<LoginPage> {
               maintainSize: true,
               maintainAnimation: true,
               maintainState: true,
-              child: RichText(
-                text: TextSpan(
-                  text: "   Incorrect Username or Password.", 
-                  style: TextStyle(
-                    fontFamily: 'W95', 
-                    fontSize: 16.sp, 
-                    color: Colors.red
-                  )
-                )
+              child: Padding(
+                padding: EdgeInsetsGeometry.symmetric(horizontal: 13.w),
+                child:RichText(text: TextSpan(text: loginErrorMessage, style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, color: Colors.red)))
               )
             ),
             SizedBox(height: 18.h),
@@ -92,9 +161,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: Win95Button(
                     text: 'Log In', 
                     onTap: () {
-                      setState(() {
-                        loginError = !loginError;
-                      });
+                      handleLogin();
                       print("Login button pressed. $username, $password. $loginError");
                       return;
                     },
