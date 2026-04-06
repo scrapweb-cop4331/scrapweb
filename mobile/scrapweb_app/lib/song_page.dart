@@ -37,7 +37,8 @@ class _SongPageState extends State<SongPage> {
   String? songText = "";
   String? songImage;
   String? audio;
-  String date = "00/00/0000";
+  DateTime dateData = DateTime.now();
+  late String date = "$dateData";
   late TextEditingController textController;
   final FocusNode focusNode = FocusNode();
   File? pickedImageFile;
@@ -140,6 +141,7 @@ class _SongPageState extends State<SongPage> {
         durationState = null;
         songText = textController.text;
         textController.dispose();
+        // TODO: EDIT ENTRY API CALL
         editing = false;
       });
 
@@ -181,11 +183,29 @@ class _SongPageState extends State<SongPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        color: Color.fromARGB(255, 2, 21, 119),
-                        width: double.infinity,
-                        height: 38.h,
-                        child: RichText(text: TextSpan(text: "  $date", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 23.sp, height: 1.6.h)))
+                      GestureDetector(
+                        onTap:() async {
+                          if(editing) {
+                            DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: dateData, 
+                              firstDate: DateTime(1970, 1, 1), 
+                              lastDate: DateTime.now(),  
+                            );
+                            if (pickedDate != null) {
+                              setState(() {
+                                dateData = pickedDate;
+                                date = "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                              });
+                            }
+                          }
+                        },
+                        child: Container(
+                          color: Color.fromARGB(255, 2, 21, 119),
+                          width: double.infinity,
+                          height: 38.h,
+                          child: RichText(text: TextSpan(text: "  $date", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 23.sp, height: 1.6.h)))
+                        )
                       ),
                       Visibility(visible: currentlyTyping, child: SizedBox(height: 10.h)),
                       Visibility(
@@ -398,7 +418,17 @@ class _SongPageState extends State<SongPage> {
                           text: editing ? "< Discard" : "< Back", 
                           onTap: () {
                             if(editing) {
-                              setState(() => editing = false);
+                              setState((){
+                                editing = false;
+                                pickedImageFile = null;
+                                pickedAudioFile = null;
+                                songText = widget.entry.text;
+                                songImage = widget.entry.imageURL;
+                                audio = widget.entry.audioURL;
+                                dateData = DateTime.parse(widget.entry.dateString);
+                                date = widget.entry.dateString;
+                              });
+                              setupAudio();
                             } else {
                               Navigator.pop(context);
                             }

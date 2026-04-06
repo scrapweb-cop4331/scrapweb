@@ -8,6 +8,7 @@ import 'song_page.dart';
 import 'home_page.dart';
 import 'account.dart';
 import 'entry.dart';
+import 'register.dart';
 
 // TODO: reminder to make API calls with UTF-8 formatting
 
@@ -62,6 +63,8 @@ class MyApp extends StatelessWidget {
                 return MaterialPageRoute(builder: (context) => SongPage(entry: entry)); 
               case '/AccountPage':
                 return MaterialPageRoute(builder: (context) => AccountPage());
+              case '/Register':
+                return MaterialPageRoute(builder: (context) => RegisterPage());
               default:
                 return null;
             }

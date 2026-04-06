@@ -19,9 +19,6 @@ class _LoginPageState extends State<LoginPage> {
   bool loginError = false;
   String loginErrorMessage = "Incorrect Username or Password.";
 
-  Color buttonTopLeftColor = Colors.white;
-  Color buttonBottomRightColor = Colors.black;
-
   Future<void> handleLogin() async {
     final String host = dotenv.env['SERVER_HOST'] ?? '127.0.0.1';
     final String port = dotenv.env['SERVER_PORT'] ?? '80';
@@ -156,18 +153,30 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(height: 18.h),
             Padding(
               padding: EdgeInsetsGeometry.symmetric(vertical: 3.0.h, horizontal: 10.0.w),
-                child: Align(
-                  alignment: Alignment.bottomRight,
-                  child: Win95Button(
-                    text: 'Log In', 
-                    onTap: () {
-                      handleLogin();
-                      print("Login button pressed. $username, $password. $loginError");
-                      return;
-                    },
-                    width: 150.w,
-                    height: 50.h
-                  )
+                child: Row( 
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap:() {
+                          Navigator.pushReplacementNamed(context, '/Register');
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 7.w),
+                          child: RichText(text: TextSpan(text: 'Register', style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, decoration: TextDecoration.underline, decorationThickness: 1.5, color: const Color.fromARGB(255, 0, 0, 255))))
+                        )
+                      )
+                    ),
+                    Win95Button(
+                      text: 'Log In', 
+                      onTap: () {
+                        handleLogin();
+                        print("Login button pressed. $username, $password. $loginError");
+                        return;
+                      },
+                      width: 150.w,
+                      height: 50.h
+                    )
+                  ]
                 )
               )
             ]

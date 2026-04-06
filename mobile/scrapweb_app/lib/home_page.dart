@@ -232,6 +232,17 @@ class _HomePageState extends State<HomePage> {
                       Expanded(
                         child: Win95Button(
                           height: 60.h,
+                          text: "+ New", 
+                          onTap: () {
+                            // create new entry, take entry information, open songpage with entry data
+                            return;
+                          } 
+                        )
+                      ),
+                      SizedBox(width: 2.0.w),
+                      Expanded(
+                        child: Win95Button(
+                          height: 60.h,
                           text: "Account", 
                           onTap: () {
                             Navigator.pushNamed(context, '/AccountPage');

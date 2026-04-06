@@ -101,12 +101,12 @@ class _AccountPageState extends State<AccountPage> {
                   color: Color.fromARGB(255, 2, 21, 119),
                   width: double.infinity,
                   height: 35.h,
-                  padding: EdgeInsets.only(left: 8),
+                  padding: EdgeInsets.only(left: 8.w),
                   child: RichText(text: TextSpan(text: "Error", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 18.sp, height: 1.6.h))),
                 ),
-                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
                 content: RichText(text: TextSpan(text: errorData['error'] ?? 'Could not update account.', style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 15.sp, height: 1.5.h))),
-                actionsPadding: EdgeInsets.fromLTRB(8, 0, 8, 10),
+                actionsPadding: EdgeInsets.fromLTRB(8.w, 0, 8.w, 10.h),
                 actions: [
                   Win95Button(
                     height: 45.h,
@@ -137,12 +137,12 @@ class _AccountPageState extends State<AccountPage> {
                 color: Color.fromARGB(255, 2, 21, 119),
                 width: double.infinity,
                 height: 35.h,
-                padding: EdgeInsets.only(left: 8),
+                padding: EdgeInsets.only(left: 8.w),
                 child: RichText(text: TextSpan(text: "Error", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 18.sp, height: 1.6.h))),
               ),
-              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
               content: RichText(text: TextSpan(text: "Could not connect to server. Try again.", style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 15.sp, height: 1.5.h))),
-              actionsPadding: EdgeInsets.fromLTRB(8, 0, 8, 10),
+              actionsPadding: EdgeInsets.fromLTRB(8.w, 0, 8.w, 10.h),
               actions: [
                 Win95Button(
                   height: 45.h,
@@ -193,12 +193,12 @@ class _AccountPageState extends State<AccountPage> {
             color: Color.fromARGB(255, 2, 21, 119),
             width: double.infinity,
             height: 35.h,
-            padding: EdgeInsets.only(left: 8),
+            padding: EdgeInsets.only(left: 8.w),
             child: RichText(text: TextSpan(text: "Confirm Delete", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 18.sp, height: 1.6.h))),
           ),
-          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
           content: RichText(text: TextSpan(text: "Are you sure you want to delete your account?\nThis action cannot be undone.", style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 15.sp, height: 1.5.h))),
-          actionsPadding: EdgeInsets.fromLTRB(8, 0, 8, 10),
+          actionsPadding: EdgeInsets.fromLTRB(8.w, 0, 8.w, 10.h),
           actions: [
             Row(
               children: [
@@ -256,12 +256,12 @@ class _AccountPageState extends State<AccountPage> {
                   color: Color.fromARGB(255, 2, 21, 119),
                   width: double.infinity,
                   height: 35.h,
-                  padding: EdgeInsets.only(left: 8),
+                  padding: EdgeInsets.only(left: 8.w),
                   child: RichText(text: TextSpan(text: "Error", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 18.sp, height: 1.6.h))),
                 ),
-                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
                 content: RichText(text: TextSpan(text: errorData['error'] ?? 'Could not delete account.', style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 15.sp, height: 1.5.h))),
-                actionsPadding: EdgeInsets.fromLTRB(8, 0, 8, 10),
+                actionsPadding: EdgeInsets.fromLTRB(8.w, 0, 8.w, 10.h),
                 actions: [
                   Win95Button(
                     height: 45.h,
@@ -291,12 +291,12 @@ class _AccountPageState extends State<AccountPage> {
                 color: Color.fromARGB(255, 2, 21, 119),
                 width: double.infinity,
                 height: 35.h,
-                padding: EdgeInsets.only(left: 8),
+                padding: EdgeInsets.only(left: 8.w),
                 child: RichText(text: TextSpan(text: "Error", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 18.sp, height: 1.6.h))),
               ),
-              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
               content: RichText(text: TextSpan(text: "Could not connect to server. Try again.", style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 15.sp, height: 1.5.h))),
-              actionsPadding: EdgeInsets.fromLTRB(8, 0, 8, 10),
+              actionsPadding: EdgeInsets.fromLTRB(8.w, 0, 8.w, 10.h),
               actions: [
                 Win95Button(
                   height: 45.h,
@@ -342,12 +342,12 @@ class _AccountPageState extends State<AccountPage> {
               color: Color.fromARGB(255, 2, 21, 119),
               width: double.infinity,
               height: 35.h,
-              padding: EdgeInsets.only(left: 8),
+              padding: EdgeInsets.only(left: 8.w),
               child: RichText(text: TextSpan(text: "Reset Password", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 18.sp, height: 1.6.h))),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
             content: RichText(text: TextSpan(text: data['message'] ?? data['error'] ?? 'Something went wrong.', style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 15.sp, height: 1.5.h))),
-            actionsPadding: EdgeInsets.fromLTRB(8, 0, 8, 10),
+            actionsPadding: EdgeInsets.fromLTRB(8.w, 0, 8.w, 10.h),
             actions: [
               Win95Button(
                 height: 45.h,
@@ -376,12 +376,12 @@ class _AccountPageState extends State<AccountPage> {
               color: Color.fromARGB(255, 2, 21, 119),
               width: double.infinity,
               height: 35.h,
-              padding: EdgeInsets.only(left: 8),
+              padding: EdgeInsets.only(left: 8.w),
               child: RichText(text: TextSpan(text: "Error", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 18.sp, height: 1.6.h))),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
             content: RichText(text: TextSpan(text: "Could not connect to server. Try again.", style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 15.sp, height: 1.5.h))),
-            actionsPadding: EdgeInsets.fromLTRB(8, 0, 8, 10),
+            actionsPadding: EdgeInsets.fromLTRB(8.w, 0, 8.w, 10.h),
             actions: [
               Win95Button(
                 height: 45.h,
@@ -404,7 +404,7 @@ class _AccountPageState extends State<AccountPage> {
           children: [
             Expanded(
               child: Padding(
-                padding: EdgeInsetsGeometry.directional(start: 10.0, end: 10.0, top: 60.0, bottom: 15.0),
+                padding: EdgeInsetsGeometry.directional(start: 10.0.w, end: 10.0.w, top: 60.0.h, bottom: 15.0.h),
                 child: Win95Window(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -417,7 +417,7 @@ class _AccountPageState extends State<AccountPage> {
                       ),
                       SizedBox(height: 12.h),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -426,23 +426,23 @@ class _AccountPageState extends State<AccountPage> {
                             editing
                               ? Win95Entry(
                                   paddingHorizontal: 8.w,
-                                  paddingVertical: 2,
+                                  paddingVertical: 2.h,
                                   child: TextField(
                                     controller: firstNameController,
                                     style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 16.sp),
-                                    decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 2, vertical: 5), filled: true, fillColor: Colors.white, isDense: true),
+                                    decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 5.h), filled: true, fillColor: Colors.white, isDense: true),
                                     onTapOutside: (_) => FocusScope.of(context).unfocus(),
                                   ),
                                 )
                               : Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 10),
+                                  padding: EdgeInsets.symmetric(horizontal: 10.w),
                                   child: RichText(text: TextSpan(text: firstName.isNotEmpty ? firstName : " ", style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, color: Colors.black))),
                                 ),
                           ],
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -451,23 +451,23 @@ class _AccountPageState extends State<AccountPage> {
                             editing
                               ? Win95Entry(
                                   paddingHorizontal: 8.w,
-                                  paddingVertical: 2,
+                                  paddingVertical: 2.h,
                                   child: TextField(
                                     controller: lastNameController,
                                     style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 16.sp),
-                                    decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 2, vertical: 5), filled: true, fillColor: Colors.white, isDense: true),
+                                    decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 5.h), filled: true, fillColor: Colors.white, isDense: true),
                                     onTapOutside: (_) => FocusScope.of(context).unfocus(),
                                   ),
                                 )
                               : Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 10),
+                                  padding: EdgeInsets.symmetric(horizontal: 10.w),
                                   child: RichText(text: TextSpan(text: lastName.isNotEmpty ? lastName : " ", style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, color: Colors.black))),
                                 ),
                           ],
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -476,23 +476,23 @@ class _AccountPageState extends State<AccountPage> {
                             editing
                               ? Win95Entry(
                                   paddingHorizontal: 8.w,
-                                  paddingVertical: 2,
+                                  paddingVertical: 2.h,
                                   child: TextField(
                                     controller: usernameController,
                                     style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 16.sp),
-                                    decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 2, vertical: 5), filled: true, fillColor: Colors.white, isDense: true),
+                                    decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 5.h), filled: true, fillColor: Colors.white, isDense: true),
                                     onTapOutside: (_) => FocusScope.of(context).unfocus(),
                                   ),
                                 )
                               : Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 10),
+                                  padding: EdgeInsets.symmetric(horizontal: 10.w),
                                   child: RichText(text: TextSpan(text: username.isNotEmpty ? username : " ", style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, color: Colors.black))),
                                 ),
                           ],
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -501,16 +501,16 @@ class _AccountPageState extends State<AccountPage> {
                             editing
                               ? Win95Entry(
                                   paddingHorizontal: 8.w,
-                                  paddingVertical: 2,
+                                  paddingVertical: 2.h,
                                   child: TextField(
                                     controller: emailController,
                                     style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 16.sp),
-                                    decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 2, vertical: 5), filled: true, fillColor: Colors.white, isDense: true),
+                                    decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 5.h), filled: true, fillColor: Colors.white, isDense: true),
                                     onTapOutside: (_) => FocusScope.of(context).unfocus(),
                                   ),
                                 )
                               : Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 10),
+                                  padding: EdgeInsets.symmetric(horizontal: 10.w),
                                   child: RichText(text: TextSpan(text: email.isNotEmpty ? email : " ", style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, color: Colors.black))),
                                 ),
                           ],
@@ -518,7 +518,7 @@ class _AccountPageState extends State<AccountPage> {
                       ),
                       SizedBox(height: 40.h),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
                         child: Win95Button(
                           height: 48.h,
                           text: "Reset Password",
