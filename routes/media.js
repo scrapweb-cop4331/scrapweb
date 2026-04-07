@@ -46,6 +46,7 @@ router.get('/file/:id', async (req, res) => {
         }
 
         res.set('Content-Type', files[0].contentType);
+        res.set('Content-Disposition', `inline; filename="${files[0].filename}"`);
 
         const downloadStream = gfsBucket.openDownloadStream(fileId);
         downloadStream.pipe(res);
