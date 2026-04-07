@@ -1,0 +1,72 @@
+name: Deploy MERN Application
+
+on:
+  push:
+    branches: [ main ]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+  steps:
+  # Checkout the repository code
+  - name: Checkout code
+    uses: actions/checkout@v3
+  # Setup Node.js
+  - name: Setup Node.js
+    uses: actions/setup-node@v3
+    with:
+    node-version: '22.22'
+    cache: 'npm'
+    cache-dependency-path: |
+      package-lock.json
+      frontend/package-lock.json
+  # Install and build frontend
+  - name: Install frontend dependencies
+    working-directory: ./frontend
+    run: npm ci
+  - name: Build frontend
+    working-directory: ./frontend
+    run: npm run build
+  # Deploy frontend to server
+  - name: Deploy frontend to server
+    uses: appleboy/scp-action@v0.1.5
+    with:
+    host: ${{ secrets.SERVER_HOST }}
+    username: ${{ secrets.SERVER_USER }}
+    password: ${{ secrets.SERVER_PASSWORD }}
+    port: ${{ secrets.SERVER_PORT }}
+    source: "frontend/dist/*"
+    target: "/var/www/html"
+    strip_components: 2
+    rm: true
+  # Deploy backend files to server
+  - name: Deploy backend files
+    uses: appleboy/scp-action@v0.1.5
+    with:
+    host: ${{ secrets.SERVER_HOST }}
+    username: ${{ secrets.SERVER_USER }}
+    password: ${{ secrets.SERVER_PASSWORD }}
+    port: ${{ secrets.SERVER_PORT }}
+    source: "server.js,package.json,package-lock.json"
+    target: "/var/scrapweb"
+    overwrite: true
+  # Install backend dependencies and restart PM2
+  - name: Install dependencies and restart server
+    uses: appleboy/ssh-action@v1.0.0
+    with:
+    host: ${{ secrets.SERVER_HOST }}
+    username: ${{ secrets.SERVER_USER }}
+    password: ${{ secrets.SERVER_PASSWORD }}
+    port: ${{ secrets.SERVER_PORT }}
+    script: |
+      # Navigate to backend directory
+      cd /var/scrapweb
+      # Install dependencies
+      npm ci --production
+      # Ensure PM2 is installed globally
+      npm list -g pm2 || npm install -g pm2
+      # Reload the application with PM2 (zero-downtime reload)
+      pm2 reload express-server --update-env || pm2 start server.js --name "express-server"
+      # Save PM2 process list
+      pm2 save
+    # Optional: Clear nginx cache if needed
+    nginx -s reload
