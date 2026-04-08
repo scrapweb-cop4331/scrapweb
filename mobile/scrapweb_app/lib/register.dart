@@ -48,27 +48,27 @@ class _RegisterPageState extends State<RegisterPage> {
           'last_name': lastName,
         })),
       );
- 
+
+      try {
+        final Map<String, dynamic> errorData = jsonDecode(utf8.decode(response.bodyBytes));
+        if (errorData['error'] != null) {
+          registerErrorMessage = "${errorData['error']}";
+        }
+      } catch (e) {
+        print("Error parsing error response: $e");
+      }
+
       if (!mounted) return;
       print("$response");
       if (response.statusCode == 201) {
-        Navigator.pushReplacementNamed(context, '/HomePage');
+        success = true;
+        registerError = true;
+        await Future.delayed(const Duration(seconds: 5), (){});
+        if (!mounted) return;
+        Navigator.pushReplacementNamed(context, '/');
       } else {
-        try {
-          final Map<String, dynamic> errorData = jsonDecode(utf8.decode(response.bodyBytes));
-          if (errorData['error'] != null) {
-            registerErrorMessage = "${errorData['error']}";
-          }
-        } catch (e) {
-          print("Error parsing error response: $e");
-        }
- 
         setState(() {
-          if(registerErrorMessage == "Registration successful! Please check your email to verify your account."){
-            success = true;
-          } else {
-            success = false;
-          }
+          success = false;
           registerError = true;
         });
       }

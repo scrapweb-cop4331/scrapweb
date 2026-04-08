@@ -10,6 +10,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
 import 'win95_style.dart';
 import 'entry.dart';
+import 'dart:convert';
 
 // Duration information for song playing
 class DurationState {
@@ -168,6 +169,143 @@ class _SongPageState extends State<SongPage> {
     }
   }
   
+/*
+  Future<void> handleDelete() async {
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          backgroundColor: Color.fromARGB(255, 195, 199, 203),
+          shape: Border(
+            top:    BorderSide(color: Colors.white, width: 2),
+            left:   BorderSide(color: Colors.white, width: 2),
+            bottom: BorderSide(color: Colors.black, width: 2),
+            right:  BorderSide(color: Colors.black, width: 2),
+          ),
+          titlePadding: EdgeInsets.zero,
+          title: Container(
+            color: Color.fromARGB(255, 2, 21, 119),
+            width: double.infinity,
+            height: 35.h,
+            padding: EdgeInsets.only(left: 8.w),
+            child: RichText(text: TextSpan(text: "Confirm Delete", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 18.sp, height: 1.6.h))),
+          ),
+          contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+          content: RichText(text: TextSpan(text: "Are you sure you want to delete your account?\nThis action cannot be undone.", style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 15.sp, height: 1.5.h))),
+          actionsPadding: EdgeInsets.fromLTRB(8.w, 0, 8.w, 10.h),
+          actions: [
+            Row(
+              children: [
+                Expanded(
+                  child: Win95Button(
+                    height: 45.h,
+                    text: "Cancel",
+                    onTap: () => Navigator.of(dialogContext).pop(false),
+                  ),
+                ),
+                SizedBox(width: 8.w),
+                Expanded(
+                  child: Win95Button(
+                    height: 45.h,
+                    text: "Delete",
+                    onTap: () => Navigator.of(dialogContext).pop(true),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed == true) {
+      final String host = dotenv.env['SERVER_HOST'] ?? '127.0.0.1';
+      final String port = dotenv.env['SERVER_PORT'] ?? '80';
+      //final url = Uri.http('$host:$port', '/api/users/');
+
+      try {
+        final response = await http.delete(url);
+        if (!mounted) return;
+
+        if (response.statusCode == 200) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.clear();
+          if (!mounted) return;
+          Navigator.of(context).pushNamedAndRemoveUntil('/HomePage', (route) => false);
+        } else {
+          final Map<String, dynamic> errorData = jsonDecode(utf8.decode(response.bodyBytes));
+          showDialog(
+            context: context,
+            builder: (BuildContext dialogContext) {
+              return AlertDialog(
+                backgroundColor: Color.fromARGB(255, 195, 199, 203),
+                shape: Border(
+                  top:    BorderSide(color: Colors.white, width: 2),
+                  left:   BorderSide(color: Colors.white, width: 2),
+                  bottom: BorderSide(color: Colors.black, width: 2),
+                  right:  BorderSide(color: Colors.black, width: 2),
+                ),
+                titlePadding: EdgeInsets.zero,
+                title: Container(
+                  color: Color.fromARGB(255, 2, 21, 119),
+                  width: double.infinity,
+                  height: 35.h,
+                  padding: EdgeInsets.only(left: 8.w),
+                  child: RichText(text: TextSpan(text: "Error", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 18.sp, height: 1.6.h))),
+                ),
+                contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                content: RichText(text: TextSpan(text: errorData['error'] ?? 'Could not delete account.', style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 15.sp, height: 1.5.h))),
+                actionsPadding: EdgeInsets.fromLTRB(8.w, 0, 8.w, 10.h),
+                actions: [
+                  Win95Button(
+                    height: 45.h,
+                    text: "OK",
+                    onTap: () => Navigator.of(dialogContext).pop(),
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      } catch (e) {
+        if (!mounted) return;
+        showDialog(
+          context: context,
+          builder: (BuildContext dialogContext) {
+            return AlertDialog(
+              backgroundColor: Color.fromARGB(255, 195, 199, 203),
+              shape: Border(
+                top:    BorderSide(color: Colors.white, width: 2),
+                left:   BorderSide(color: Colors.white, width: 2),
+                bottom: BorderSide(color: Colors.black, width: 2),
+                right:  BorderSide(color: Colors.black, width: 2),
+              ),
+              titlePadding: EdgeInsets.zero,
+              title: Container(
+                color: Color.fromARGB(255, 2, 21, 119),
+                width: double.infinity,
+                height: 35.h,
+                padding: EdgeInsets.only(left: 8.w),
+                child: RichText(text: TextSpan(text: "Error", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 18.sp, height: 1.6.h))),
+              ),
+              contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+              content: RichText(text: TextSpan(text: "Could not connect to server. Try again.", style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 15.sp, height: 1.5.h))),
+              actionsPadding: EdgeInsets.fromLTRB(8.w, 0, 8.w, 10.h),
+              actions: [
+                Win95Button(
+                  height: 45.h,
+                  text: "OK",
+                  onTap: () => Navigator.of(dialogContext).pop(),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    }
+  }
+*/
 
   @override
   Widget build(BuildContext context) {
@@ -449,7 +587,19 @@ class _SongPageState extends State<SongPage> {
                             return;
                           } 
                         )
-                      )
+                      ),
+                      SizedBox(width: 2.0.w),
+                      Expanded(
+                        child: Win95Button(
+                          height: 60.h,
+                          text: "Delete",
+                          icon: 'images/x.png',
+                          onTap: () {
+                            //handleDelete();
+                            return;
+                          }
+                        )
+                      ),
                     ],
                   )      
                 )

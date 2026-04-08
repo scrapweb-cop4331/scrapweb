@@ -421,7 +421,7 @@ class _AccountPageState extends State<AccountPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            RichText(text: TextSpan(text: "  First Name:", style: TextStyle(fontFamily: 'W95', fontSize: 15.sp, color: Colors.black))),
+                            RichText(text: TextSpan(text: "  First Name:", style: TextStyle(fontFamily: 'W95', fontWeight: FontWeight.w700, fontSize: 16.sp, color: Colors.black))),
                             SizedBox(height: 2.h),
                             editing
                               ? Win95Entry(
@@ -446,7 +446,7 @@ class _AccountPageState extends State<AccountPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            RichText(text: TextSpan(text: "  Last Name:", style: TextStyle(fontFamily: 'W95', fontSize: 15.sp, color: Colors.black))),
+                            RichText(text: TextSpan(text: "  Last Name:", style: TextStyle(fontFamily: 'W95', fontWeight: FontWeight.w700, fontSize: 16.sp, color: Colors.black))),
                             SizedBox(height: 2.h),
                             editing
                               ? Win95Entry(
@@ -471,7 +471,7 @@ class _AccountPageState extends State<AccountPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            RichText(text: TextSpan(text: "  Username:", style: TextStyle(fontFamily: 'W95', fontSize: 15.sp, color: Colors.black))),
+                            RichText(text: TextSpan(text: "  Username:", style: TextStyle(fontFamily: 'W95', fontWeight: FontWeight.w700, fontSize: 16.sp, color: Colors.black))),
                             SizedBox(height: 2.h),
                             editing
                               ? Win95Entry(
@@ -496,7 +496,7 @@ class _AccountPageState extends State<AccountPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            RichText(text: TextSpan(text: "  Email:", style: TextStyle(fontFamily: 'W95', fontSize: 15.sp, color: Colors.black))),
+                            RichText(text: TextSpan(text: "  Email:", style: TextStyle(fontFamily: 'W95', fontWeight: FontWeight.w700, fontSize: 16.sp, color: Colors.black))),
                             SizedBox(height: 2.h),
                             editing
                               ? Win95Entry(
