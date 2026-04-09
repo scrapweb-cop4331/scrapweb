@@ -53,29 +53,58 @@ class _SongPageState extends State<SongPage> {
   final AudioPlayer player = AudioPlayer();
   Stream<DurationState>? durationState;
 
+  final String host = dotenv.env['SERVER_HOST'] ?? '127.0.0.1';
+  final String port = dotenv.env['SERVER_PORT'] ?? '80';
+
   Future<void> openImagePicker() async {
+    setState(() {
+      makingAPICall = false;
+      showSongPageError = false;
+    });
     ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
     if (image != null){
-      setState(() {
-        pickedImageFile = image;
-        songImage = image.path;
-      });
+      int fileSize = await image.length();
+      if(fileSize > 26214400) {
+        songPageErrorMessage = "Max file size is 25MB";
+        setState(() {
+          makingAPICall = false;
+          showSongPageError = true;
+        });
+      } else {
+        setState(() {
+          pickedImageFile = image;
+          songImage = image.path;
+        });
+      }
     }
   }
 
   Future<void> openAudioPicker() async {
+    setState(() {
+      makingAPICall = false;
+      showSongPageError = false;
+    });
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.audio,
+      type: FileType.custom,
       allowMultiple: false,
+      allowedExtensions: ['mp3','wav']
     );
-
     if (result != null && result.files.single.path != null) {
       setState(() {
         pickedAudioFile = XFile(result.files.single.path!);
-        audio = result.files.single.path!; 
       });
+      int fileSize = await pickedAudioFile!.length();
+      if(fileSize > 26214400) {
+        songPageErrorMessage = "Max file size is 25MB";
+        setState(() {
+          makingAPICall = false;
+          showSongPageError = true;
+        });
+      } else {
+        audio = result.files.single.path!; 
+      }
     }
   }
 
@@ -92,21 +121,19 @@ class _SongPageState extends State<SongPage> {
     ).asBroadcastStream();
   }
 
+  String formatPath(String? path) {
+    if (path == null || path.isEmpty) return "";
+    if (path.startsWith('http') || path.startsWith('/data/user') || path.startsWith('/Users/')) {
+      return path;
+    }
+    return "http://$host:$port$path";
+  }
+
   @override
   void initState() {
     super.initState();
-    final String host = dotenv.env['SERVER_HOST'] ?? '127.0.0.1';
-    final String port = dotenv.env['SERVER_PORT'] ?? '80';
     songText = widget.entry.text;
     date = widget.entry.dateString;
-
-    String formatPath(String? path) {
-      if (path == null || path.isEmpty) return "";
-      if (path.startsWith('http') || path.startsWith('/data/user') || path.startsWith('/Users/')) {
-        return path;
-    }
-      return "http://$host:$port$path";
-    }
 
     songImage = formatPath(widget.entry.imageURL);
     print(songImage);
@@ -118,7 +145,7 @@ class _SongPageState extends State<SongPage> {
   }
 
   Future<void> handleEditAPI() async {
-    songPageErrorMessage = "Saving...";
+    songPageErrorMessage = "Saving... Do not exit!";
     setState(() {
       makingAPICall = true;
       showSongPageError = true;
@@ -149,10 +176,10 @@ class _SongPageState extends State<SongPage> {
           await http.MultipartFile.fromPath('audio', pickedAudioFile!.path)
         );
       }
-
       final streamedResponse = await request.send();
       if (!mounted) return;
       final response = await http.Response.fromStream(streamedResponse);
+      print(response.toString());
 
       if (response.statusCode == 200) {
         setState(() {
@@ -173,6 +200,7 @@ class _SongPageState extends State<SongPage> {
       }
     } catch (e) {
       if (!mounted) return;
+      print(e);
       setState(() {
         makingAPICall = false;
         showSongPageError = true;
@@ -336,7 +364,16 @@ class _SongPageState extends State<SongPage> {
                           color: Color.fromARGB(255, 2, 21, 119),
                           width: double.infinity,
                           height: 38.h,
-                          child: RichText(text: TextSpan(text: "  $date", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 23.sp, height: 1.6.h)))
+                          child: Row(
+                            children: [
+                              RichText(text: TextSpan(text: "  $date", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 23.sp, height: 1.6.h))),
+                              SizedBox(width: 5.w,),
+                              Visibility(
+                                visible: editing,
+                                child: Image(image: AssetImage("./images/dateEdit.png"), height: 14.h)
+                              )
+                            ]
+                          )
                         )
                       ),
                       Visibility(visible: currentlyTyping, child: SizedBox(height: 10.h)),
@@ -368,15 +405,18 @@ class _SongPageState extends State<SongPage> {
                               padding: EdgeInsets.symmetric(horizontal: 30.h, vertical: 10.w),
                               height: 300.h,
                               width: 350.w,
-                              child: Image(
+                              child: editing
+                              ? Image(image: AssetImage("./images/uploadImage.png"),)
+                              : FadeInImage(
+                                placeholder: AssetImage("./images/loading.png"),
                                 fit: BoxFit.contain,
                                 image: (songImage != null && songImage!.isNotEmpty)
                                   ? (songImage!.startsWith('http') 
                                       ? NetworkImage(songImage!)
                                       : FileImage(File(songImage!)) as ImageProvider)
                                   : const AssetImage('images/placeholderSquare.png'),
-                                errorBuilder: (context, error, stackTract) => Image.asset('images/placeholderSquare.png'),
                               )
+
                             ),
                           )
                         )
@@ -534,7 +574,7 @@ class _SongPageState extends State<SongPage> {
                         visible: showSongPageError,
                         child: Padding(
                           padding: EdgeInsetsGeometry.symmetric(horizontal: 8.w),
-                          child: RichText(text: TextSpan(text: songPageErrorMessage, style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, color: makingAPICall ? Colors.black : Colors.red)))
+                          child: Center(child: RichText(text: TextSpan(text: songPageErrorMessage, style: TextStyle(fontFamily: 'W95', fontSize: 22.sp, color: makingAPICall ? Colors.black : Colors.red))))
                         ),
                       )
                     ],
@@ -562,8 +602,8 @@ class _SongPageState extends State<SongPage> {
                                 pickedImageFile = null;
                                 pickedAudioFile = null;
                                 songText = widget.entry.text;
-                                songImage = widget.entry.imageURL;
-                                audio = widget.entry.audioURL;
+                                songImage = formatPath(widget.entry.imageURL);
+                                audio = formatPath(widget.entry.audioURL);
                                 dateData = DateTime.parse(widget.entry.dateString);
                                 date = widget.entry.dateString;
                               });

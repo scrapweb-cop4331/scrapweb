@@ -43,14 +43,14 @@ class EntryClickable extends StatefulWidget {
 class _EntryClickableState extends State<EntryClickable> {
 
   final String host = dotenv.env['SERVER_HOST'] ?? '127.0.0.1';
-    final String port = dotenv.env['SERVER_PORT'] ?? '80';
+  final String port = dotenv.env['SERVER_PORT'] ?? '80';
 
-    String getImageUrl(String path) {
-      if (path.startsWith('http')) return path; 
-      if (path.startsWith('/') && !path.contains('data/user')) { 
-        return Uri.http('$host:$port', path).toString();
-      }
-      return path; 
+  String getImageUrl(String path) {
+    if (path.startsWith('http')) return path; 
+    if (path.startsWith('/') && !path.contains('data/user')) { 
+      return Uri.http('$host:$port', path).toString();
+    }
+    return path; 
   }
 
   @override
@@ -58,10 +58,11 @@ class _EntryClickableState extends State<EntryClickable> {
     return GestureDetector(
       onTap: () async {
         print("Intentional tap on: ${widget.entry.dateString}");
-        await Navigator.pushNamed(
+        await Navigator.pushNamedAndRemoveUntil(
           context, 
           '/SongPage',
-          arguments: widget.entry
+          arguments: widget.entry,
+          (route) => false
         );
         
         widget.onRefresh();
@@ -84,7 +85,11 @@ class _EntryClickableState extends State<EntryClickable> {
                       }
 
                       if (displayPath.startsWith('http')) {
-                        return Image.network(displayPath, fit: BoxFit.cover);
+                        return FadeInImage(
+                          fit: BoxFit.cover,
+                          placeholder: AssetImage("./images/loading.png"), 
+                          image: NetworkImage(displayPath)
+                        );
                       } else {
                         return Image.file(File(displayPath), fit: BoxFit.cover);
                       }

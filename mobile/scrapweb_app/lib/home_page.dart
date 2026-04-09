@@ -222,7 +222,7 @@ class _HomePageState extends State<HomePage> {
                           visible: showMainPageError,
                           child: Padding(
                             padding: EdgeInsetsGeometry.symmetric(horizontal: 8.w),
-                            child: RichText(text: TextSpan(text: mainPageErrorMessage, style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, color: makingAPICall? Colors.black : Colors.red)))
+                            child: Center(child: RichText(text: TextSpan(text: mainPageErrorMessage, style: TextStyle(fontFamily: 'W95', fontSize: 22.sp, color: makingAPICall? Colors.black : Colors.red))))
                           )
                         )
                       ],
