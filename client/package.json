@@ -14,11 +14,13 @@
     "@react-router/serve": "7.14.0",
     "@react95/core": "^9.7.1",
     "@react95/icons": "^2.4.0",
+    "@tailwindcss/vite": "^4.2.2",
     "isbot": "^5.1.31",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router": "7.14.0",
-    "react-router-dom": "^7.14.0"
+    "react-router-dom": "^7.14.0",
+    "tailwindcss": "^4.2.2"
   },
   "devDependencies": {
     "@react-router/dev": "7.14.0",
