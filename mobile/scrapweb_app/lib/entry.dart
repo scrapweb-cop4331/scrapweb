@@ -18,11 +18,11 @@ class Entry {
   });
   factory Entry.fromJson(Map<String, dynamic> json){
     return Entry(
-      id: json['id'],
+      id: json['_id'],
       dateString: json['date'],
-      imageURL: json['imageURL'],
-      audioURL: json['audioURL'],
-      text: json['text']
+      imageURL: json['photo'],
+      audioURL: json['audio'],
+      text: json['notes']
     );
   }
 
@@ -62,7 +62,7 @@ class _EntryClickableState extends State<EntryClickable> {
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.only(top: 5),
-                  child: widget.entry.imageURL != null ? Image.network(widget.entry.imageURL!, fit: BoxFit.cover) : Image.asset("images/placeholderSquare.png")
+                  child: widget.entry.imageURL != "" ? Image.network(widget.entry.imageURL!, fit: BoxFit.cover) : Image.asset("images/placeholderSquare.png")
                 )
               ),
               Padding(

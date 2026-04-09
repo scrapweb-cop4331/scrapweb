@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'win95_style.dart';
 import 'entry.dart';
+import 'dart:convert';
 
 class MonthGroup {
   final String title;
@@ -30,59 +33,6 @@ class MonthGroup {
   static String getMonthName(int month) => ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][month - 1];
 }
 
-final List<Map<String, dynamic>> sampleAPIResponse = [
-  {
-    "id": "_1d",
-    "date": "2023-10-12",
-    "imageURL": "https://picsum.photos/200",
-    "audioURL": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-    "text": "Test 1."
-  },
-  {
-    "id": "_6d",
-    "date": "2023-10-05",
-    "imageURL": null,
-    "audioURL": null,
-    "text": "test 2"
-  },
-  {
-    "id": "_5d",
-    "date": "2023-11-01",
-    "imageURL": "https://picsum.photos/202",
-    "audioURL": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-    "text": "Hello, World!"
-  },
-  {
-    "id": "_4d",
-    "date": "2023-09-28",
-    "imageURL": null,
-    "audioURL": null,
-    "text": "idk"
-  },
-  {
-    "id": "_3d",
-    "date": "2023-09-27",
-    "imageURL": null,
-    "audioURL": null,
-    "text": null
-  },
-  {
-    "id": "_2d",
-    "date": "2023-09-26",
-    "imageURL": "https://picsum.photos/201",
-    "audioURL": null,
-    "text": "really long string to show off the previous thing gone :( so here lorem again: Lorem ipsum dolor sit amet consectetur adipiscing elit. Pretium tellus duis convallis tempus leo eu aenean. Iaculis massa nisl malesuada lacinia integer nunc posuere. Conubia nostra inceptos himenaeos orci varius natoque penatibus. Nulla molestie mattis scelerisque maximus eget fermentum odio. Blandit quis suspendisse aliquet nisi sodales consequat magna. Ligula congue sollicitudin erat viverra ac tincidunt nam. Velit aliquam imperdiet mollis nullam volutpat porttitor ullamcorper. Dui felis venenatis ultrices proin libero feugiat tristique. Cubilia curae hac habitasse platea dictumst lorem ipsum. Sem placerat in id cursus mi pretium tellus. Fringilla lacus nec metus bibendum egestas iaculis massa. Taciti sociosqu ad litora torquent per conubia nostra. Ridiculus mus donec rhoncus eros lobortis nulla molestie. Mauris pharetra vestibulum fusce dictum risus blandit quis. Finibus facilisis dapibus etiam interdum tortor ligula congue. Justo lectus commodo augue arcu dignissim velit aliquam. Primis vulputate ornare sagittis vehicula praesent dui felis. Senectus netus suscipit auctor curabitur facilisi cubilia curae. Quisque faucibus ex sapien vitae pellentesque sem placerat."
-  },
-  {
-    "id": "_1c",
-    "date": "2023-09-25",
-    "imageURL": null,
-    "audioURL": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
-    "text": "test 23."
-  }
-];
-
-
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -92,6 +42,10 @@ class HomePage extends StatefulWidget {
 }
 class _HomePageState extends State<HomePage> {
   final ScrollController scrollController = ScrollController();
+  bool loading = false;
+  String mainPageErrorMessage = "";
+  bool showMainPageError = false;
+  bool makingAPICall = false;
 
   List<MonthGroup> groupedData = [];
   
@@ -101,34 +55,93 @@ class _HomePageState extends State<HomePage> {
     fetchEntries();
   }
 
-  /*Future<void> fetchEntries() async {
-    final Object? args = ModalRoute.of(context)?.settings.arguments;
-
-    if(args is List<dynamic>) {
-      setState(() {
-        groupedData = MonthGroup.convertAPIList(args);
-      });
-    } else {
-      setState(() => groupedData = []);
-    }
-  }*/
-
   Future<void> fetchEntries() async {
+    loading = true;
     final prefs = await SharedPreferences.getInstance();
-    final String? loggedInUser = prefs.getString('username');
+    final String? userToken = prefs.getString('jwt_token');
 
-    final Object? args = ModalRoute.of(context)?.settings.arguments;
-    List<dynamic> apiEntries = (args is List<dynamic>) ? args : [];
+    final String host = dotenv.env['SERVER_HOST'] ?? '127.0.0.1';
+    final String port = dotenv.env['SERVER_PORT'] ?? '80';
+    final url = Uri.http('$host:$port', '/api/media');
 
-    if (apiEntries.isEmpty && loggedInUser == 'juli4nne') {
-      setState(() {
-        groupedData = MonthGroup.convertAPIList(sampleAPIResponse);
-      });
-    } else {
-      setState(() {
-        groupedData = MonthGroup.convertAPIList(apiEntries);
-      });
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $userToken'
+        },
+      );
+      
+      if(!mounted) return;
+      final Map<String, dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
+      if(response.statusCode == 200) {
+        final apiEntries = data['media'];
+        setState(() {
+          groupedData = MonthGroup.convertAPIList(apiEntries);
+        });
+      }
+    } catch (e) {
+      print("Error: $e");
     }
+    loading = false;
+  }
+
+  Future<void> createEntry() async {
+    mainPageErrorMessage = "Loading...";
+    setState(() {
+      makingAPICall = true;
+      showMainPageError = true;
+    });
+    final prefs = await SharedPreferences.getInstance();
+    final String? userToken = prefs.getString('jwt_token');
+    
+    final String host = dotenv.env['SERVER_HOST'] ?? '127.0.0.1';
+    final String port = dotenv.env['SERVER_PORT'] ?? '80';
+    final url = Uri.http('$host:$port', '/api/media');
+
+    DateTime now = DateTime.now();
+    DateTime date = DateTime(now.year, now.month, now.day);
+    String dateString = "$date";
+    print("$dateString");
+
+    final map = <String, String>{};
+    map['date'] = dateString;
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $userToken'
+        },
+        body: map
+      );
+      
+      if(!mounted) return;
+
+      if(response.statusCode == 201) {
+        final Map<String, dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
+        print("$data");
+        Entry newEntry = Entry(id: data['mediaItem']['_id'], imageURL: "", audioURL: "", text: "", dateString: data['mediaItem']['date']);
+        fetchEntries();
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/SongPage',
+          (route) => false,
+          arguments: newEntry
+        );
+      } else {
+        final Map<String, dynamic> errorData = jsonDecode(utf8.decode(response.bodyBytes));
+        if (errorData['error'] != null) {
+          print("${errorData['error']}");
+          mainPageErrorMessage = "${errorData['error']}";
+          setState(() => showMainPageError = true);
+        }
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
+    
   }
 
   @override
@@ -170,7 +183,7 @@ class _HomePageState extends State<HomePage> {
                                 context: context,
                                 removeTop: true,
                                 child: groupedData.isEmpty
-                                ? Center(child: RichText(text: TextSpan(text: "No entries yet", style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 21.sp, height: 1.4.h))))
+                                ? Center(child: RichText(text: TextSpan(text: loading ? "Loading..." : "No entries yet", style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 21.sp, height: 1.4.h))))
                                 : ListView.builder(
                                   physics: ClampingScrollPhysics(),
                                   controller: scrollController,
@@ -204,6 +217,13 @@ class _HomePageState extends State<HomePage> {
                               )
                             )
                           )
+                        ),
+                        Visibility(
+                          visible: showMainPageError,
+                          child: Padding(
+                            padding: EdgeInsetsGeometry.symmetric(horizontal: 8.w),
+                            child: RichText(text: TextSpan(text: mainPageErrorMessage, style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, color: makingAPICall? Colors.black : Colors.red)))
+                          )
                         )
                       ],
                     )
@@ -234,7 +254,10 @@ class _HomePageState extends State<HomePage> {
                           height: 60.h,
                           text: "+ New", 
                           onTap: () {
-                            // create new entry, take entry information, open songpage with entry data
+                            setState(() {
+                              createEntry();
+                              fetchEntries();
+                            });
                             return;
                           } 
                         )
@@ -245,7 +268,7 @@ class _HomePageState extends State<HomePage> {
                           height: 60.h,
                           text: "Account", 
                           onTap: () {
-                            Navigator.pushNamed(context, '/AccountPage');
+                            Navigator.pushNamedAndRemoveUntil(context, '/AccountPage', (route) => false,);
                             return;
                           } 
                         )

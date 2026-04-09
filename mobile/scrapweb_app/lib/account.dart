@@ -21,6 +21,10 @@ class _AccountPageState extends State<AccountPage> {
   String username = '';
   String email = '';
 
+  String accountErrorMessage = '';
+  bool accountMessageVisible = false;
+  bool accountMessageIsError = true;
+
   late TextEditingController firstNameController;
   late TextEditingController lastNameController;
   late TextEditingController usernameController;
@@ -78,6 +82,7 @@ class _AccountPageState extends State<AccountPage> {
             username  = usernameController.text;
             email     = emailController.text;
             editing   = false;
+            accountMessageVisible = false;
           });
           firstNameController.dispose();
           lastNameController.dispose();
@@ -85,81 +90,30 @@ class _AccountPageState extends State<AccountPage> {
           emailController.dispose();
         } else {
           final Map<String, dynamic> errorData = jsonDecode(utf8.decode(response.bodyBytes));
-          showDialog(
-            context: context,
-            builder: (BuildContext dialogContext) {
-              return AlertDialog(
-                backgroundColor: Color.fromARGB(255, 195, 199, 203),
-                shape: Border(
-                  top:    BorderSide(color: Colors.white, width: 2),
-                  left:   BorderSide(color: Colors.white, width: 2),
-                  bottom: BorderSide(color: Colors.black, width: 2),
-                  right:  BorderSide(color: Colors.black, width: 2),
-                ),
-                titlePadding: EdgeInsets.zero,
-                title: Container(
-                  color: Color.fromARGB(255, 2, 21, 119),
-                  width: double.infinity,
-                  height: 35.h,
-                  padding: EdgeInsets.only(left: 8.w),
-                  child: RichText(text: TextSpan(text: "Error", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 18.sp, height: 1.6.h))),
-                ),
-                contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-                content: RichText(text: TextSpan(text: errorData['error'] ?? 'Could not update account.', style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 15.sp, height: 1.5.h))),
-                actionsPadding: EdgeInsets.fromLTRB(8.w, 0, 8.w, 10.h),
-                actions: [
-                  Win95Button(
-                    height: 45.h,
-                    text: "OK",
-                    onTap: () => Navigator.of(dialogContext).pop(),
-                  ),
-                ],
-              );
-            },
-          );
+          setState(() {
+            accountErrorMessage = errorData['error'] ?? 'Could not update account.';
+            accountMessageIsError = true;
+            accountMessageVisible = true;
+          });
         }
       } catch (e) {
-        print('Connection Error: $e'); 
+        print('Connection Error: $e');
         if (!mounted) return;
-        showDialog(
-          context: context,
-          builder: (BuildContext dialogContext) {
-            return AlertDialog(
-              backgroundColor: Color.fromARGB(255, 195, 199, 203),
-              shape: Border(
-                top:    BorderSide(color: Colors.white, width: 2),
-                left:   BorderSide(color: Colors.white, width: 2),
-                bottom: BorderSide(color: Colors.black, width: 2),
-                right:  BorderSide(color: Colors.black, width: 2),
-              ),
-              titlePadding: EdgeInsets.zero,
-              title: Container(
-                color: Color.fromARGB(255, 2, 21, 119),
-                width: double.infinity,
-                height: 35.h,
-                padding: EdgeInsets.only(left: 8.w),
-                child: RichText(text: TextSpan(text: "Error", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 18.sp, height: 1.6.h))),
-              ),
-              contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-              content: RichText(text: TextSpan(text: "Could not connect to server. Try again.", style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 15.sp, height: 1.5.h))),
-              actionsPadding: EdgeInsets.fromLTRB(8.w, 0, 8.w, 10.h),
-              actions: [
-                Win95Button(
-                  height: 45.h,
-                  text: "OK",
-                  onTap: () => Navigator.of(dialogContext).pop(),
-                ),
-              ],
-            );
-          },
-        );
+        setState(() {
+          accountErrorMessage = 'Could not connect to server. Try again.';
+          accountMessageIsError = true;
+          accountMessageVisible = true;
+        });
       }
     } else {
       firstNameController = TextEditingController(text: firstName);
       lastNameController  = TextEditingController(text: lastName);
       usernameController  = TextEditingController(text: username);
       emailController     = TextEditingController(text: email);
-      setState(() => editing = true);
+      setState(() {
+        editing = true;
+        accountMessageVisible = false;
+      });
     }
   }
 
@@ -169,9 +123,12 @@ class _AccountPageState extends State<AccountPage> {
       lastNameController.dispose();
       usernameController.dispose();
       emailController.dispose();
-      setState(() => editing = false);
+      setState(() {
+        editing = false;
+        accountMessageVisible = false;
+      });
     } else {
-      Navigator.pop(context);
+      Navigator.pushNamedAndRemoveUntil(context, '/HomePage', (route) => false);
     }
   }
 
@@ -240,73 +197,19 @@ class _AccountPageState extends State<AccountPage> {
           Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
         } else {
           final Map<String, dynamic> errorData = jsonDecode(utf8.decode(response.bodyBytes));
-          showDialog(
-            context: context,
-            builder: (BuildContext dialogContext) {
-              return AlertDialog(
-                backgroundColor: Color.fromARGB(255, 195, 199, 203),
-                shape: Border(
-                  top:    BorderSide(color: Colors.white, width: 2),
-                  left:   BorderSide(color: Colors.white, width: 2),
-                  bottom: BorderSide(color: Colors.black, width: 2),
-                  right:  BorderSide(color: Colors.black, width: 2),
-                ),
-                titlePadding: EdgeInsets.zero,
-                title: Container(
-                  color: Color.fromARGB(255, 2, 21, 119),
-                  width: double.infinity,
-                  height: 35.h,
-                  padding: EdgeInsets.only(left: 8.w),
-                  child: RichText(text: TextSpan(text: "Error", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 18.sp, height: 1.6.h))),
-                ),
-                contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-                content: RichText(text: TextSpan(text: errorData['error'] ?? 'Could not delete account.', style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 15.sp, height: 1.5.h))),
-                actionsPadding: EdgeInsets.fromLTRB(8.w, 0, 8.w, 10.h),
-                actions: [
-                  Win95Button(
-                    height: 45.h,
-                    text: "OK",
-                    onTap: () => Navigator.of(dialogContext).pop(),
-                  ),
-                ],
-              );
-            },
-          );
+          setState(() {
+            accountErrorMessage = errorData['error'] ?? 'Could not delete account.';
+            accountMessageIsError = true;
+            accountMessageVisible = true;
+          });
         }
       } catch (e) {
         if (!mounted) return;
-        showDialog(
-          context: context,
-          builder: (BuildContext dialogContext) {
-            return AlertDialog(
-              backgroundColor: Color.fromARGB(255, 195, 199, 203),
-              shape: Border(
-                top:    BorderSide(color: Colors.white, width: 2),
-                left:   BorderSide(color: Colors.white, width: 2),
-                bottom: BorderSide(color: Colors.black, width: 2),
-                right:  BorderSide(color: Colors.black, width: 2),
-              ),
-              titlePadding: EdgeInsets.zero,
-              title: Container(
-                color: Color.fromARGB(255, 2, 21, 119),
-                width: double.infinity,
-                height: 35.h,
-                padding: EdgeInsets.only(left: 8.w),
-                child: RichText(text: TextSpan(text: "Error", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 18.sp, height: 1.6.h))),
-              ),
-              contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-              content: RichText(text: TextSpan(text: "Could not connect to server. Try again.", style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 15.sp, height: 1.5.h))),
-              actionsPadding: EdgeInsets.fromLTRB(8.w, 0, 8.w, 10.h),
-              actions: [
-                Win95Button(
-                  height: 45.h,
-                  text: "OK",
-                  onTap: () => Navigator.of(dialogContext).pop(),
-                ),
-              ],
-            );
-          },
-        );
+        setState(() {
+          accountErrorMessage = 'Could not connect to server. Try again.';
+          accountMessageIsError = true;
+          accountMessageVisible = true;
+        });
       }
     }
   }
@@ -314,7 +217,7 @@ class _AccountPageState extends State<AccountPage> {
   Future<void> handleResetPassword() async {
     final String host = dotenv.env['SERVER_HOST'] ?? '127.0.0.1';
     final String port = dotenv.env['SERVER_PORT'] ?? '80';
-    final url = Uri.http('$host:$port', '/api/reset-password');
+    final url = Uri.http('$host:$port', '/api/forgot-password');
 
     try {
       final response = await http.post(
@@ -326,72 +229,19 @@ class _AccountPageState extends State<AccountPage> {
       if (!mounted) return;
 
       final Map<String, dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
-      showDialog(
-        context: context,
-        builder: (BuildContext dialogContext) {
-          return AlertDialog(
-            backgroundColor: Color.fromARGB(255, 195, 199, 203),
-            shape: Border(
-              top:    BorderSide(color: Colors.white, width: 2),
-              left:   BorderSide(color: Colors.white, width: 2),
-              bottom: BorderSide(color: Colors.black, width: 2),
-              right:  BorderSide(color: Colors.black, width: 2),
-            ),
-            titlePadding: EdgeInsets.zero,
-            title: Container(
-              color: Color.fromARGB(255, 2, 21, 119),
-              width: double.infinity,
-              height: 35.h,
-              padding: EdgeInsets.only(left: 8.w),
-              child: RichText(text: TextSpan(text: "Reset Password", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 18.sp, height: 1.6.h))),
-            ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-            content: RichText(text: TextSpan(text: data['message'] ?? data['error'] ?? 'Something went wrong.', style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 15.sp, height: 1.5.h))),
-            actionsPadding: EdgeInsets.fromLTRB(8.w, 0, 8.w, 10.h),
-            actions: [
-              Win95Button(
-                height: 45.h,
-                text: "OK",
-                onTap: () => Navigator.of(dialogContext).pop(),
-              ),
-            ],
-          );
-        },
-      );
+      final bool isError = data.containsKey('error');
+      setState(() {
+        accountErrorMessage = data['message'] ?? data['error'] ?? 'Something went wrong.';
+        accountMessageIsError = isError;
+        accountMessageVisible = true;
+      });
     } catch (e) {
       if (!mounted) return;
-      showDialog(
-        context: context,
-        builder: (BuildContext dialogContext) {
-          return AlertDialog(
-            backgroundColor: Color.fromARGB(255, 195, 199, 203),
-            shape: Border(
-              top:    BorderSide(color: Colors.white, width: 2),
-              left:   BorderSide(color: Colors.white, width: 2),
-              bottom: BorderSide(color: Colors.black, width: 2),
-              right:  BorderSide(color: Colors.black, width: 2),
-            ),
-            titlePadding: EdgeInsets.zero,
-            title: Container(
-              color: Color.fromARGB(255, 2, 21, 119),
-              width: double.infinity,
-              height: 35.h,
-              padding: EdgeInsets.only(left: 8.w),
-              child: RichText(text: TextSpan(text: "Error", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 18.sp, height: 1.6.h))),
-            ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-            content: RichText(text: TextSpan(text: "Could not connect to server. Try again.", style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 15.sp, height: 1.5.h))),
-            actionsPadding: EdgeInsets.fromLTRB(8.w, 0, 8.w, 10.h),
-            actions: [
-              Win95Button(
-                height: 45.h,
-                text: "OK",
-                onTap: () => Navigator.of(dialogContext).pop(),
-              ),
-            ],
-          );
-        },
-      );
+      setState(() {
+        accountErrorMessage = 'Could not connect to server. Try again.';
+        accountMessageIsError = true;
+        accountMessageVisible = true;
+      });
     }
   }
 
@@ -523,14 +373,20 @@ class _AccountPageState extends State<AccountPage> {
                           height: 48.h,
                           text: "Reset Password",
                           onTap: () {
+                            setState(() => accountMessageVisible = false);
                             handleResetPassword();
                             return;
                           }
                         )
                       ),
-                      Spacer(),
-                      Win95Divider(),
                       SizedBox(height: 6.h),
+                      Visibility(
+                        visible: accountMessageVisible,
+                        child: Padding( 
+                          padding: EdgeInsetsGeometry.symmetric(horizontal: 13.w),
+                          child: RichText(text: TextSpan(text: accountErrorMessage, style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, color: accountMessageIsError ? Colors.red : Colors.black)))
+                        )
+                      )
                     ],
                   ),
                 ),
@@ -546,6 +402,7 @@ class _AccountPageState extends State<AccountPage> {
                         height: 60.h,
                         text: editing ? "< Discard" : "< Back",
                         onTap: () {
+                          setState(() => accountMessageVisible = false);
                           handleDiscard();
                           return;
                         }
@@ -558,6 +415,7 @@ class _AccountPageState extends State<AccountPage> {
                         text: editing ? " Save" : "Edit",
                         icon: editing ? 'images/save.png' : 'images/edit.png',
                         onTap: () {
+                          setState(() => accountMessageVisible = false);
                           handleEditToggle();
                           return;
                         }
@@ -570,6 +428,7 @@ class _AccountPageState extends State<AccountPage> {
                         text: "Delete",
                         icon: 'images/x.png',
                         onTap: () {
+                          setState(() => accountMessageVisible = false);
                           handleDelete();
                           return;
                         }

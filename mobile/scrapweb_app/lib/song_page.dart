@@ -7,6 +7,7 @@ import 'package:image_picker_plus/image_picker_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 import 'win95_style.dart';
 import 'entry.dart';
@@ -44,6 +45,10 @@ class _SongPageState extends State<SongPage> {
   final FocusNode focusNode = FocusNode();
   File? pickedImageFile;
   File? pickedAudioFile;
+
+  bool makingAPICall = false;
+  bool showSongPageError = false;
+  String songPageErrorMessage = "";
   
   final AudioPlayer player = AudioPlayer();
   Stream<DurationState>? durationState;
@@ -68,6 +73,7 @@ class _SongPageState extends State<SongPage> {
         pickedImageFile = selectedFile.selectedFile;
         songImage = null;
       });
+      await handleEditAPI();
     }
   }
 
@@ -108,6 +114,7 @@ class _SongPageState extends State<SongPage> {
         pickedAudioFile = File(result.files.single.path!);
         audio = null; 
       });
+      await handleEditAPI();
     }
   }
 
@@ -134,6 +141,48 @@ class _SongPageState extends State<SongPage> {
 
     initDurationStream();
     setupAudio();
+  }
+
+  Future<void> handleEditAPI() async {
+    songPageErrorMessage = "Saving...";
+    setState(() {
+      makingAPICall = true;
+      showSongPageError = true;
+    });
+    final prefs = await SharedPreferences.getInstance();
+    final String? userToken = prefs.getString('jwt_token');
+
+    final String host = dotenv.env['SERVER_HOST'] ?? '127.0.0.1';
+    final String port = dotenv.env['SERVER_PORT'] ?? '80';
+    final url = Uri.http('$host:$port', '/api/media/${widget.entry.id}');
+    
+    try {
+      final response = await http.patch(
+          url,
+          headers: {
+            'Authorization' : 'Bearer $userToken'
+          }
+        );
+        if (!mounted) return;
+
+        if (response.statusCode == 200) {
+          setState(() {
+            songPageErrorMessage = "Saved!";
+          });
+          await Future.delayed(const Duration(seconds: 3), (){});
+          setState(() {
+            makingAPICall = false;
+            showSongPageError = false;
+          });
+        }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        makingAPICall = false;
+        showSongPageError = true;
+        songPageErrorMessage = "Could not connect to server. Try again.";
+      });
+    }
   }
 
   void handleTextToggle() async {
@@ -169,7 +218,7 @@ class _SongPageState extends State<SongPage> {
     }
   }
   
-/*
+
   Future<void> handleDelete() async {
     final bool? confirmed = await showDialog<bool>(
       context: context,
@@ -192,7 +241,7 @@ class _SongPageState extends State<SongPage> {
             child: RichText(text: TextSpan(text: "Confirm Delete", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 18.sp, height: 1.6.h))),
           ),
           contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-          content: RichText(text: TextSpan(text: "Are you sure you want to delete your account?\nThis action cannot be undone.", style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 15.sp, height: 1.5.h))),
+          content: RichText(text: TextSpan(text: "Are you sure you want to delete this entry?\nThis action cannot be undone.", style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 15.sp, height: 1.5.h))),
           actionsPadding: EdgeInsets.fromLTRB(8.w, 0, 8.w, 10.h),
           actions: [
             Row(
@@ -220,92 +269,43 @@ class _SongPageState extends State<SongPage> {
     );
 
     if (confirmed == true) {
+      final prefs = await SharedPreferences.getInstance();
+      final String? userToken = prefs.getString('jwt_token');
+
       final String host = dotenv.env['SERVER_HOST'] ?? '127.0.0.1';
       final String port = dotenv.env['SERVER_PORT'] ?? '80';
-      //final url = Uri.http('$host:$port', '/api/users/');
+      final url = Uri.http('$host:$port', '/api/media/${widget.entry.id}');
 
       try {
-        final response = await http.delete(url);
+        final response = await http.delete(
+          url,
+          headers: {
+            'Authorization' : 'Bearer $userToken'
+          }
+        );
         if (!mounted) return;
 
         if (response.statusCode == 200) {
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.clear();
-          if (!mounted) return;
           Navigator.of(context).pushNamedAndRemoveUntil('/HomePage', (route) => false);
         } else {
           final Map<String, dynamic> errorData = jsonDecode(utf8.decode(response.bodyBytes));
-          showDialog(
-            context: context,
-            builder: (BuildContext dialogContext) {
-              return AlertDialog(
-                backgroundColor: Color.fromARGB(255, 195, 199, 203),
-                shape: Border(
-                  top:    BorderSide(color: Colors.white, width: 2),
-                  left:   BorderSide(color: Colors.white, width: 2),
-                  bottom: BorderSide(color: Colors.black, width: 2),
-                  right:  BorderSide(color: Colors.black, width: 2),
-                ),
-                titlePadding: EdgeInsets.zero,
-                title: Container(
-                  color: Color.fromARGB(255, 2, 21, 119),
-                  width: double.infinity,
-                  height: 35.h,
-                  padding: EdgeInsets.only(left: 8.w),
-                  child: RichText(text: TextSpan(text: "Error", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 18.sp, height: 1.6.h))),
-                ),
-                contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-                content: RichText(text: TextSpan(text: errorData['error'] ?? 'Could not delete account.', style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 15.sp, height: 1.5.h))),
-                actionsPadding: EdgeInsets.fromLTRB(8.w, 0, 8.w, 10.h),
-                actions: [
-                  Win95Button(
-                    height: 45.h,
-                    text: "OK",
-                    onTap: () => Navigator.of(dialogContext).pop(),
-                  ),
-                ],
-              );
-            },
-          );
+          setState(() {
+            makingAPICall = false;
+            showSongPageError = true;
+            songPageErrorMessage = errorData['error'] ?? 'Could not delete entry.';
+          });
         }
       } catch (e) {
         if (!mounted) return;
-        showDialog(
-          context: context,
-          builder: (BuildContext dialogContext) {
-            return AlertDialog(
-              backgroundColor: Color.fromARGB(255, 195, 199, 203),
-              shape: Border(
-                top:    BorderSide(color: Colors.white, width: 2),
-                left:   BorderSide(color: Colors.white, width: 2),
-                bottom: BorderSide(color: Colors.black, width: 2),
-                right:  BorderSide(color: Colors.black, width: 2),
-              ),
-              titlePadding: EdgeInsets.zero,
-              title: Container(
-                color: Color.fromARGB(255, 2, 21, 119),
-                width: double.infinity,
-                height: 35.h,
-                padding: EdgeInsets.only(left: 8.w),
-                child: RichText(text: TextSpan(text: "Error", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 18.sp, height: 1.6.h))),
-              ),
-              contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-              content: RichText(text: TextSpan(text: "Could not connect to server. Try again.", style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 15.sp, height: 1.5.h))),
-              actionsPadding: EdgeInsets.fromLTRB(8.w, 0, 8.w, 10.h),
-              actions: [
-                Win95Button(
-                  height: 45.h,
-                  text: "OK",
-                  onTap: () => Navigator.of(dialogContext).pop(),
-                ),
-              ],
-            );
-          },
-        );
+        setState(() {
+          makingAPICall = false;
+          showSongPageError = true;
+          songPageErrorMessage = "Could not connect to server. Try again.";
+        });
       }
     }
   }
-*/
+
 
   @override
   Widget build(BuildContext context) {
@@ -378,7 +378,7 @@ class _SongPageState extends State<SongPage> {
                               width: 350.w,
                               child: Image(
                                 fit: BoxFit.contain,
-                                image: songImage != null ? NetworkImage(songImage!) as ImageProvider : const AssetImage('images/placeholderSquare.png'),
+                                image: songImage != "" ? NetworkImage(songImage!) as ImageProvider : const AssetImage('images/placeholderSquare.png'),
                                 errorBuilder: (context, error, stackTract) => Image.asset('images/placeholderSquare.png'),
                               )
                             ),
@@ -536,6 +536,13 @@ class _SongPageState extends State<SongPage> {
                             )
                           )
                         )
+                      ),
+                      Visibility(
+                        visible: showSongPageError,
+                        child: Padding(
+                          padding: EdgeInsetsGeometry.symmetric(horizontal: 8.w),
+                          child: RichText(text: TextSpan(text: songPageErrorMessage, style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, color: makingAPICall? Colors.black : Colors.red)))
+                        ),
                       )
                     ],
                   )
@@ -558,6 +565,7 @@ class _SongPageState extends State<SongPage> {
                             if(editing) {
                               setState((){
                                 editing = false;
+                                showSongPageError = false;
                                 pickedImageFile = null;
                                 pickedAudioFile = null;
                                 songText = widget.entry.text;
@@ -568,7 +576,7 @@ class _SongPageState extends State<SongPage> {
                               });
                               setupAudio();
                             } else {
-                              Navigator.pop(context);
+                              Navigator.pushNamedAndRemoveUntil(context, '/HomePage', (route) => false);
                             }
                             print("Back button pressed. editing: $editing");
                             return;
@@ -582,6 +590,7 @@ class _SongPageState extends State<SongPage> {
                           icon: editing ? 'images/save.png' : 'images/edit.png',
                           text: editing ? " Save" : "Edit", 
                           onTap: () {
+                            setState(() => showSongPageError = false);
                             handleTextToggle();
                             print("Edit button pressed. editing: $editing");
                             return;
@@ -595,7 +604,8 @@ class _SongPageState extends State<SongPage> {
                           text: "Delete",
                           icon: 'images/x.png',
                           onTap: () {
-                            //handleDelete();
+                            setState(() => showSongPageError = false);
+                            handleDelete();
                             return;
                           }
                         )

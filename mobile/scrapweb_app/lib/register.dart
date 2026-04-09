@@ -49,8 +49,8 @@ class _RegisterPageState extends State<RegisterPage> {
         })),
       );
 
+      final Map<String, dynamic> errorData = jsonDecode(utf8.decode(response.bodyBytes));
       try {
-        final Map<String, dynamic> errorData = jsonDecode(utf8.decode(response.bodyBytes));
         if (errorData['error'] != null) {
           registerErrorMessage = "${errorData['error']}";
         }
@@ -59,11 +59,19 @@ class _RegisterPageState extends State<RegisterPage> {
       }
 
       if (!mounted) return;
-      print("$response");
+      print("$errorData");
       if (response.statusCode == 201) {
         success = true;
-        registerError = true;
-        await Future.delayed(const Duration(seconds: 5), (){});
+        try {
+          if (errorData['message'] != null) {
+            registerErrorMessage = "${errorData['message']} Redirecting to login.";
+          }
+        } catch (e) {
+          print("Error parsing error response: $e");
+        }
+        print("$registerError");
+        setState(() => registerError = true);
+        await Future.delayed(const Duration(seconds: 7), (){});
         if (!mounted) return;
         Navigator.pushReplacementNamed(context, '/');
       } else {
@@ -89,7 +97,7 @@ class _RegisterPageState extends State<RegisterPage> {
       padding: EdgeInsets.only(
         left: 70.w, 
         right: 70.w, 
-        bottom: (MediaQuery.of(context).viewInsets.bottom > 0) ? 225.h : 135.h, 
+        bottom: success ? 115.h : (MediaQuery.of(context).viewInsets.bottom > 0) ? 225.h : 135.h, 
         top: (MediaQuery.of(context).viewInsets.bottom > 0) ? 45.h : 135.h
       ),
       child: Win95Window(        

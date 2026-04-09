@@ -48,8 +48,6 @@ class _LoginPageState extends State<LoginPage> {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
 
-        final List<dynamic> APIEntries = data['user']['media'] ?? [];
-
         final String token = data['token'];
         final Map<String, dynamic> user = data['user'];
  
@@ -63,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
         await prefs.setString('email', user['email']);
  
         if (!mounted) return;
-        Navigator.pushReplacementNamed(context, '/HomePage', arguments: APIEntries);
+        Navigator.pushReplacementNamed(context, '/HomePage');
       } else {
         String errorMsg = "Incorrect Username or Password.";
         try {
