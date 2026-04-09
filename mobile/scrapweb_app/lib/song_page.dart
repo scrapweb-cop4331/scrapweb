@@ -3,15 +3,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:image_picker_plus/image_picker_plus.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:io';
 import 'win95_style.dart';
 import 'entry.dart';
 import 'dart:convert';
+import 'dart:io';
 
 // Duration information for song playing
 class DurationState {
@@ -43,8 +43,8 @@ class _SongPageState extends State<SongPage> {
   late String date = "$dateData";
   late TextEditingController textController;
   final FocusNode focusNode = FocusNode();
-  File? pickedImageFile;
-  File? pickedAudioFile;
+  XFile? pickedImageFile;
+  XFile? pickedAudioFile;
 
   bool makingAPICall = false;
   bool showSongPageError = false;
@@ -54,53 +54,15 @@ class _SongPageState extends State<SongPage> {
   Stream<DurationState>? durationState;
 
   Future<void> openImagePicker() async {
-    ImagePickerPlus picker = ImagePickerPlus(context);
+    ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
-    SelectedImagesDetails? details = await picker.pickImage(
-      source: ImageSource.both,
-      galleryDisplaySettings: GalleryDisplaySettings(
-        appTheme: AppTheme(
-          focusColor: Color.fromARGB(255, 0, 128, 128),
-          primaryColor: Color.fromARGB(255, 0, 128, 128),
-        )
-      )
-    );
-
-    if (details != null && details.selectedFiles.isNotEmpty) {
+    if (image != null){
       setState(() {
-        final selectedFile = details.selectedFiles.first;
-
-        pickedImageFile = selectedFile.selectedFile;
-        songImage = null;
+        pickedImageFile = image;
+        songImage = image.path;
       });
-      await handleEditAPI();
     }
-  }
-
-  Future<void> saveChanges() async {
-    var request = http.MultipartRequest(
-      'POST', 
-      Uri.parse('https://your-api.com{widget.entry.id}')
-    );
-
-    request.fields['id'] = widget.entry.id;
-    request.fields['date'] = widget.entry.dateString;
-    request.fields['text'] = songText ?? "";
-
-    if(pickedImageFile != null) {
-      request.files.add(await http.MultipartFile.fromPath(
-        'imageURL',
-        pickedImageFile!.path
-      ));
-    }
-
-    if (pickedAudioFile != null) {
-      request.files.add(await http.MultipartFile.fromPath('audio', pickedAudioFile!.path));
-    } else {
-      request.fields['audioURL'] = audio ?? "";
-    }
-
-    request.send();
   }
 
   Future<void> openAudioPicker() async {
@@ -111,34 +73,46 @@ class _SongPageState extends State<SongPage> {
 
     if (result != null && result.files.single.path != null) {
       setState(() {
-        pickedAudioFile = File(result.files.single.path!);
-        audio = null; 
+        pickedAudioFile = XFile(result.files.single.path!);
+        audio = result.files.single.path!; 
       });
-      await handleEditAPI();
     }
   }
 
   void initDurationStream() {
     durationState = Rx.combineLatest3<Duration, Duration, Duration?, DurationState>(
-    player.positionStream,
-    player.bufferedPositionStream,
-    player.durationStream,
-    (progress, buffered, total) => DurationState(
-      progress: progress,
-      buffered: buffered,
-      total: total ?? Duration.zero,
-    ),
-  ).asBroadcastStream();
+      player.positionStream,
+      player.bufferedPositionStream,
+      player.durationStream,
+      (progress, buffered, total) => DurationState(
+        progress: progress,
+        buffered: buffered,
+        total: total ?? Duration.zero,
+      ),
+    ).asBroadcastStream();
   }
 
   @override
   void initState() {
     super.initState();
+    final String host = dotenv.env['SERVER_HOST'] ?? '127.0.0.1';
+    final String port = dotenv.env['SERVER_PORT'] ?? '80';
     songText = widget.entry.text;
-    songImage = widget.entry.imageURL;
-    audio = widget.entry.audioURL;
     date = widget.entry.dateString;
 
+    String formatPath(String? path) {
+      if (path == null || path.isEmpty) return "";
+      if (path.startsWith('http') || path.startsWith('/data/user') || path.startsWith('/Users/')) {
+        return path;
+    }
+      return "http://$host:$port$path";
+    }
+
+    songImage = formatPath(widget.entry.imageURL);
+    print(songImage);
+    audio = formatPath(widget.entry.audioURL);
+    print(audio);
+    
     initDurationStream();
     setupAudio();
   }
@@ -149,32 +123,54 @@ class _SongPageState extends State<SongPage> {
       makingAPICall = true;
       showSongPageError = true;
     });
+
     final prefs = await SharedPreferences.getInstance();
     final String? userToken = prefs.getString('jwt_token');
 
     final String host = dotenv.env['SERVER_HOST'] ?? '127.0.0.1';
     final String port = dotenv.env['SERVER_PORT'] ?? '80';
     final url = Uri.http('$host:$port', '/api/media/${widget.entry.id}');
-    
-    try {
-      final response = await http.patch(
-          url,
-          headers: {
-            'Authorization' : 'Bearer $userToken'
-          }
-        );
-        if (!mounted) return;
 
-        if (response.statusCode == 200) {
-          setState(() {
-            songPageErrorMessage = "Saved!";
-          });
-          await Future.delayed(const Duration(seconds: 3), (){});
-          setState(() {
-            makingAPICall = false;
-            showSongPageError = false;
-          });
-        }
+    try {
+      final request = http.MultipartRequest('PATCH', url);
+      request.headers['Authorization'] = 'Bearer $userToken';
+
+      request.fields['notes'] = songText ?? "";
+      request.fields['date'] = date;
+
+      if (pickedImageFile != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath('photo', pickedImageFile!.path)
+        );
+      }
+
+      if (pickedAudioFile != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath('audio', pickedAudioFile!.path)
+        );
+      }
+
+      final streamedResponse = await request.send();
+      if (!mounted) return;
+      final response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200) {
+        setState(() {
+          songPageErrorMessage = "Saved!";
+        });
+        await Future.delayed(const Duration(seconds: 3), (){});
+        setState(() {
+          makingAPICall = false;
+          showSongPageError = false;
+        });
+      } else {
+        final Map<String, dynamic> errorData = jsonDecode(utf8.decode(response.bodyBytes));
+        setState(() {
+          makingAPICall = false;
+          showSongPageError = true;
+          songPageErrorMessage = errorData['error'] ?? 'Could not save changes.';
+        });
+      }
     } catch (e) {
       if (!mounted) return;
       setState(() {
@@ -191,10 +187,9 @@ class _SongPageState extends State<SongPage> {
         durationState = null;
         songText = textController.text;
         textController.dispose();
-        // TODO: EDIT ENTRY API CALL
         editing = false;
       });
-
+      await handleEditAPI();
       await setupAudio();
 
       setState((){
@@ -217,7 +212,6 @@ class _SongPageState extends State<SongPage> {
       print("Audio URL is null or empty.");
     }
   }
-  
 
   Future<void> handleDelete() async {
     final bool? confirmed = await showDialog<bool>(
@@ -367,8 +361,6 @@ class _SongPageState extends State<SongPage> {
                           child: GestureDetector( 
                             onTap: () {
                               if(editing) {
-                                // TODO: Image Upload Prompt
-                                print("Image upload prompt");
                                 openImagePicker();
                               }
                             },
@@ -378,7 +370,11 @@ class _SongPageState extends State<SongPage> {
                               width: 350.w,
                               child: Image(
                                 fit: BoxFit.contain,
-                                image: songImage != "" ? NetworkImage(songImage!) as ImageProvider : const AssetImage('images/placeholderSquare.png'),
+                                image: (songImage != null && songImage!.isNotEmpty)
+                                  ? (songImage!.startsWith('http') 
+                                      ? NetworkImage(songImage!)
+                                      : FileImage(File(songImage!)) as ImageProvider)
+                                  : const AssetImage('images/placeholderSquare.png'),
                                 errorBuilder: (context, error, stackTract) => Image.asset('images/placeholderSquare.png'),
                               )
                             ),
@@ -449,8 +445,6 @@ class _SongPageState extends State<SongPage> {
                                           playing = !playing;
                                         });
                                       } else {
-                                        //TODO: media upload prompt
-                                        print("Media Upload Prompt.");
                                         openAudioPicker();
                                       }
                                     },
@@ -518,7 +512,6 @@ class _SongPageState extends State<SongPage> {
                                                   currentlyTyping = true;
                                                 });
                                               },
-                                              
                                               onTapOutside: (_) {
                                                 setState(() {
                                                   currentlyTyping = false;
@@ -541,7 +534,7 @@ class _SongPageState extends State<SongPage> {
                         visible: showSongPageError,
                         child: Padding(
                           padding: EdgeInsetsGeometry.symmetric(horizontal: 8.w),
-                          child: RichText(text: TextSpan(text: songPageErrorMessage, style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, color: makingAPICall? Colors.black : Colors.red)))
+                          child: RichText(text: TextSpan(text: songPageErrorMessage, style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, color: makingAPICall ? Colors.black : Colors.red)))
                         ),
                       )
                     ],

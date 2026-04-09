@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'win95_style.dart';
+import 'dart:io';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Entry {
   final String id;
   final String dateString;
-  final String? imageURL;
-  final String? audioURL;
-  final String? text;
+  String? imageURL;
+  String? audioURL;
+  String? text;
 
   Entry({
     required this.id,
@@ -40,6 +42,17 @@ class EntryClickable extends StatefulWidget {
 }
 class _EntryClickableState extends State<EntryClickable> {
 
+  final String host = dotenv.env['SERVER_HOST'] ?? '127.0.0.1';
+    final String port = dotenv.env['SERVER_PORT'] ?? '80';
+
+    String getImageUrl(String path) {
+      if (path.startsWith('http')) return path; 
+      if (path.startsWith('/') && !path.contains('data/user')) { 
+        return Uri.http('$host:$port', path).toString();
+      }
+      return path; 
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -62,8 +75,22 @@ class _EntryClickableState extends State<EntryClickable> {
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.only(top: 5),
-                  child: widget.entry.imageURL != "" ? Image.network(widget.entry.imageURL!, fit: BoxFit.cover) : Image.asset("images/placeholderSquare.png")
-                )
+                  child: Builder(
+                    builder: (context) {
+                      final String displayPath = getImageUrl(widget.entry.imageURL ?? "");
+
+                      if (displayPath.isEmpty) {
+                        return Image.asset("images/placeholderSquare.png");
+                      }
+
+                      if (displayPath.startsWith('http')) {
+                        return Image.network(displayPath, fit: BoxFit.cover);
+                      } else {
+                        return Image.file(File(displayPath), fit: BoxFit.cover);
+                      }
+                    },
+                  )
+                ),
               ),
               Padding(
                 padding: EdgeInsets.all(4),
