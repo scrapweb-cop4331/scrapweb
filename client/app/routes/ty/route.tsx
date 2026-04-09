@@ -1,6 +1,6 @@
-import { foobar } from "./styles.css"
+import "./styles.css"
 export default () => (
-    <div>
+    <div className="foobar">
         Hi
     </div>
 )
