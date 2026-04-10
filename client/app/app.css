@@ -1,6 +1,6 @@
-@import "tailwindcss";
+/* @import "tailwindcss"; */
 
-@theme {
+:root {
     --color-anchor: #000e7a;
     --color-anchor-visited: #440381;
     --color-border-dark: #868a8e;
@@ -22,4 +22,13 @@
     --color-progress: #000e7a;
     --color-input-background: #ffffff;
     --color-input-background-disabled: #d2d2d2;
+    --color-backdrop: #008080;
 }
+
+
+
+body {
+    background-color: var(--color-backdrop);
+
+}
+
