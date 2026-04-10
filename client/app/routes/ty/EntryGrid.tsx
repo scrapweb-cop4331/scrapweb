@@ -1,24 +1,41 @@
-import { Frame, Fieldset, Button } from "@react95/core";
+import { Frame, Fieldset } from "@react95/core";
 import "./styles.css";
-import type { ButtonProps } from "@react95/core/Button";
 import { useLoaderData } from "react-router";
 import type { EntryItem } from "./data";
 
-export interface EntryProps extends ButtonProps {
-  label: string;
+export interface EntryButtonProps {
+  date: string;
   imageUrl: string;
+  isActive: boolean;
+  onClick: () => void;
 }
 
-export const Entry = ({ label, imageUrl, ...props }: EntryProps) => {
+export const EntryButton = ({date: date, imageUrl, isActive, onClick }: EntryButtonProps) => {
+  console.log();
     return (
-      <Button {...props} className="entry">
-        <img src={imageUrl} alt={label} className="entry-image"/>
-        <div className="entry-label">{label}</div>
-      </Button>
+      <Frame
+        as="button"
+        onClick={onClick}
+        boxShadow={isActive ? "$in" : "$out"}
+        className={`entry-button ${isActive ? "active" : ""}`}
+      >
+        <Frame boxShadow="$in" className="entry-image-frame">
+          <img
+            src={imageUrl}
+            className="entry-image"
+          />
+        </Frame>
+        <div className="entry-label">{date}</div>
+      </Frame>
     );
 }
 
-export const EntryGrid = () => {
+interface EntryGridProps {
+  selectedId: string | null;
+  onSelect: (id: string | null) => void;
+}
+
+export const EntryGrid = ({ selectedId, onSelect }: EntryGridProps) => {
   const entries = useLoaderData<EntryItem[]>();
 
   return (
@@ -36,11 +53,12 @@ export const EntryGrid = () => {
         >
           {entries && entries.length > 0 ? (
             entries.map((entry) => (
-              <Entry 
+              <EntryButton 
                 key={entry.id} 
-                className="grid-button"
-                label={entry.label}
-                imageUrl={entry.imageUrl}
+                date={entry.date}
+                imageUrl={entry.imageURL}
+                isActive={selectedId === entry.id}
+                onClick={() => onSelect(entry.id)}
               />
             ))
           ) : (
@@ -51,3 +69,4 @@ export const EntryGrid = () => {
     </Frame>
   );
 };
+

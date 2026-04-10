@@ -1,96 +1,113 @@
 .center-div {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
+  .center-div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    gap: 16px;
+  }
 
-.main-frame {
-  width: 90%;
-  height: 90%;
-  padding: 16px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  background-color: var(--color-material);
-}
+  .main-frame {
+    width: 90%;
+    height: 80%;
+    padding: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-material);
+  }
 
-.entry-fieldset {
-  padding: 8px;
-  margin: 8px;
-  display: flex;
-  flex-grow: 1;
-  width: 100%;
-  height: 100%;
-  flex-direction: column;
-}
+  .entry-fieldset {
+    padding: 8px;
+    margin: 8px;
+    display: flex;
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+  }
 
-.entries-grid {
-  padding: 10px;
-  width: 100%;
-  flex-grow: 1;
-  overflow: auto;
-  display: grid;
-  gap: 10px;
-  grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
-  grid-auto-rows: min-content;
-  background-color: var(--color-canvas-text);
-}
+  .entries-grid {
+    padding: 10px;
+    width: 100%;
+    flex-grow: 1;
+    overflow: auto;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+    grid-auto-rows: min-content;
+    background-color: var(--color-canvas-text);
+  }
 
+  /* Custom EntryButton Styles */
+  .entry-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    /* padding: 16px 8px; */
+    gap: 8px;
+    aspect-ratio: 1;
+    cursor: pointer;
+    border: none;
+    background-color: var(--color-material);
+    outline: none;
+    user-select: none;
+    position: relative;
+  }
 
-.foo {
-  background-color: rgb(195, 199, 203);
-  color: rgb(0, 0, 0);
-  padding: 10px;
-  font-family: "MS Sans Serif";
-  font-size: 12px;
-  font-weight: 400;
-  cursor: default;
-  border: none;
+  /* The dotted line for focus/selection */
+  .entry-button.active::after {
+    content: "";
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    right: 4px;
+    bottom: 4px;
+    outline: 1px dotted #000;
+    pointer-events: none;
+  }
 
-  /* Retro bevel effect using box-shadow */
-  box-shadow:
-    12 inset 1px 1px 0px 1px rgb(255, 255, 255),
-    13 inset -1px -1px 0px 1px rgb(134, 138, 142),
-    14 1px 1px 0px 0px rgb(0, 0, 0);
+  .entry-image-frame {
+    width: 100%;
+    height: 70%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-material);
+    overflow: clip;
+    padding: 2px;
+  }
 
-  /* Layout defaults from the dump */
-  display: block;
-  box-sizing: border-box;
-  text-align: center;
-}
+  .entry-image {
+    flex: 1;
+    width: auto;
+    height: 100%;
+    /* aspect-ratio: 1; */
+    object-fit: contain;
+  }
 
-.entry {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  gap: 8px;
-  aspect-ratio: 1;
-}
+  .entry-label {
+    font-size: 24px;
+    text-align: center;
+    /* overflow: hidden; */
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+    color: (var(--color-material-text));
+  }
 
-.entry-image {
-  width: 100%;
-  height: auto;
-  max-height: 80%;
-  object-fit: contain;
-}
+  .no-entries {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    font-family: "MS Sans Serif", sans-serif;
+    color: #000;
+  }
 
-.entry-label {
-  font-size: 11px;
-  text-align: center;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100%;
-  font-family: "MS Sans Serif", sans-serif;
-}
+  .reset-button {
+    width: fit-content;
+  }
 
-.no-entries {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: 40px;
-  font-family: "MS Sans Serif", sans-serif;
-  color: #000;
 }
