@@ -110,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
             Center(
               child: Container(
                 padding: EdgeInsets.all(10.0),
-                child: Image(image: AssetImage('images/placeholderSquare.png'), width: 100.w)
+                child: Image(image: AssetImage('images/logo_worded.png'), width: 200.w)
               )
             ),
             RichText(text: TextSpan(text: '   Username:', style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, color: Colors.black))),

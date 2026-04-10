@@ -332,234 +332,238 @@ class _SongPageState extends State<SongPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: Color.fromARGB(255, 0, 128, 128),
-        child: Column(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: EdgeInsetsGeometry.directional(start: 10.0, end: 10.0, top: 60.0, bottom: 15.0),
-                child: Win95Window(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      GestureDetector(
-                        onTap:() async {
-                          if(editing) {
-                            DateTime? pickedDate = await showDatePicker(
-                              context: context,
-                              initialDate: dateData, 
-                              firstDate: DateTime(1970, 1, 1), 
-                              lastDate: DateTime.now(),  
-                            );
-                            if (pickedDate != null) {
-                              setState(() {
-                                dateData = pickedDate;
-                                date = "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                              });
+      body: SafeArea(
+        top: false,
+        bottom: true,
+        child: Container(
+          color: Color.fromARGB(255, 0, 128, 128),
+          child: Column(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsetsGeometry.directional(start: 10.0, end: 10.0, top: 60.0, bottom: 15.0),
+                  child: Win95Window(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        GestureDetector(
+                          onTap:() async {
+                            if(editing) {
+                              DateTime? pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: dateData, 
+                                firstDate: DateTime(1970, 1, 1), 
+                                lastDate: DateTime.now(),  
+                              );
+                              if (pickedDate != null) {
+                                setState(() {
+                                  dateData = pickedDate;
+                                  date = "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                });
+                              }
                             }
-                          }
-                        },
-                        child: Container(
-                          color: Color.fromARGB(255, 2, 21, 119),
-                          width: double.infinity,
-                          height: 38.h,
+                          },
+                          child: Container(
+                            color: Color.fromARGB(255, 2, 21, 119),
+                            width: double.infinity,
+                            height: 38.h,
+                            child: Row(
+                              children: [
+                                RichText(text: TextSpan(text: "  $date", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 23.sp, height: 1.6.h))),
+                                SizedBox(width: 5.w,),
+                                Visibility(
+                                  visible: editing,
+                                  child: Image(image: AssetImage("./images/dateEdit.png"), height: 14.h)
+                                )
+                              ]
+                            )
+                          )
+                        ),
+                        Visibility(visible: currentlyTyping, child: SizedBox(height: 10.h)),
+                        Visibility(
+                          visible: currentlyTyping,
                           child: Row(
                             children: [
-                              RichText(text: TextSpan(text: "  $date", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 23.sp, height: 1.6.h))),
-                              SizedBox(width: 5.w,),
-                              Visibility(
-                                visible: editing,
-                                child: Image(image: AssetImage("./images/dateEdit.png"), height: 14.h)
+                              SizedBox(width: 10.w),
+                              Win95Button(
+                                text: "< Back to Edit Page", 
+                                height: 50.h,
+                                width: 150.w,
+                                onTap: () {}
                               )
                             ]
                           )
-                        )
-                      ),
-                      Visibility(visible: currentlyTyping, child: SizedBox(height: 10.h)),
-                      Visibility(
-                        visible: currentlyTyping,
-                        child: Row(
-                          children: [
-                            SizedBox(width: 10.w),
-                            Win95Button(
-                              text: "< Back to Edit Page", 
-                              height: 50.h,
-                              width: 150.w,
-                              onTap: () {}
-                            )
-                          ]
-                        )
-                      ),
-                      Visibility(
-                        visible: !currentlyTyping,
-                        maintainState: true,
-                        child: Center(
-                          child: GestureDetector( 
-                            onTap: () {
-                              if(editing) {
-                                openImagePicker();
-                              }
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 30.h, vertical: 10.w),
-                              height: 300.h,
-                              width: 350.w,
-                              child: editing
-                              ? Image(image: AssetImage("./images/uploadImage.png"),)
-                              : FadeInImage(
-                                placeholder: AssetImage("./images/loading.png"),
-                                fit: BoxFit.contain,
-                                image: (songImage != null && songImage!.isNotEmpty)
-                                  ? (songImage!.startsWith('http') 
-                                      ? NetworkImage(songImage!)
-                                      : FileImage(File(songImage!)) as ImageProvider)
-                                  : const AssetImage('images/placeholderSquare.png'),
-                              )
-
-                            ),
-                          )
-                        )
-                      ),
-                      Visibility(
-                        visible: !editing,
-                        maintainState: true,
-                        child: Center(
-                          child: Container(
-                            margin: EdgeInsets.symmetric(horizontal: 40.w),
-                            child: StreamBuilder<DurationState>(
-                              stream: durationState,
-                              builder: (context, snapshot) {
-                                if (durationState == null || !snapshot.hasData) {
-                                  return ProgressBar(progress: Duration.zero, total: Duration.zero,);
+                        ),
+                        Visibility(
+                          visible: !currentlyTyping,
+                          maintainState: true,
+                          child: Center(
+                            child: GestureDetector( 
+                              onTap: () {
+                                if(editing) {
+                                  openImagePicker();
                                 }
-                                final stateData = snapshot.data;
-                                final progress = stateData!.progress;
-                                //final buffered = stateData?.buffered ?? Duration.zero;
-                                final total = stateData.total;
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 30.h, vertical: 10.w),
+                                height: 300.h,
+                                width: 350.w,
+                                child: editing
+                                ? Image(image: AssetImage("./images/uploadImage.png"),)
+                                : FadeInImage(
+                                  placeholder: AssetImage("./images/loading.png"),
+                                  fit: BoxFit.contain,
+                                  image: (songImage != null && songImage!.isNotEmpty)
+                                    ? (songImage!.startsWith('http') 
+                                        ? NetworkImage(songImage!)
+                                        : FileImage(File(songImage!)) as ImageProvider)
+                                    : const AssetImage('images/placeholderSquare.png'),
+                                )
 
-                                return ProgressBar(
-                                  progress: progress,
-                                  total: total,
-                                  thumbGlowColor: Colors.transparent,
-                                  thumbGlowRadius: 0.0,
-                                  timeLabelLocation: TimeLabelLocation.sides,
-                                  onSeek: (duration) {
-                                    player.seek(duration);
-                                    print("User seek to $duration");
-                                  }
-                                );
-                              }
+                              ),
                             )
                           )
-                        )
-                      ),
-                      Visibility(
-                        visible: !currentlyTyping,
-                        maintainState: true,
-                        child: SizedBox(
-                          height: editing ? 50.h : 55.h, 
-                          child: Stack(
-                            clipBehavior: Clip.none, 
-                            children: [
-                              Positioned(
-                                top: editing ? 0 : 7.h, 
-                                left: 0,
-                                right: 0,
-                                child: Center(
-                                  child: Win95Button(
-                                    height: 50.h,
-                                    width: 50.w,
-                                    iconSize: editing ? 25.h : 17.h,
-                                    icon: editing ? 'images/uploadMusic.png' : (playing ? 'images/pause.png' : 'images/play.png'),
-                                    text: "",
-                                    onTap: () {
-                                      if(!editing){
-                                        if(audio == null || audio!.isEmpty) return;
-                                        if(playing) {
-                                          player.pause();
+                        ),
+                        Visibility(
+                          visible: !editing,
+                          maintainState: true,
+                          child: Center(
+                            child: Container(
+                              margin: EdgeInsets.symmetric(horizontal: 40.w),
+                              child: StreamBuilder<DurationState>(
+                                stream: durationState,
+                                builder: (context, snapshot) {
+                                  if (durationState == null || !snapshot.hasData) {
+                                    return ProgressBar(progress: Duration.zero, total: Duration.zero,);
+                                  }
+                                  final stateData = snapshot.data;
+                                  final progress = stateData!.progress;
+                                  //final buffered = stateData?.buffered ?? Duration.zero;
+                                  final total = stateData.total;
+
+                                  return ProgressBar(
+                                    progress: progress,
+                                    total: total,
+                                    thumbGlowColor: Colors.transparent,
+                                    thumbGlowRadius: 0.0,
+                                    timeLabelLocation: TimeLabelLocation.sides,
+                                    onSeek: (duration) {
+                                      player.seek(duration);
+                                      print("User seek to $duration");
+                                    }
+                                  );
+                                }
+                              )
+                            )
+                          )
+                        ),
+                        Visibility(
+                          visible: !currentlyTyping,
+                          maintainState: true,
+                          child: SizedBox(
+                            height: editing ? 50.h : 55.h, 
+                            child: Stack(
+                              clipBehavior: Clip.none, 
+                              children: [
+                                Positioned(
+                                  top: editing ? 0 : 7.h, 
+                                  left: 0,
+                                  right: 0,
+                                  child: Center(
+                                    child: Win95Button(
+                                      height: 50.h,
+                                      width: 50.w,
+                                      iconSize: editing ? 25.h : 17.h,
+                                      icon: editing ? 'images/uploadMusic.png' : (playing ? 'images/pause.png' : 'images/play.png'),
+                                      text: "",
+                                      onTap: () {
+                                        if(!editing){
+                                          if(audio == null || audio!.isEmpty) return;
+                                          if(playing) {
+                                            player.pause();
+                                          } else {
+                                            player.play();
+                                          }
+                                          setState(() {
+                                            playing = !playing;
+                                          });
                                         } else {
-                                          player.play();
+                                          openAudioPicker();
                                         }
-                                        setState(() {
-                                          playing = !playing;
-                                        });
-                                      } else {
-                                        openAudioPicker();
-                                      }
-                                    },
+                                      },
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        )
-                      ),
-                      SizedBox(height: 10.h),
-                      Win95Divider(),
-                      Expanded(
-                        child: Container(
-                          padding: EdgeInsets.all(5),
-                          child: Material(
-                            shape: Border.all(
-                              color: const Color.fromARGB(255, 134, 138, 142)
+                              ],
                             ),
-                            child: Container(
-                              padding: EdgeInsets.all(5),
-                              color: editing ? Colors.white : Color.fromARGB(255, 195, 199, 203),
-                              child: RawScrollbar(
-                                thumbVisibility: true,
-                                trackVisibility: true,
-                                thickness: 16.w,
-                                thumbColor: Color.fromARGB(255, 195, 199, 203),
-                                trackColor: Color.fromARGB(255, 224, 224, 224),
-                                trackBorderColor: const Color.fromARGB(255, 0, 0, 0),
-                                mainAxisMargin: 0,
-                                padding: EdgeInsets.zero,
-                                shape: Win95BackupOutline(),
-                                child: ScrollConfiguration(
-                                  behavior: ScrollConfiguration.of(context).copyWith(overscroll: false), 
-                                  child: GestureDetector(
-                                    behavior: HitTestBehavior.opaque,
-                                    onTap: () {
-                                      if(editing) {
-                                        focusNode.requestFocus();
-                                        textController.selection = TextSelection.fromPosition(
-                                          TextPosition(offset: textController.text.length),
-                                        );
-                                        setState(() => currentlyTyping = true);
-                                      }
-                                    },
-                                    child: SingleChildScrollView(
-                                      physics: const ClampingScrollPhysics(),
-                                      child: Container(
-                                        width: double.infinity,
-                                        child: Padding(
-                                          padding: EdgeInsets.only(right: 20), 
-                                          child: editing
-                                            ? TextField(
-                                              focusNode: focusNode,
-                                              controller: textController,
-                                              maxLines: null,
-                                              style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 0, 0, 0), fontSize: 18.sp, height: 1.0.h),
-                                              decoration: InputDecoration(
-                                                border: InputBorder.none,
-                                                isDense: true,
-                                                contentPadding: EdgeInsets.zero
-                                              ),
-                                              onTap: () {
-                                                setState(() {
-                                                  currentlyTyping = true;
-                                                });
-                                              },
-                                              onTapOutside: (_) {
-                                                setState(() {
-                                                  currentlyTyping = false;
-                                                });
-                                                FocusScope.of(context).unfocus();
-                                              }
-                                            )
-                                            : RichText(text: TextSpan(text: (songText == null) ? "" : "$songText", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 0, 0, 0), fontSize: 18.sp, height: 1.0.h)))
+                          )
+                        ),
+                        SizedBox(height: 10.h),
+                        Win95Divider(),
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.all(5),
+                            child: Material(
+                              shape: Border.all(
+                                color: const Color.fromARGB(255, 134, 138, 142)
+                              ),
+                              child: Container(
+                                padding: EdgeInsets.all(5),
+                                color: editing ? Colors.white : Color.fromARGB(255, 195, 199, 203),
+                                child: RawScrollbar(
+                                  thumbVisibility: true,
+                                  trackVisibility: true,
+                                  thickness: 16.w,
+                                  thumbColor: Color.fromARGB(255, 195, 199, 203),
+                                  trackColor: Color.fromARGB(255, 224, 224, 224),
+                                  trackBorderColor: const Color.fromARGB(255, 0, 0, 0),
+                                  mainAxisMargin: 0,
+                                  padding: EdgeInsets.zero,
+                                  shape: Win95BackupOutline(),
+                                  child: ScrollConfiguration(
+                                    behavior: ScrollConfiguration.of(context).copyWith(overscroll: false), 
+                                    child: GestureDetector(
+                                      behavior: HitTestBehavior.opaque,
+                                      onTap: () {
+                                        if(editing) {
+                                          focusNode.requestFocus();
+                                          textController.selection = TextSelection.fromPosition(
+                                            TextPosition(offset: textController.text.length),
+                                          );
+                                          setState(() => currentlyTyping = true);
+                                        }
+                                      },
+                                      child: SingleChildScrollView(
+                                        physics: const ClampingScrollPhysics(),
+                                        child: Container(
+                                          width: double.infinity,
+                                          child: Padding(
+                                            padding: EdgeInsets.only(right: 20), 
+                                            child: editing
+                                              ? TextField(
+                                                focusNode: focusNode,
+                                                controller: textController,
+                                                maxLines: null,
+                                                style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 0, 0, 0), fontSize: 18.sp, height: 1.0.h),
+                                                decoration: InputDecoration(
+                                                  border: InputBorder.none,
+                                                  isDense: true,
+                                                  contentPadding: EdgeInsets.zero
+                                                ),
+                                                onTap: () {
+                                                  setState(() {
+                                                    currentlyTyping = true;
+                                                  });
+                                                },
+                                                onTapOutside: (_) {
+                                                  setState(() {
+                                                    currentlyTyping = false;
+                                                  });
+                                                  FocusScope.of(context).unfocus();
+                                                }
+                                              )
+                                              : RichText(text: TextSpan(text: (songText == null) ? "" : "$songText", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 0, 0, 0), fontSize: 18.sp, height: 1.0.h)))
+                                          )
                                         )
                                       )
                                     )
@@ -568,87 +572,87 @@ class _SongPageState extends State<SongPage> {
                               )
                             )
                           )
-                        )
-                      ),
-                      Visibility(
-                        visible: showSongPageError,
-                        child: Padding(
-                          padding: EdgeInsetsGeometry.symmetric(horizontal: 8.w),
-                          child: Center(child: RichText(text: TextSpan(text: songPageErrorMessage, style: TextStyle(fontFamily: 'W95', fontSize: 22.sp, color: makingAPICall ? Colors.black : Colors.red))))
                         ),
-                      )
-                    ],
+                        Visibility(
+                          visible: showSongPageError,
+                          child: Padding(
+                            padding: EdgeInsetsGeometry.symmetric(horizontal: 8.w),
+                            child: Center(child: RichText(text: TextSpan(text: songPageErrorMessage, style: TextStyle(fontFamily: 'W95', fontSize: 22.sp, color: makingAPICall ? Colors.black : Colors.red))))
+                          ),
+                        )
+                      ],
+                    )
+                  )
+                )
+              ),
+              Visibility(
+                visible: !currentlyTyping,
+                maintainState: true,
+                child:SizedBox(
+                  height: 70.h,
+                  child: Win95Window(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Win95Button(
+                            height: 60.h,
+                            text: editing ? "< Discard" : "< Back", 
+                            onTap: () {
+                              if(editing) {
+                                setState((){
+                                  editing = false;
+                                  showSongPageError = false;
+                                  pickedImageFile = null;
+                                  pickedAudioFile = null;
+                                  songText = widget.entry.text;
+                                  songImage = formatPath(widget.entry.imageURL);
+                                  audio = formatPath(widget.entry.audioURL);
+                                  dateData = DateTime.parse(widget.entry.dateString);
+                                  date = widget.entry.dateString;
+                                });
+                                setupAudio();
+                              } else {
+                                Navigator.pushNamedAndRemoveUntil(context, '/HomePage', (route) => false);
+                              }
+                              print("Back button pressed. editing: $editing");
+                              return;
+                            } 
+                          )
+                        ),
+                        SizedBox(width: 2.0.w),
+                        Expanded(
+                          child: Win95Button(
+                            height: 60.h,
+                            icon: editing ? 'images/save.png' : 'images/edit.png',
+                            text: editing ? " Save" : "Edit", 
+                            onTap: () {
+                              setState(() => showSongPageError = false);
+                              handleTextToggle();
+                              print("Edit button pressed. editing: $editing");
+                              return;
+                            } 
+                          )
+                        ),
+                        SizedBox(width: 2.0.w),
+                        Expanded(
+                          child: Win95Button(
+                            height: 60.h,
+                            text: "Delete",
+                            icon: 'images/x.png',
+                            onTap: () {
+                              setState(() => showSongPageError = false);
+                              handleDelete();
+                              return;
+                            }
+                          )
+                        ),
+                      ],
+                    )      
                   )
                 )
               )
-            ),
-            Visibility(
-              visible: !currentlyTyping,
-              maintainState: true,
-              child:SizedBox(
-                height: 70.h,
-                child: Win95Window(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Win95Button(
-                          height: 60.h,
-                          text: editing ? "< Discard" : "< Back", 
-                          onTap: () {
-                            if(editing) {
-                              setState((){
-                                editing = false;
-                                showSongPageError = false;
-                                pickedImageFile = null;
-                                pickedAudioFile = null;
-                                songText = widget.entry.text;
-                                songImage = formatPath(widget.entry.imageURL);
-                                audio = formatPath(widget.entry.audioURL);
-                                dateData = DateTime.parse(widget.entry.dateString);
-                                date = widget.entry.dateString;
-                              });
-                              setupAudio();
-                            } else {
-                              Navigator.pushNamedAndRemoveUntil(context, '/HomePage', (route) => false);
-                            }
-                            print("Back button pressed. editing: $editing");
-                            return;
-                          } 
-                        )
-                      ),
-                      SizedBox(width: 2.0.w),
-                      Expanded(
-                        child: Win95Button(
-                          height: 60.h,
-                          icon: editing ? 'images/save.png' : 'images/edit.png',
-                          text: editing ? " Save" : "Edit", 
-                          onTap: () {
-                            setState(() => showSongPageError = false);
-                            handleTextToggle();
-                            print("Edit button pressed. editing: $editing");
-                            return;
-                          } 
-                        )
-                      ),
-                      SizedBox(width: 2.0.w),
-                      Expanded(
-                        child: Win95Button(
-                          height: 60.h,
-                          text: "Delete",
-                          icon: 'images/x.png',
-                          onTap: () {
-                            setState(() => showSongPageError = false);
-                            handleDelete();
-                            return;
-                          }
-                        )
-                      ),
-                    ],
-                  )      
-                )
-              )
-            )
-          ]
+            ]
+          )
         )
       )
     );

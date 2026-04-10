@@ -248,197 +248,201 @@ class _AccountPageState extends State<AccountPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: Color.fromARGB(255, 0, 128, 128),
-        child: Column(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: EdgeInsetsGeometry.directional(start: 10.0.w, end: 10.0.w, top: 60.0.h, bottom: 15.0.h),
+      body: SafeArea(
+        top: false,
+        bottom: true,
+        child: Container(
+          color: Color.fromARGB(255, 0, 128, 128),
+          child: Column(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsetsGeometry.directional(start: 10.0.w, end: 10.0.w, top: 60.0.h, bottom: 15.0.h),
+                  child: Win95Window(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          color: Color.fromARGB(255, 2, 21, 119),
+                          width: double.infinity,
+                          height: 38.h,
+                          child: RichText(text: TextSpan(text: "  ScrapWeb - Account", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 23.sp, height: 1.6.h)))
+                        ),
+                        SizedBox(height: 12.h),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              RichText(text: TextSpan(text: "  First Name:", style: TextStyle(fontFamily: 'W95', fontWeight: FontWeight.w700, fontSize: 16.sp, color: Colors.black))),
+                              SizedBox(height: 2.h),
+                              editing
+                                ? Win95Entry(
+                                    paddingHorizontal: 8.w,
+                                    paddingVertical: 2.h,
+                                    child: TextField(
+                                      controller: firstNameController,
+                                      style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 16.sp),
+                                      decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 5.h), filled: true, fillColor: Colors.white, isDense: true),
+                                      onTapOutside: (_) => FocusScope.of(context).unfocus(),
+                                    ),
+                                  )
+                                : Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 10.w),
+                                    child: RichText(text: TextSpan(text: firstName.isNotEmpty ? firstName : " ", style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, color: Colors.black))),
+                                  ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              RichText(text: TextSpan(text: "  Last Name:", style: TextStyle(fontFamily: 'W95', fontWeight: FontWeight.w700, fontSize: 16.sp, color: Colors.black))),
+                              SizedBox(height: 2.h),
+                              editing
+                                ? Win95Entry(
+                                    paddingHorizontal: 8.w,
+                                    paddingVertical: 2.h,
+                                    child: TextField(
+                                      controller: lastNameController,
+                                      style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 16.sp),
+                                      decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 5.h), filled: true, fillColor: Colors.white, isDense: true),
+                                      onTapOutside: (_) => FocusScope.of(context).unfocus(),
+                                    ),
+                                  )
+                                : Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 10.w),
+                                    child: RichText(text: TextSpan(text: lastName.isNotEmpty ? lastName : " ", style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, color: Colors.black))),
+                                  ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              RichText(text: TextSpan(text: "  Username:", style: TextStyle(fontFamily: 'W95', fontWeight: FontWeight.w700, fontSize: 16.sp, color: Colors.black))),
+                              SizedBox(height: 2.h),
+                              editing
+                                ? Win95Entry(
+                                    paddingHorizontal: 8.w,
+                                    paddingVertical: 2.h,
+                                    child: TextField(
+                                      controller: usernameController,
+                                      style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 16.sp),
+                                      decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 5.h), filled: true, fillColor: Colors.white, isDense: true),
+                                      onTapOutside: (_) => FocusScope.of(context).unfocus(),
+                                    ),
+                                  )
+                                : Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 10.w),
+                                    child: RichText(text: TextSpan(text: username.isNotEmpty ? username : " ", style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, color: Colors.black))),
+                                  ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              RichText(text: TextSpan(text: "  Email:", style: TextStyle(fontFamily: 'W95', fontWeight: FontWeight.w700, fontSize: 16.sp, color: Colors.black))),
+                              SizedBox(height: 2.h),
+                              editing
+                                ? Win95Entry(
+                                    paddingHorizontal: 8.w,
+                                    paddingVertical: 2.h,
+                                    child: TextField(
+                                      controller: emailController,
+                                      style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 16.sp),
+                                      decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 5.h), filled: true, fillColor: Colors.white, isDense: true),
+                                      onTapOutside: (_) => FocusScope.of(context).unfocus(),
+                                    ),
+                                  )
+                                : Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 10.w),
+                                    child: RichText(text: TextSpan(text: email.isNotEmpty ? email : " ", style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, color: Colors.black))),
+                                  ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 40.h),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+                          child: Win95Button(
+                            height: 48.h,
+                            text: "Reset Password",
+                            onTap: () {
+                              setState(() => accountMessageVisible = false);
+                              handleResetPassword();
+                              return;
+                            }
+                          )
+                        ),
+                        SizedBox(height: 6.h),
+                        Visibility(
+                          visible: accountMessageVisible,
+                          child: Padding( 
+                            padding: EdgeInsetsGeometry.symmetric(horizontal: 13.w),
+                            child: RichText(text: TextSpan(text: accountErrorMessage, style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, color: accountMessageIsError ? Colors.red : Colors.black)))
+                          )
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 70.h,
                 child: Win95Window(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Row(
                     children: [
-                      Container(
-                        color: Color.fromARGB(255, 2, 21, 119),
-                        width: double.infinity,
-                        height: 38.h,
-                        child: RichText(text: TextSpan(text: "  ScrapWeb - Account", style: TextStyle(fontFamily: 'W95', color: Color.fromARGB(255, 255, 248, 249), fontWeight: FontWeight.w700, fontSize: 23.sp, height: 1.6.h)))
-                      ),
-                      SizedBox(height: 12.h),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            RichText(text: TextSpan(text: "  First Name:", style: TextStyle(fontFamily: 'W95', fontWeight: FontWeight.w700, fontSize: 16.sp, color: Colors.black))),
-                            SizedBox(height: 2.h),
-                            editing
-                              ? Win95Entry(
-                                  paddingHorizontal: 8.w,
-                                  paddingVertical: 2.h,
-                                  child: TextField(
-                                    controller: firstNameController,
-                                    style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 16.sp),
-                                    decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 5.h), filled: true, fillColor: Colors.white, isDense: true),
-                                    onTapOutside: (_) => FocusScope.of(context).unfocus(),
-                                  ),
-                                )
-                              : Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 10.w),
-                                  child: RichText(text: TextSpan(text: firstName.isNotEmpty ? firstName : " ", style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, color: Colors.black))),
-                                ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            RichText(text: TextSpan(text: "  Last Name:", style: TextStyle(fontFamily: 'W95', fontWeight: FontWeight.w700, fontSize: 16.sp, color: Colors.black))),
-                            SizedBox(height: 2.h),
-                            editing
-                              ? Win95Entry(
-                                  paddingHorizontal: 8.w,
-                                  paddingVertical: 2.h,
-                                  child: TextField(
-                                    controller: lastNameController,
-                                    style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 16.sp),
-                                    decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 5.h), filled: true, fillColor: Colors.white, isDense: true),
-                                    onTapOutside: (_) => FocusScope.of(context).unfocus(),
-                                  ),
-                                )
-                              : Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 10.w),
-                                  child: RichText(text: TextSpan(text: lastName.isNotEmpty ? lastName : " ", style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, color: Colors.black))),
-                                ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            RichText(text: TextSpan(text: "  Username:", style: TextStyle(fontFamily: 'W95', fontWeight: FontWeight.w700, fontSize: 16.sp, color: Colors.black))),
-                            SizedBox(height: 2.h),
-                            editing
-                              ? Win95Entry(
-                                  paddingHorizontal: 8.w,
-                                  paddingVertical: 2.h,
-                                  child: TextField(
-                                    controller: usernameController,
-                                    style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 16.sp),
-                                    decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 5.h), filled: true, fillColor: Colors.white, isDense: true),
-                                    onTapOutside: (_) => FocusScope.of(context).unfocus(),
-                                  ),
-                                )
-                              : Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 10.w),
-                                  child: RichText(text: TextSpan(text: username.isNotEmpty ? username : " ", style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, color: Colors.black))),
-                                ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            RichText(text: TextSpan(text: "  Email:", style: TextStyle(fontFamily: 'W95', fontWeight: FontWeight.w700, fontSize: 16.sp, color: Colors.black))),
-                            SizedBox(height: 2.h),
-                            editing
-                              ? Win95Entry(
-                                  paddingHorizontal: 8.w,
-                                  paddingVertical: 2.h,
-                                  child: TextField(
-                                    controller: emailController,
-                                    style: TextStyle(fontFamily: 'W95', color: Colors.black, fontSize: 16.sp),
-                                    decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 5.h), filled: true, fillColor: Colors.white, isDense: true),
-                                    onTapOutside: (_) => FocusScope.of(context).unfocus(),
-                                  ),
-                                )
-                              : Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 10.w),
-                                  child: RichText(text: TextSpan(text: email.isNotEmpty ? email : " ", style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, color: Colors.black))),
-                                ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 40.h),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+                      Expanded(
                         child: Win95Button(
-                          height: 48.h,
-                          text: "Reset Password",
+                          height: 60.h,
+                          text: editing ? "< Discard" : "< Back",
                           onTap: () {
                             setState(() => accountMessageVisible = false);
-                            handleResetPassword();
+                            handleDiscard();
                             return;
                           }
                         )
                       ),
-                      SizedBox(height: 6.h),
-                      Visibility(
-                        visible: accountMessageVisible,
-                        child: Padding( 
-                          padding: EdgeInsetsGeometry.symmetric(horizontal: 13.w),
-                          child: RichText(text: TextSpan(text: accountErrorMessage, style: TextStyle(fontFamily: 'W95', fontSize: 16.sp, color: accountMessageIsError ? Colors.red : Colors.black)))
+                      SizedBox(width: 2.0.w),
+                      Expanded(
+                        child: Win95Button(
+                          height: 60.h,
+                          text: editing ? " Save" : "Edit",
+                          icon: editing ? 'images/save.png' : 'images/edit.png',
+                          onTap: () {
+                            setState(() => accountMessageVisible = false);
+                            handleEditToggle();
+                            return;
+                          }
                         )
-                      )
+                      ),
+                      SizedBox(width: 2.0.w),
+                      Expanded(
+                        child: Win95Button(
+                          height: 60.h,
+                          text: "Delete",
+                          icon: 'images/x.png',
+                          onTap: () {
+                            setState(() => accountMessageVisible = false);
+                            handleDelete();
+                            return;
+                          }
+                        )
+                      ),
                     ],
                   ),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 70.h,
-              child: Win95Window(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Win95Button(
-                        height: 60.h,
-                        text: editing ? "< Discard" : "< Back",
-                        onTap: () {
-                          setState(() => accountMessageVisible = false);
-                          handleDiscard();
-                          return;
-                        }
-                      )
-                    ),
-                    SizedBox(width: 2.0.w),
-                    Expanded(
-                      child: Win95Button(
-                        height: 60.h,
-                        text: editing ? " Save" : "Edit",
-                        icon: editing ? 'images/save.png' : 'images/edit.png',
-                        onTap: () {
-                          setState(() => accountMessageVisible = false);
-                          handleEditToggle();
-                          return;
-                        }
-                      )
-                    ),
-                    SizedBox(width: 2.0.w),
-                    Expanded(
-                      child: Win95Button(
-                        height: 60.h,
-                        text: "Delete",
-                        icon: 'images/x.png',
-                        onTap: () {
-                          setState(() => accountMessageVisible = false);
-                          handleDelete();
-                          return;
-                        }
-                      )
-                    ),
-                  ],
-                ),
+                )
               )
-            )
-          ]
+            ]
+          )
         )
       )
     );
