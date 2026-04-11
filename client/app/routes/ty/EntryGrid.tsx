@@ -34,7 +34,6 @@ export const EntryButton = ({
           {date} <br />
         </div>
       </Frame>
-      <p style={{ fontSize: "10px" }}>{id}</p>
     </>
   );
 };
