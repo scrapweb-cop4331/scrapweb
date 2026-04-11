@@ -30,9 +30,9 @@ export const EntryButton = ({
         <Frame boxShadow="$in" className="entry-image-frame">
           <img src={imageUrl} className="entry-image" />
         </Frame>
-        <div className="entry-label">
-          {date} <br />
-        </div>
+        <label className="entry-label">
+          {date} 
+        </label>
       </Frame>
     </>
   );
