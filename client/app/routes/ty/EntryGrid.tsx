@@ -7,12 +7,20 @@ export interface EntryButtonProps {
   date: string;
   imageUrl: string;
   isActive: boolean;
+  id: string;
   onClick: () => void;
 }
 
-export const EntryButton = ({date: date, imageUrl, isActive, onClick }: EntryButtonProps) => {
+export const EntryButton = ({
+  id,
+  date,
+  imageUrl,
+  isActive,
+  onClick,
+}: EntryButtonProps) => {
   console.log();
-    return (
+  return (
+    <>
       <Frame
         as="button"
         onClick={onClick}
@@ -20,15 +28,16 @@ export const EntryButton = ({date: date, imageUrl, isActive, onClick }: EntryBut
         className={`entry-button ${isActive ? "active" : ""}`}
       >
         <Frame boxShadow="$in" className="entry-image-frame">
-          <img
-            src={imageUrl}
-            className="entry-image"
-          />
+          <img src={imageUrl} className="entry-image" />
         </Frame>
-        <div className="entry-label">{date}</div>
+        <div className="entry-label">
+          {date} <br />
+        </div>
       </Frame>
-    );
-}
+      <p style={{ fontSize: "10px" }}>{id}</p>
+    </>
+  );
+};
 
 interface EntryGridProps {
   selectedId: string | null;
@@ -39,22 +48,14 @@ export const EntryGrid = ({ selectedId, onSelect }: EntryGridProps) => {
   const entries = useLoaderData<EntryItem[]>();
 
   return (
-    <Frame
-      boxShadow="$out"
-      className="main-frame"
-    >
-      <Fieldset
-        legend="Entries"
-        className="entry-fieldset"
-      >
-        <Frame
-          boxShadow="$in"
-          className="entries-grid"
-        >
+    <Frame boxShadow="$out" className="main-frame">
+      <Fieldset legend="Entries" className="entry-fieldset">
+        <Frame boxShadow="$in" className="entries-grid">
           {entries && entries.length > 0 ? (
             entries.map((entry) => (
-              <EntryButton 
-                key={entry.id} 
+              <EntryButton
+                key={entry.id}
+                id={entry.id}
                 date={entry.date}
                 imageUrl={entry.imageURL}
                 isActive={selectedId === entry.id}
@@ -69,4 +70,3 @@ export const EntryGrid = ({ selectedId, onSelect }: EntryGridProps) => {
     </Frame>
   );
 };
-
