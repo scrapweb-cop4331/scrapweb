@@ -3,7 +3,6 @@
 exports[`AppWindow matches snapshot 1`] = `
 <Modal
   className="app-modal"
-  closeModal={[Function]}
   icon={
     <Memo(Computer)
       variant="16x16_4"
@@ -11,20 +10,25 @@ exports[`AppWindow matches snapshot 1`] = `
   }
   menu={[]}
   title="Scrapweb"
+  titleBarOptions={
+    [
+      <Close
+        onClick={[Function]}
+      />,
+    ]
+  }
 >
   <Tabs
-    activeTab="Home"
+    defaultActiveTab="Home"
     onChange={[Function]}
   >
     <Tab
-      label="Home"
-      value="Home"
+      title="Home"
     >
       <div />
     </Tab>
     <Tab
-      label="Explore"
-      value="Explore"
+      title="Explore"
     />
   </Tabs>
 </Modal>

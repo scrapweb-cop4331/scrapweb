@@ -16,16 +16,19 @@ vi.mock("@react95/core", async () => {
         {children}
       </div>
     ),
-    Tabs: ({ children, activeTab, onChange }: any) => (
-      <div data-testid="tabs" data-active-tab={activeTab}>
+    Tabs: ({ children, defaultActiveTab, onChange }: any) => (
+      <div data-testid="tabs" data-active-tab={defaultActiveTab}>
         {children}
       </div>
     ),
-    Tab: ({ children, value, label }: any) => (
-      <div data-testid="tab" data-value={value} data-label={label}>
+    Tab: ({ children, title }: any) => (
+      <div data-testid="tab" data-title={title}>
         {children}
       </div>
     ),
+    TitleBar: {
+      Close: () => <div data-testid="close-button" />,
+    },
   };
 });
 
