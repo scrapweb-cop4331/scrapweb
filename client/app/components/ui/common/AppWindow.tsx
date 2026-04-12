@@ -1,7 +1,8 @@
-import { Modal, Tabs, Tab } from "@react95/core";
+import { Modal, Tabs, Tab, TitleBar } from "@react95/core";
 import { Computer } from "@react95/icons";
 import { useLocation, useNavigate } from "react-router";
 import React from "react";
+import "./AppWindow.css";
 
 interface AppWindowProps {
   children: React.ReactNode;
@@ -21,22 +22,29 @@ export function AppWindow({ children, isOpen, setIsOpen }: AppWindowProps) {
     <Modal
       title="Scrapweb"
       className="app-modal"
-      closeModal={() => setIsOpen(false)}
+      titleBarOptions={[
+        <TitleBar.Close key="close" onClick={() => setIsOpen(false)} />,
+      ]}
       icon={<Computer variant="16x16_4" />}
       menu={[]}
     >
-      <Tabs 
-        activeTab={currentPath === "/" ? "Home" : "Explore"} 
-        onChange={(tab: string) => {
-           if (tab === "Home") navigate("/");
-           else navigate("/explore");
-        }}
+      <Tabs
+        key={currentPath}
+        defaultActiveTab={currentPath === "/" ? "Home" : "Explore"}
+        onChange={
+          ((tab: string) => {
+            if (tab === "Home") navigate("/");
+            else if (tab === "Explore") {
+              navigate("/explore");
+            } else navigate("/login");
+          }) as any
+        }
       >
-        <Tab value="Home" label="Home">
-           {currentPath === "/" ? children : null}
+        <Tab title="Home">
+          {currentPath === "/" ? children : null}
         </Tab>
-        <Tab value="Explore" label="Explore">
-           {currentPath === "/explore" ? children : null}
+        <Tab title="Explore">
+          {currentPath === "/explore" ? children : null}
         </Tab>
       </Tabs>
     </Modal>
