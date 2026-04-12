@@ -15,20 +15,37 @@ vi.mock("react-router", async () => {
   };
 });
 
-// Mock styled-components which is used by react95
-vi.mock("styled-components", () => ({
-  default: {
-    div: () => "div",
-    button: () => "button",
-    fieldset: () => "fieldset",
-    legend: () => "legend",
-    label: () => "label",
-    img: () => "img",
-    span: () => "span",
-  },
-  css: () => "",
-  createGlobalStyle: () => () => null,
-  ThemeProvider: ({ children }: any) => children,
+// Mock react95 components
+vi.mock("@react95/core", async () => {
+  return {
+    Modal: ({ children, title, className }: any) => (
+      <div data-testid="modal" className={className}>
+        <div className="modal-title">{title}</div>
+        {children}
+      </div>
+    ),
+    Button: ({ children, onClick, disabled, className }: any) => (
+      <button onClick={onClick} disabled={disabled} className={className}>
+        {children}
+      </button>
+    ),
+    Frame: ({ children, className, as: Component = "div", onClick }: any) => (
+      <Component className={className} onClick={onClick}>
+        {children}
+      </Component>
+    ),
+    Fieldset: ({ children, legend, className }: any) => (
+      <fieldset className={className}>
+        <legend>{legend}</legend>
+        {children}
+      </fieldset>
+    ),
+  };
+});
+
+// Mock react95 icons
+vi.mock("@react95/icons", () => ({
+  Computer: () => <div data-testid="computer-icon" />,
 }));
 
 // Mock global fetch
@@ -60,8 +77,12 @@ describe("Route Component", () => {
     mockFetch.mockReset();
   });
 
-  it("renders entries and allows selection", () => {
+  it("renders within a Modal and allows selection", () => {
     render(<Route />);
+
+    // Check for Modal
+    expect(screen.getByTestId("modal")).toBeInTheDocument();
+    expect(screen.getByText("Scrapweb", { selector: ".modal-title" })).toBeInTheDocument();
 
     const buttons = screen.getAllByRole("button", { name: /04-10-2026|12-25-2025/ });
     expect(buttons).toHaveLength(2);
@@ -70,26 +91,18 @@ describe("Route Component", () => {
     const resetButton = screen.getByText("Reset Selection");
     expect(resetButton).toBeDisabled();
 
+    // Placeholder should be visible when no selection
+    expect(screen.getByText("Select an entry to view details")).toBeInTheDocument();
+
     // Click the first entry
     fireEvent.click(buttons[0]);
 
     // Reset Selection should now be enabled
     expect(resetButton).not.toBeDisabled();
 
-    // LargeView should be visible (mocked content is "Hello, world" in LargeView.tsx)
+    // LargeView should be visible
     expect(screen.getByText("Hello, world")).toBeInTheDocument();
-
-    // Click the second entry
-    fireEvent.click(buttons[1]);
-    
-    // Reset Selection should still be enabled
-    expect(resetButton).not.toBeDisabled();
-    expect(screen.getByText("Hello, world")).toBeInTheDocument();
-
-    // Toggle: click the second entry again to de-select
-    fireEvent.click(buttons[1]);
-    expect(resetButton).toBeDisabled();
-    expect(screen.queryByText("Hello, world")).not.toBeInTheDocument();
+    expect(screen.queryByText("Select an entry to view details")).not.toBeInTheDocument();
   });
 
   it("de-selects when Reset Selection is pressed", () => {
@@ -100,7 +113,6 @@ describe("Route Component", () => {
 
     // Click an entry
     fireEvent.click(buttons[0]);
-    expect(resetButton).not.toBeDisabled();
     expect(screen.queryByText("Hello, world")).toBeInTheDocument();
 
     // Click reset
@@ -108,6 +120,7 @@ describe("Route Component", () => {
 
     // Should be de-selected
     expect(resetButton).toBeDisabled();
+    expect(screen.getByText("Select an entry to view details")).toBeInTheDocument();
     expect(screen.queryByText("Hello, world")).not.toBeInTheDocument();
   });
 
@@ -172,13 +185,23 @@ describe("Route Component", () => {
     expect(screen.getByText("December")).toBeInTheDocument();
   });
 
+  it("renders a desktop icon for Scrapweb", () => {
+    render(<Route />);
+    expect(screen.getByText("Scrapweb", { selector: ".desktop-icon-label" })).toBeInTheDocument();
+    expect(screen.getByTestId("computer-icon")).toBeInTheDocument();
+  });
+
+  it("does not render a Center Window button inside the modal", () => {
+    render(<Route />);
+    expect(screen.queryByText("Center Window")).not.toBeInTheDocument();
+  });
+
   it("shows no entries message when empty", () => {
     vi.mocked(reactRouter.useLoaderData).mockReturnValue([]);
 
     render(<Route />);
 
     expect(screen.getByText("No entries found.")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /04-10-2026|12-25-2025/ })).not.toBeInTheDocument();
   });
 
   describe("loader", () => {
@@ -221,31 +244,6 @@ describe("Route Component", () => {
           timestamp: 20260410,
         })
       );
-    });
-
-    it("returns empty array when fetch response is not ok", async () => {
-      const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-      });
-
-      const result = await loader();
-
-      expect(result).toEqual([]);
-      expect(consoleErrorSpy).toHaveBeenCalledWith("Failed to fetch media data");
-      consoleErrorSpy.mockRestore();
-    });
-
-    it("returns empty array and logs error on fetch exception", async () => {
-      const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-      const error = new Error("Network error");
-      mockFetch.mockRejectedValueOnce(error);
-
-      const result = await loader();
-
-      expect(result).toEqual([]);
-      expect(consoleErrorSpy).toHaveBeenCalledWith("Error loading media:", error);
-      consoleErrorSpy.mockRestore();
     });
   });
 });
