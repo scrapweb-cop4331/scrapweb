@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { EntryGrid } from "./EntryGrid"
 import { Button } from "@react95/core";
+import { LargeView } from "./LargeView";
 import "./styles.css";
 import { mapMediaToEntry, type MediaDTO } from "./data";
 
 const jwtbase64 =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDk2YjE2YjhhNTkwZWVkMzBiMmI5MyIsImlhdCI6MTc3NTg1NjQ3MCwiZXhwIjoxNzc1OTQyODcwfQ.5Vlu5Solcw63qThIMGApgOHSw8FDPkcy_-1ZKNKeP-Q";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDk2YjE2YjhhNTkwZWVkMzBiMmI5MyIsImlhdCI6MTc3NTk1NTgzOSwiZXhwIjoxNzc2MDQyMjM5fQ.4FvoxUWeVpZKm-Oer4tPZxyXYX9A6PwvWvnc-YfEZFs";
 
 export async function loader() {
     try {
@@ -22,7 +23,14 @@ export async function loader() {
 
         const data = await response.json();
         const results: MediaDTO[] = data.media || [];
-        return results.map(mapMediaToEntry);
+        return results.map((e) => {
+            const res = mapMediaToEntry(e);
+            // console.log({
+            //     input: e,
+            //     output: res,
+            // });
+            return res;
+        });
     } catch (error) {
         console.error("Error loading media:", error);
         return [];
@@ -34,6 +42,7 @@ export default () => {
 
     return (
         <div className="center-div">
+            
             <EntryGrid 
                 selectedId={selectedId} 
                 onSelect={setSelectedId} 

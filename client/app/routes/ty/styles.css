@@ -1,4 +1,4 @@
-.center-div {
+
   .center-div {
     display: flex;
     flex-direction: column;
@@ -111,4 +111,7 @@
     width: fit-content;
   }
 
+
+.large-view {
+  font-size: 2rem;
 }

@@ -2,41 +2,9 @@ import { Frame, Fieldset } from "@react95/core";
 import "./styles.css";
 import { useLoaderData } from "react-router";
 import type { EntryItem } from "./data";
+import EntryButton from "./EntryButton";
 
-export interface EntryButtonProps {
-  date: string;
-  imageUrl: string;
-  isActive: boolean;
-  id: string;
-  onClick: () => void;
-}
 
-export const EntryButton = ({
-  id,
-  date,
-  imageUrl,
-  isActive,
-  onClick,
-}: EntryButtonProps) => {
-  console.log();
-  return (
-    <>
-      <Frame
-        as="button"
-        onClick={onClick}
-        boxShadow={isActive ? "$in" : "$out"}
-        className={`entry-button ${isActive ? "active" : ""}`}
-      >
-        <Frame boxShadow="$in" className="entry-image-frame">
-          <img src={imageUrl} className="entry-image" />
-        </Frame>
-        <label className="entry-label">
-          {date} 
-        </label>
-      </Frame>
-    </>
-  );
-};
 
 interface EntryGridProps {
   selectedId: string | null;
@@ -47,16 +15,15 @@ export const EntryGrid = ({ selectedId, onSelect }: EntryGridProps) => {
   const entries = useLoaderData<EntryItem[]>();
 
   return (
-    <Frame boxShadow="$out" className="main-frame">
+
       <Fieldset legend="Entries" className="entry-fieldset">
         <Frame boxShadow="$in" className="entries-grid">
           {entries && entries.length > 0 ? (
             entries.map((entry) => (
               <EntryButton
                 key={entry.id}
-                id={entry.id}
                 date={entry.date}
-                imageUrl={entry.imageURL}
+                imageURL={entry.imageURL}
                 isActive={selectedId === entry.id}
                 onClick={() => onSelect(entry.id)}
               />
@@ -66,6 +33,6 @@ export const EntryGrid = ({ selectedId, onSelect }: EntryGridProps) => {
           )}
         </Frame>
       </Fieldset>
-    </Frame>
+
   );
 };

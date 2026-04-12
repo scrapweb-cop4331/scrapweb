@@ -1,0 +1,116 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`EntryGrid integrates with DTO transformer 1`] = `"<link rel="preload" as="image" href="http://137.184.93.240/api/media/file/69d98d38b8a590eed30b2ba3"/><link rel="preload" as="image" href="/app/assets/logo_worded.jpg"/><fieldset class="r95_bt4hec0 entry-fieldset"><legend class="r95_bt4hec1">Entries</legend><div class="r95_iuzg89cn entries-grid" style="--r95_iuzg89cm:var(--r95-shadow-in)"><div class="mock-entry"><img src="http://137.184.93.240/api/media/file/69d98d38b8a590eed30b2ba3" alt="04-09-2026"/><span>04-09-2026</span></div><div class="mock-entry"><img src="/app/assets/logo_worded.jpg" alt="12-24-2025"/><span>12-24-2025</span></div><div class="mock-entry"><img src="/app/assets/logo_worded.jpg" alt="12-24-2025"/><span>12-24-2025</span></div><div class="mock-entry"><img src="/app/assets/logo_worded.jpg" alt="12-24-2025"/><span>12-24-2025</span></div></div></fieldset>"`;
+
+exports[`EntryGrid renders basic divs with image and date from mock data 1`] = `"<link rel="preload" as="image" href="http://137.184.93.240/api/media/file/69d98d38b8a590eed30b2ba3"/><link rel="preload" as="image" href="/app/assets/logo_worded.jpg"/><fieldset class="r95_bt4hec0 entry-fieldset"><legend class="r95_bt4hec1">Entries</legend><div class="r95_iuzg89cn entries-grid" style="--r95_iuzg89cm:var(--r95-shadow-in)"><div class="mock-entry"><img src="http://137.184.93.240/api/media/file/69d98d38b8a590eed30b2ba3" alt="04-09-2026"/><span>04-09-2026</span></div><div class="mock-entry"><img src="/app/assets/logo_worded.jpg" alt="12-24-2025"/><span>12-24-2025</span></div><div class="mock-entry"><img src="/app/assets/logo_worded.jpg" alt="12-24-2025"/><span>12-24-2025</span></div><div class="mock-entry"><img src="/app/assets/logo_worded.jpg" alt="12-24-2025"/><span>12-24-2025</span></div></div></fieldset>"`;
+
+exports[`Integration: api returns values 1`] = `
+<ForwardRef
+  className="entry-fieldset"
+  legend="Entries"
+>
+  <ForwardRef(FrameComponent)
+    boxShadow="$in"
+    className="entries-grid"
+  >
+    <default
+      date="04-09-2026"
+      imageURL="http://137.184.93.240/api/media/file/69d98d38b8a590eed30b2ba3"
+      isActive={false}
+      onClick={[Function]}
+    />
+    <default
+      date="12-24-2025"
+      imageURL="/app/assets/logo_worded.jpg"
+      isActive={false}
+      onClick={[Function]}
+    />
+    <default
+      date="12-24-2025"
+      imageURL="/app/assets/logo_worded.jpg"
+      isActive={false}
+      onClick={[Function]}
+    />
+    <default
+      date="12-24-2025"
+      imageURL="/app/assets/logo_worded.jpg"
+      isActive={false}
+      onClick={[Function]}
+    />
+  </ForwardRef(FrameComponent)>
+</ForwardRef>
+`;
+
+exports[`Integration: api returns values 2`] = `
+<ForwardRef
+  className="entry-fieldset"
+  legend="Entries"
+>
+  <ForwardRef(FrameComponent)
+    boxShadow="$in"
+    className="entries-grid"
+  >
+    <default
+      date="04-09-2026"
+      imageURL="http://137.184.93.240/api/media/file/69d98d38b8a590eed30b2ba3"
+      isActive={false}
+      onClick={[Function]}
+    />
+    <default
+      date="12-24-2025"
+      imageURL="/app/assets/logo_worded.jpg"
+      isActive={false}
+      onClick={[Function]}
+    />
+    <default
+      date="12-24-2025"
+      imageURL="/app/assets/logo_worded.jpg"
+      isActive={false}
+      onClick={[Function]}
+    />
+    <default
+      date="12-24-2025"
+      imageURL="/app/assets/logo_worded.jpg"
+      isActive={false}
+      onClick={[Function]}
+    />
+  </ForwardRef(FrameComponent)>
+</ForwardRef>
+`;
+
+exports[`Integration: mapMediaToEntry and this displays properly 1`] = `
+<ForwardRef
+  className="entry-fieldset"
+  legend="Entries"
+>
+  <ForwardRef(FrameComponent)
+    boxShadow="$in"
+    className="entries-grid"
+  >
+    <default
+      date="04-09-2026"
+      imageURL="http://137.184.93.240/api/media/file/69d98d38b8a590eed30b2ba3"
+      isActive={false}
+      onClick={[Function]}
+    />
+    <default
+      date="12-24-2025"
+      imageURL="/app/assets/logo_worded.jpg"
+      isActive={false}
+      onClick={[Function]}
+    />
+    <default
+      date="12-24-2025"
+      imageURL="/app/assets/logo_worded.jpg"
+      isActive={false}
+      onClick={[Function]}
+    />
+    <default
+      date="12-24-2025"
+      imageURL="/app/assets/logo_worded.jpg"
+      isActive={false}
+      onClick={[Function]}
+    />
+  </ForwardRef(FrameComponent)>
+</ForwardRef>
+`;

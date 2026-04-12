@@ -6,6 +6,9 @@ import tsconfigPaths from "vite-tsconfig-paths";
 export default defineConfig({
   plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
   ssr: {
-    noExternal: ["@react95/core", "@react95/icons"]
-  }
+    noExternal: ["@react95/core", "@react95/icons"],
+  },
+  
 });
+
+
