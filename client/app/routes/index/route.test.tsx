@@ -3,7 +3,7 @@
  */
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import Route from "./route";
+import Route, { loader } from "./route";
 import * as reactRouter from "react-router";
 
 // Mock useLoaderData
@@ -31,21 +31,25 @@ vi.mock("styled-components", () => ({
   ThemeProvider: ({ children }: any) => children,
 }));
 
+// Mock global fetch
+const mockFetch = vi.fn();
+global.fetch = mockFetch;
+
 const mockEntries = [
   {
     id: "1",
-    date: "2026-04-10",
+    date: "04-10-2026",
     imageURL: "/test1.png",
     audioURL: "/audio1.mp3",
-    timestamp: 123456,
+    timestamp: 20260410,
     isInvalid: false,
   },
   {
     id: "2",
-    date: "2025-12-25",
+    date: "12-25-2025",
     imageURL: "/test2.png",
     audioURL: "/audio2.mp3",
-    timestamp: 123457,
+    timestamp: 20251225,
     isInvalid: false,
   },
 ];
@@ -53,12 +57,13 @@ const mockEntries = [
 describe("Route Component", () => {
   beforeEach(() => {
     vi.mocked(reactRouter.useLoaderData).mockReturnValue(mockEntries);
+    mockFetch.mockReset();
   });
 
   it("renders entries and allows selection", () => {
     render(<Route />);
 
-    const buttons = screen.getAllByRole("button", { name: /2026-04-10|2025-12-25/ });
+    const buttons = screen.getAllByRole("button", { name: /04-10-2026|12-25-2025/ });
     expect(buttons).toHaveLength(2);
 
     // Initial state: Reset Selection should be disabled
@@ -90,7 +95,7 @@ describe("Route Component", () => {
   it("de-selects when Reset Selection is pressed", () => {
     render(<Route />);
 
-    const buttons = screen.getAllByRole("button", { name: /2026-04-10|2025-12-25/ });
+    const buttons = screen.getAllByRole("button", { name: /04-10-2026|12-25-2025/ });
     const resetButton = screen.getByText("Reset Selection");
 
     // Click an entry
@@ -122,7 +127,7 @@ describe("Route Component", () => {
 
     render(<Route />);
 
-    const buttons = screen.getAllByRole("button", { name: /2026-04-10|2025-12-25/ });
+    const buttons = screen.getAllByRole("button", { name: /04-10-2026|12-25-2025/ });
     expect(buttons).toHaveLength(2); // Only valid ones should render
   });
 
@@ -132,6 +137,74 @@ describe("Route Component", () => {
     render(<Route />);
 
     expect(screen.getByText("No entries found.")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /2026-04-10|2025-12-25/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /04-10-2026|12-25-2025/ })).not.toBeInTheDocument();
+  });
+
+  describe("loader", () => {
+    it("fetches and maps media data correctly", async () => {
+      const mockMediaData = {
+        media: [
+          {
+            _id: "1",
+            audio: "/audio1.mp3",
+            photo: "/photo1.jpg",
+            notes: "Note 1",
+            date: "2026-04-10",
+          },
+        ],
+      };
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockMediaData,
+      });
+
+      const result = await loader();
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        "http://137.184.93.240/api/media",
+        expect.objectContaining({
+          method: "GET",
+          headers: expect.objectContaining({
+            Authorization: expect.stringContaining("Bearer "),
+          }),
+        })
+      );
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).toEqual(
+        expect.objectContaining({
+          id: "1",
+          imageURL: "http://137.184.93.240/photo1.jpg",
+          date: "04-10-2026",
+          timestamp: 20260410,
+        })
+      );
+    });
+
+    it("returns empty array when fetch response is not ok", async () => {
+      const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+      });
+
+      const result = await loader();
+
+      expect(result).toEqual([]);
+      expect(consoleErrorSpy).toHaveBeenCalledWith("Failed to fetch media data");
+      consoleErrorSpy.mockRestore();
+    });
+
+    it("returns empty array and logs error on fetch exception", async () => {
+      const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+      const error = new Error("Network error");
+      mockFetch.mockRejectedValueOnce(error);
+
+      const result = await loader();
+
+      expect(result).toEqual([]);
+      expect(consoleErrorSpy).toHaveBeenCalledWith("Error loading media:", error);
+      consoleErrorSpy.mockRestore();
+    });
   });
 });

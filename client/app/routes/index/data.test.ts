@@ -20,8 +20,8 @@ const testCases: Array<TestSchema> = [
       id: "69d96c20b8a590eed30b2b94",
       imageURL: "/app/assets/logo_worded.jpg",
       audioURL: "/app/assets/500-milliseconds-of-silence.mp3",
-      timestamp: 1775779200000,
-      date: "04-09-2026",
+      timestamp: 20260410,
+      date: "04-10-2026",
       isInvalid: false,
     },
   },
@@ -39,8 +39,8 @@ const testCases: Array<TestSchema> = [
       id: "69d98d38b8a590eed30b2ba6",
       imageURL: "http://137.184.93.240/api/media/file/69d98d38b8a590eed30b2ba3",
       audioURL: "/app/assets/500-milliseconds-of-silence.mp3",
-      timestamp: 1775779200000,
-      date: "04-09-2026",
+      timestamp: 20260410,
+      date: "04-10-2026",
       isInvalid: false,
     },
   },
@@ -58,8 +58,8 @@ const testCases: Array<TestSchema> = [
       id: "69da6d15b8a590eed30b2bbc",
       imageURL: "/app/assets/logo_worded.jpg",
       audioURL: "http://137.184.93.240/api/media/file/69da6d15b8a590eed30b2bba",
-      timestamp: 1766620800000,
-      date: "12-24-2025",
+      timestamp: 20251225,
+      date: "12-25-2025",
       isInvalid: false,
     },
   },
@@ -77,8 +77,8 @@ const testCases: Array<TestSchema> = [
       id: "69da6ff2b8a590eed30b2bbe",
       imageURL: "/app/assets/logo_worded.jpg",
       audioURL: "/app/assets/500-milliseconds-of-silence.mp3",
-      timestamp: 1766620800000,
-      date: "12-24-2025",
+      timestamp: 20251225,
+      date: "12-25-2025",
       isInvalid: false,
     },
   },
@@ -107,5 +107,3 @@ for (const dummy of testCases) {
     expect(mapMediaToEntry(dummy.input)).toEqual(dummy.output);
   });
 }
-
-

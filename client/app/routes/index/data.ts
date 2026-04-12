@@ -39,40 +39,34 @@ export function mapMediaToEntry(dto: MediaDTO): EntryItem {
     }
   }
 
-  let isValidDate = 0;
   const dateRE = /^\d{4}-\d{2}-\d{2}$/; //yyyy-mm-dd
-  if (!dateRE.test(dto.date)) {
-    console.log(dateRE.test(dto.date));
-    isValidDate = 0;
-  } else {
-    // Now we validate that it is a plausible date
-    isValidDate = Date.parse(dto.date); // todo this will break if they have an entry for 1970-1-1
-  }
-
+  const hasValidFormat = dateRE.test(dto.date);
+  
   let dateString = "";
-  let msSince1970 = 0;
-  if (!isValidDate) {
-    console.error(`Date ${dto.date} wasn't in iso 8061 for entry ${dto._id}`);
+  let timestamp = 0;
+  let isInvalid = !hasValidFormat;
+
+  if (hasValidFormat) {
+    // Validate if it's a real date using Date object
+    const parsedDate = Date.parse(dto.date);
+    if (isNaN(parsedDate)) {
+      isInvalid = true;
+      console.error(`Date ${dto.date} is not a valid date for entry ${dto._id}`);
+    } else {
+      const [year, month, day] = dto.date.split("-");
+      dateString = `${month}-${day}-${year}`;
+      timestamp = Number(year + month + day);
+    }
   } else {
-    const date = new Date(dto.date);
-    dateString = date
-      .toLocaleDateString("en-US", {
-        month: "2-digit",
-        day: "2-digit",
-        year: "numeric",
-      })
-      .replace(/\//g, "-");
-    msSince1970 = isValidDate;
+    console.error(`Date ${dto.date} wasn't in iso 8061 for entry ${dto._id}`);
   }
-
-
 
   return {
     id: dto._id,
     imageURL: imgURL,
     audioURL: audioURL,
-    timestamp: msSince1970,
+    timestamp: timestamp,
     date: dateString,
-    isInvalid: !isValidDate,
+    isInvalid: isInvalid,
   };
 }
