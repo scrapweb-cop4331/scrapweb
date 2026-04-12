@@ -12,11 +12,4 @@ export default defineConfig({
   ssr: {
     noExternal: ["@react95/core", "@react95/icons"],
   },
-  test: {
-    globals: true,
-    environment: "jsdom",
-    setupFiles: ["./app/test/setup.ts"],
-  },
 });
-
-
