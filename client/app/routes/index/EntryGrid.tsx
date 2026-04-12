@@ -8,10 +8,8 @@ interface EntryGridProps {
 
 export const EntryGrid = ({ children }: EntryGridProps) => {
   return (
-    <Fieldset legend="Entries" className="entry-fieldset">
       <Frame boxShadow="$in" className="entries-grid">
         {children}
       </Frame>
-    </Fieldset>
   );
 };

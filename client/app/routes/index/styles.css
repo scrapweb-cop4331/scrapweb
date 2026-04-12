@@ -30,8 +30,9 @@
   }
 
   .grid-section {
+    display:flex;
     flex: 2;
-    /* overflow: hidden; */
+    overflow: hidden;
   }
 
   .largeview-section {
@@ -61,29 +62,21 @@
     }
     
     .grid-section, .largeview-section {
+      display: flex;
       flex: none;
       height: 50%; /* Each takes 50% of the 200% height, so 100% of the modal viewport */
     }
   }
 
-  .main-frame {
-    /* width: 100%;
-    height: 100%; 
-    overflow: hidden;
-    display: flex;
-    flex-direction: column; */
-    background-color: var(--color-material);
-  }
-
-  .entry-fieldset {
-    padding: 8px;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-  }
+.foo {
+  display: flex;
+  background-color: aqua;
+  /* margin: 10px; */
+}
 
   .entries-grid {
+    flex:1;
+    overflow: scroll;
     padding: 10px;
     display: grid;
     gap: 10px;
@@ -91,6 +84,8 @@
     grid-auto-rows: min-content;
     background-color: var(--color-canvas-text);
   }
+
+
 
   /* Custom EntryButton Styles */
   .entry-button {
@@ -245,9 +240,3 @@ border-top: 1px solid var(--color-border-dark);
 border-bottom: 1px solid var(--color-border-lightest);
 }
 
-.foo {
- height: 50px;
-  background-color: aqua;
-  flex: 1;
-  margin: 10px;
-}

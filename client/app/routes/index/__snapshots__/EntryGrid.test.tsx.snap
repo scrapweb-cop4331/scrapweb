@@ -1,41 +1,31 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Integration style check: can render mocked EntryButtons as children 1`] = `
-<ForwardRef
-  className="entry-fieldset"
-  legend="Entries"
+exports[`Integration: can render mocked EntryButtons as children 1`] = `
+<ForwardRef(FrameComponent)
+  boxShadow="$in"
+  className="entries-grid"
 >
-  <ForwardRef(FrameComponent)
-    boxShadow="$in"
-    className="entries-grid"
-  >
-    <div>
-      <img
-        alt="2026-04-10"
-        src="/test.png"
-      />
-      <span>
-        2026-04-10
-      </span>
-    </div>
-  </ForwardRef(FrameComponent)>
-</ForwardRef>
+  <div>
+    <img
+      alt="2026-04-10"
+      src="/test.png"
+    />
+    <span>
+      2026-04-10
+    </span>
+  </div>
+</ForwardRef(FrameComponent)>
 `;
 
-exports[`renders children correctly 1`] = `
-<ForwardRef
-  className="entry-fieldset"
-  legend="Entries"
+exports[`Unit: matches snapshot with with a test child 1`] = `
+<ForwardRef(FrameComponent)
+  boxShadow="$in"
+  className="entries-grid"
 >
-  <ForwardRef(FrameComponent)
-    boxShadow="$in"
-    className="entries-grid"
+  <div
+    data-testid="test-child"
   >
-    <div
-      data-testid="test-child"
-    >
-      Test Child
-    </div>
-  </ForwardRef(FrameComponent)>
-</ForwardRef>
+    Test Child
+  </div>
+</ForwardRef(FrameComponent)>
 `;
