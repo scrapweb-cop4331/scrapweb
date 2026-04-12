@@ -1,0 +1,31 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`AppWindow matches snapshot 1`] = `
+<Modal
+  className="app-modal"
+  closeModal={[Function]}
+  icon={
+    <Memo(Computer)
+      variant="16x16_4"
+    />
+  }
+  menu={[]}
+  title="Scrapweb"
+>
+  <Tabs
+    activeTab="Home"
+    onChange={[Function]}
+  >
+    <Tab
+      label="Home"
+      value="Home"
+    >
+      <div />
+    </Tab>
+    <Tab
+      label="Explore"
+      value="Explore"
+    />
+  </Tabs>
+</Modal>
+`;

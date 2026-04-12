@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
 import { EntryGrid } from "./EntryGrid"
-import { Button, Modal } from "@react95/core";
-import { Computer } from "@react95/icons";
+import { Button } from "@react95/core";
 import { useLoaderData } from "react-router";
 import { mapMediaToEntry, type MediaDTO, type EntryItem } from "./data";
 import EntryButton from "./EntryButton";
@@ -40,7 +39,6 @@ export async function loader() {
 export default function Route() {
     const rawEntries = useLoaderData<EntryItem[]>();
     const [selectedId, setSelectedId] = useState<string | null>(null);
-    const [modalKey, setModalKey] = useState(0);
 
     const entries = useMemo(() => {
         if (!rawEntries) return [];
@@ -94,72 +92,54 @@ export default function Route() {
         return entries.find(e => e.id === selectedId);
     }, [entries, selectedId]);
 
-    const handleCenterWindow = () => {
-        setModalKey(prev => prev + 1);
-    };
-
     return (
-        <div className="center-div">
-            <button className="desktop-icon" onClick={handleCenterWindow}>
-                <Computer variant="32x32_4" />
-                <span className="desktop-icon-label">Scrapweb</span>
-            </button>
-
-            <Modal
-                key={modalKey}
-                title="Scrapweb"
-                className="app-modal"
-                menu={[]}
-            >
-                <div className="modal-content">
-                    <div className="main-layout">
-                        <div className="grid-section">
-                            <EntryGrid>
-                                {entriesWithSeparators.length > 0 ? (
-                                    entriesWithSeparators.map((item) => {
-                                        if ("isSeparator" in item) {
-                                            return (
-                                                <EntrySeparator
-                                                    key={item.id}
-                                                    type={item.type}
-                                                    label={item.label}
-                                                />
-                                            );
-                                        }
-                                        return (
-                                            <EntryButton
-                                                key={item.id}
-                                                date={item.date}
-                                                imageURL={item.imageURL}
-                                                isActive={selectedId === item.id}
-                                                onClick={() => setSelectedId(selectedId === item.id ? null : item.id)}
-                                            />
-                                        );
-                                    })
-                                ) : (
-                                    <div className="no-entries">No entries found.</div>
-                                )}
-                            </EntryGrid>
-                        </div>
-                        <div className="largeview-section">
-                            {selectedEntry ? (
-                                <LargeView {...selectedEntry} />
-                            ) : (
-                                <div className="no-selection">Select an entry to view details</div>
-                            )}
-                        </div>
-                    </div>
-                    <div className="footer-buttons">
-                        <Button 
-                            className="reset-button" 
-                            onClick={() => setSelectedId(null)}
-                            disabled={selectedId === null}
-                        >
-                            Reset Selection
-                        </Button>
-                    </div>
+        <div className="modal-content">
+            <div className="main-layout">
+                <div className="grid-section">
+                    <EntryGrid>
+                        {entriesWithSeparators.length > 0 ? (
+                            entriesWithSeparators.map((item) => {
+                                if ("isSeparator" in item) {
+                                    return (
+                                        <EntrySeparator
+                                            key={item.id}
+                                            type={item.type}
+                                            label={item.label}
+                                        />
+                                    );
+                                }
+                                return (
+                                    <EntryButton
+                                        key={item.id}
+                                        date={item.date}
+                                        imageURL={item.imageURL}
+                                        isActive={selectedId === item.id}
+                                        onClick={() => setSelectedId(selectedId === item.id ? null : item.id)}
+                                    />
+                                );
+                            })
+                        ) : (
+                            <div className="no-entries">No entries found.</div>
+                        )}
+                    </EntryGrid>
                 </div>
-            </Modal>
+                <div className="largeview-section">
+                    {selectedEntry ? (
+                        <LargeView {...selectedEntry} />
+                    ) : (
+                        <div className="no-selection">Select an entry to view details</div>
+                    )}
+                </div>
+            </div>
+            <div className="footer-buttons">
+                <Button 
+                    className="reset-button" 
+                    onClick={() => setSelectedId(null)}
+                    disabled={selectedId === null}
+                >
+                    Reset Selection
+                </Button>
+            </div>
         </div>
     );
 }

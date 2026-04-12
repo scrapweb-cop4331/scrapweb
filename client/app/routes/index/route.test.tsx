@@ -77,12 +77,8 @@ describe("Route Component", () => {
     mockFetch.mockReset();
   });
 
-  it("renders within a Modal and allows selection", () => {
+  it("renders entries and allows selection", () => {
     render(<Route />);
-
-    // Check for Modal
-    expect(screen.getByTestId("modal")).toBeInTheDocument();
-    expect(screen.getByText("Scrapweb", { selector: ".modal-title" })).toBeInTheDocument();
 
     const buttons = screen.getAllByRole("button", { name: /04-10-2026|12-25-2025/ });
     expect(buttons).toHaveLength(2);
@@ -183,17 +179,6 @@ describe("Route Component", () => {
     expect(screen.getByText("April")).toBeInTheDocument();
     expect(screen.getByText("March")).toBeInTheDocument();
     expect(screen.getByText("December")).toBeInTheDocument();
-  });
-
-  it("renders a desktop icon for Scrapweb", () => {
-    render(<Route />);
-    expect(screen.getByText("Scrapweb", { selector: ".desktop-icon-label" })).toBeInTheDocument();
-    expect(screen.getByTestId("computer-icon")).toBeInTheDocument();
-  });
-
-  it("does not render a Center Window button inside the modal", () => {
-    render(<Route />);
-    expect(screen.queryByText("Center Window")).not.toBeInTheDocument();
   });
 
   it("shows no entries message when empty", () => {
