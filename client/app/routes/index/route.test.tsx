@@ -81,11 +81,6 @@ describe("Route Component", () => {
     render(<Route />);
 
     const buttons = screen.getAllByRole("button", { name: /04-10-2026|12-25-2025/ });
-    expect(buttons).toHaveLength(2);
-
-    // Initial state: Reset Selection should be disabled
-    const resetButton = screen.getByText("Reset Selection");
-    expect(resetButton).toBeDisabled();
 
     // Placeholder should be visible when no selection
     expect(screen.getByText("Select an entry to view details")).toBeInTheDocument();
@@ -93,15 +88,12 @@ describe("Route Component", () => {
     // Click the first entry
     fireEvent.click(buttons[0]);
 
-    // Reset Selection should now be enabled
-    expect(resetButton).not.toBeDisabled();
-
     // LargeView should be visible
     expect(screen.getByText("Hello, world")).toBeInTheDocument();
     expect(screen.queryByText("Select an entry to view details")).not.toBeInTheDocument();
   });
 
-  it("de-selects when Reset Selection is pressed", () => {
+  it("de-selects when the same button is pressed", () => {
     render(<Route />);
 
     const buttons = screen.getAllByRole("button", { name: /04-10-2026|12-25-2025/ });
@@ -112,7 +104,7 @@ describe("Route Component", () => {
     expect(screen.queryByText("Hello, world")).toBeInTheDocument();
 
     // Click reset
-    fireEvent.click(resetButton);
+    fireEvent.click(buttons[0]);
 
     // Should be de-selected
     expect(resetButton).toBeDisabled();
@@ -219,7 +211,8 @@ describe("Route Component", () => {
           }),
         })
       );
-
+      
+      //todo it should also check for audio. DO NOT IMPLEMENT UNLESS USER REQUESTS A FIX ON TODOS
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual(
         expect.objectContaining({

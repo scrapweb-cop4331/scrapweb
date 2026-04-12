@@ -10,7 +10,7 @@ vi.mock("./EntryButton", () => ({
   ),
 }));
 
-test("renders children correctly", () => {
+test("Unit: matches snapshot with with a test child", () => {
   const children = (
     <div data-testid="test-child">Test Child</div>
   );
@@ -19,7 +19,7 @@ test("renders children correctly", () => {
   expect(EntryGrid({ children })).toMatchSnapshot();
 });
 
-test("Integration style check: can render mocked EntryButtons as children", () => {
+test("Integration: can render mocked EntryButtons as children", () => {
   const mockEntries = [
     { id: "1", date: "2026-04-10", imageURL: "/test.png" }
   ];
