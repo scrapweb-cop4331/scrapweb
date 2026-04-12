@@ -4,6 +4,6 @@ import {
 } from "@react-router/dev/routes";
 import { flatRoutes } from "@react-router/fs-routes";
 export default [
-  index("routes/index/index.tsx"),
-  ...(await flatRoutes({ ignoredRouteFiles: ["routes/index/index.tsx"] })),
+  index("routes/index/route.tsx"),
+  ...(await flatRoutes({ ignoredRouteFiles: ["routes/index/route.tsx"] })),
 ] satisfies RouteConfig;
