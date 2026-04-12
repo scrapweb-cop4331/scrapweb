@@ -100,11 +100,12 @@
   }
 
   .no-entries {
-    grid-column: 1 / -1;
+    /* grid-column: 1 / -1; */
     text-align: center;
     padding: 40px;
     font-family: "MS Sans Serif", sans-serif;
     color: #000;
+    background-color: aqua;
   }
 
   .reset-button {

@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { EntryGrid } from "./EntryGrid"
 import { Button } from "@react95/core";
-import { LargeView } from "./LargeView";
+import { useLoaderData } from "react-router";
+import { mapMediaToEntry, type MediaDTO, type EntryItem } from "./data";
+import EntryButton from "./EntryButton";
+import LargeView from "./LargeView";
 import "./styles.css";
-import { mapMediaToEntry, type MediaDTO } from "./data";
 
 const jwtbase64 =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDk2YjE2YjhhNTkwZWVkMzBiMmI5MyIsImlhdCI6MTc3NTk1NTgzOSwiZXhwIjoxNzc2MDQyMjM5fQ.4FvoxUWeVpZKm-Oer4tPZxyXYX9A6PwvWvnc-YfEZFs";
@@ -25,10 +27,6 @@ export async function loader() {
         const results: MediaDTO[] = data.media || [];
         return results.map((e) => {
             const res = mapMediaToEntry(e);
-            // console.log({
-            //     input: e,
-            //     output: res,
-            // });
             return res;
         });
     } catch (error) {
@@ -37,16 +35,38 @@ export async function loader() {
     }
 }
 
-export default () => {
+export default function Route() {
+    const rawEntries = useLoaderData<EntryItem[]>();
     const [selectedId, setSelectedId] = useState<string | null>(null);
+
+    const entries = useMemo(() => {
+        return rawEntries ? rawEntries.filter(entry => !entry.isInvalid) : [];
+    }, [rawEntries]);
+
+    const selectedEntry = useMemo(() => {
+        return entries.find(e => e.id === selectedId);
+    }, [entries, selectedId]);
 
     return (
         <div className="center-div">
-            
-            <EntryGrid 
-                selectedId={selectedId} 
-                onSelect={setSelectedId} 
-            />
+            {selectedEntry && (
+                <LargeView {...selectedEntry} />
+            )}
+            <EntryGrid>
+                {entries && entries.length > 0 ? (
+                    entries.map((entry) => (
+                        <EntryButton
+                            key={entry.id}
+                            date={entry.date}
+                            imageURL={entry.imageURL}
+                            isActive={selectedId === entry.id}
+                            onClick={() => setSelectedId(selectedId === entry.id ? null : entry.id)}
+                        />
+                    ))
+                ) : (
+                    <div className="no-entries">No entries found.</div>
+                )}
+            </EntryGrid>
             <Button 
                 className="reset-button" 
                 onClick={() => setSelectedId(null)}

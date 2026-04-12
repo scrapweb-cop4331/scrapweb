@@ -13,10 +13,10 @@ const EntryButton = ({
   onClick,
 }: EntryButtonProps) => {
   console.log({
-    date: date,
-    imageURL: imageURL,
-    isActive: false,
-    onClick: () => {}
+    date,
+    imageURL,
+    isActive,
+    onClick
   })
   return (
     <>
