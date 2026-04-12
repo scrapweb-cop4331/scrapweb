@@ -114,5 +114,41 @@
 
 
 .large-view {
-  font-size: 2rem;
+font-size: 2rem;
+}
+
+/* EntrySeparator Styles */
+.entry-separator {
+grid-column: 1 / -1;
+display: flex;
+flex-direction: column;
+margin: 16px 0 8px 0;
+}
+
+.entry-separator.year {
+margin-top: 32px;
+}
+
+.separator-heading {
+margin: 0 0 8px 0;
+font-family: "MS Sans Serif", sans-serif;
+color: var(--color-material-text);
+}
+
+.month .separator-heading {
+text-align: left;
+font-size: 24px;
+}
+
+.year .separator-heading {
+text-align: center;
+font-size: 32px;
+font-weight: bold;
+}
+
+.separator-bar {
+height: 2px;
+width: 100%;
+border-top: 1px solid var(--color-border-dark);
+border-bottom: 1px solid var(--color-border-lightest);
 }

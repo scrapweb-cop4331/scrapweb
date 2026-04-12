@@ -5,6 +5,7 @@ import { useLoaderData } from "react-router";
 import { mapMediaToEntry, type MediaDTO, type EntryItem } from "./data";
 import EntryButton from "./EntryButton";
 import LargeView from "./LargeView";
+import { EntrySeparator } from "./EntrySeparator";
 import "./styles.css";
 
 const jwtbase64 =
@@ -46,6 +47,47 @@ export default function Route() {
             .sort((a, b) => b.timestamp - a.timestamp);
     }, [rawEntries]);
 
+    const entriesWithSeparators = useMemo(() => {
+        const result: (EntryItem | { isSeparator: true; type: "month" | "year"; label: string; id: string })[] = [];
+        let lastYear = "";
+        let lastMonth = "";
+
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+
+        entries.forEach((entry) => {
+            const [month, , year] = entry.date.split("-");
+            const monthName = monthNames[parseInt(month, 10) - 1];
+
+            if (year !== lastYear) {
+                result.push({
+                    isSeparator: true,
+                    type: "year",
+                    label: year,
+                    id: `year-${year}`,
+                });
+                lastYear = year;
+                lastMonth = "";
+            }
+
+            if (monthName !== lastMonth) {
+                result.push({
+                    isSeparator: true,
+                    type: "month",
+                    label: monthName,
+                    id: `month-${year}-${month}`,
+                });
+                lastMonth = monthName;
+            }
+
+            result.push(entry);
+        });
+
+        return result;
+    }, [entries]);
+
     const selectedEntry = useMemo(() => {
         return entries.find(e => e.id === selectedId);
     }, [entries, selectedId]);
@@ -56,16 +98,27 @@ export default function Route() {
                 <LargeView {...selectedEntry} />
             )}
             <EntryGrid>
-                {entries && entries.length > 0 ? (
-                    entries.map((entry) => (
-                        <EntryButton
-                            key={entry.id}
-                            date={entry.date}
-                            imageURL={entry.imageURL}
-                            isActive={selectedId === entry.id}
-                            onClick={() => setSelectedId(selectedId === entry.id ? null : entry.id)}
-                        />
-                    ))
+                {entriesWithSeparators.length > 0 ? (
+                    entriesWithSeparators.map((item) => {
+                        if ("isSeparator" in item) {
+                            return (
+                                <EntrySeparator
+                                    key={item.id}
+                                    type={item.type}
+                                    label={item.label}
+                                />
+                            );
+                        }
+                        return (
+                            <EntryButton
+                                key={item.id}
+                                date={item.date}
+                                imageURL={item.imageURL}
+                                isActive={selectedId === item.id}
+                                onClick={() => setSelectedId(selectedId === item.id ? null : item.id)}
+                            />
+                        );
+                    })
                 ) : (
                     <div className="no-entries">No entries found.</div>
                 )}

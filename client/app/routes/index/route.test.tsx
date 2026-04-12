@@ -131,6 +131,47 @@ describe("Route Component", () => {
     expect(buttons).toHaveLength(2); // Only valid ones should render
   });
 
+  it("renders year and month separators", () => {
+    const multiPeriodEntries = [
+      {
+        id: "1",
+        date: "04-10-2026",
+        imageURL: "/test1.png",
+        audioURL: "/audio1.mp3",
+        timestamp: 20260410,
+        isInvalid: false,
+      },
+      {
+        id: "2",
+        date: "03-15-2026",
+        imageURL: "/test2.png",
+        audioURL: "/audio2.mp3",
+        timestamp: 20260315,
+        isInvalid: false,
+      },
+      {
+        id: "3",
+        date: "12-25-2025",
+        imageURL: "/test3.png",
+        audioURL: "/audio3.mp3",
+        timestamp: 20251225,
+        isInvalid: false,
+      },
+    ];
+    vi.mocked(reactRouter.useLoaderData).mockReturnValue(multiPeriodEntries);
+
+    render(<Route />);
+
+    // Check for year separators
+    expect(screen.getByText("2026")).toBeInTheDocument();
+    expect(screen.getByText("2025")).toBeInTheDocument();
+
+    // Check for month separators
+    expect(screen.getByText("April")).toBeInTheDocument();
+    expect(screen.getByText("March")).toBeInTheDocument();
+    expect(screen.getByText("December")).toBeInTheDocument();
+  });
+
   it("shows no entries message when empty", () => {
     vi.mocked(reactRouter.useLoaderData).mockReturnValue([]);
 
