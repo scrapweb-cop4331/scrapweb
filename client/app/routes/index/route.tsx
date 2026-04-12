@@ -40,7 +40,10 @@ export default function Route() {
     const [selectedId, setSelectedId] = useState<string | null>(null);
 
     const entries = useMemo(() => {
-        return rawEntries ? rawEntries.filter(entry => !entry.isInvalid) : [];
+        if (!rawEntries) return [];
+        return rawEntries
+            .filter(entry => !entry.isInvalid)
+            .sort((a, b) => b.timestamp - a.timestamp);
     }, [rawEntries]);
 
     const selectedEntry = useMemo(() => {
