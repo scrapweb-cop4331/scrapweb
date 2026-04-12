@@ -53,7 +53,7 @@ export default function LoginPage() {
 
       localStorage.setItem('token', data.token)
       setSuccess(`Logged in as ${data.user.username}`)
-      navigate('/main')
+      navigate('/')
 
     } catch (err) {
       setError('Could not connect to server')
