@@ -125,4 +125,13 @@ describe("Route Component", () => {
     const buttons = screen.getAllByRole("button", { name: /2026-04-10|2025-12-25/ });
     expect(buttons).toHaveLength(2); // Only valid ones should render
   });
+
+  it("shows no entries message when empty", () => {
+    vi.mocked(reactRouter.useLoaderData).mockReturnValue([]);
+
+    render(<Route />);
+
+    expect(screen.getByText("No entries found.")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /2026-04-10|2025-12-25/ })).not.toBeInTheDocument();
+  });
 });
