@@ -16,6 +16,22 @@ vi.mock("react-router", async () => {
   };
 });
 
+// Mock styled-components which is used by react95
+vi.mock("styled-components", () => ({
+  default: {
+    div: () => "div",
+    button: () => "button",
+    fieldset: () => "fieldset",
+    legend: () => "legend",
+    label: () => "label",
+    img: () => "img",
+    span: () => "span",
+    input: () => "input",
+  },
+  css: () => "",
+  createGlobalStyle: () => () => null,
+  ThemeProvider: ({ children }: any) => children,
+}));
 
 // Mock fetch
 global.fetch = vi.fn();
