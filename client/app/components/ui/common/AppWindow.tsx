@@ -3,14 +3,17 @@ import { Computer } from "@react95/icons";
 import { useLocation, useNavigate } from "react-router";
 import React from "react";
 import "./AppWindow.css";
+import type { DragOptions } from "@neodrag/react";
 
 interface AppWindowProps {
   children: React.ReactNode;
   isOpen: boolean;
+  dragOptions: DragOptions;
   setIsOpen: (isOpen: boolean) => void;
 }
 
-export function AppWindow({ children, isOpen, setIsOpen }: AppWindowProps) {
+
+export function AppWindow({ children, isOpen, setIsOpen, dragOptions}: AppWindowProps) {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -22,6 +25,7 @@ export function AppWindow({ children, isOpen, setIsOpen }: AppWindowProps) {
     <Modal
       title="Scrapweb"
       className="app-modal"
+      dragOptions={dragOptions}
       titleBarOptions={[
         <TitleBar.Close key="close" onClick={() => setIsOpen(false)} />,
       ]}
