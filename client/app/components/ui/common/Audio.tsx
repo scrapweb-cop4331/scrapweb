@@ -1,182 +1,115 @@
-import React, { forwardRef, useState, useRef, useImperativeHandle, useEffect } from "react";
-import { Frame, Button, Range } from "@react95/core";
-import { Playd16, Playp16 } from "@react95/icons";
-import classNames from "classnames";
-import "./Audio.css";
+import React, { useState, useRef, useEffect } from 'react';
+import { Button, Range } from '@react95/core';
+import { Playp16 } from '@react95/icons';
+import './Audio.css';
 
-export type AudioProps = {
+export interface AudioProps {
   src: string;
-  name?: string;
-  autoPlay?: boolean;
-};
-
-export type AudioRefs = {
-  audio: React.RefObject<HTMLAudioElement | null>;
-  progress: React.RefObject<HTMLInputElement | null>;
-  playpause: React.RefObject<HTMLButtonElement | null>;
-  stop: React.RefObject<HTMLButtonElement | null>;
-};
-
-function parseCurrentTime(secs: number) {
-  if (!secs || isNaN(secs)) {
-    return "00:00";
-  }
-  const sec = parseInt(secs.toString(), 10);
-  const hours = Math.floor(sec / 3600);
-  const minutes = Math.floor(sec / 60) % 60;
-  const seconds = sec % 60;
-  return [hours, minutes, seconds].map((v) => v < 10 ? `0${v}` : v).filter((v, i) => v !== "00" || i > 0).join(":");
+  audioProps?: React.AudioHTMLAttributes<HTMLAudioElement>;
 }
 
-const Audio = forwardRef<AudioRefs, AudioProps>(({ src, autoPlay = false }, ref) => {
-  const [playing, setPlaying] = useState(false);
-  const [loadeddata, setLoadeddata] = useState(false);
-  const [progress, setProgress] = useState(0);
-  
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const progressRef = useRef<HTMLInputElement>(null);
-  const playPauseRef = useRef<HTMLButtonElement>(null);
-  const stopRef = useRef<HTMLButtonElement>(null);
+const formatTime = (time: number) => {
+  const minutes = Math.floor(time / 60);
+  const seconds = Math.floor(time % 60);
+  return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+};
 
-  useImperativeHandle(ref, () => ({
-    audio: audioRef,
-    progress: progressRef,
-    playpause: playPauseRef,
-    stop: stopRef,
-  }));
+export function Audio({ src, audioProps }: AudioProps) {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
 
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    // Reset state when src changes
-    setLoadeddata(audio.readyState >= 3);
-    setPlaying(!audio.paused);
-
+    const onTimeUpdate = () => setCurrentTime(audio.currentTime);
+    const onLoadedMetadata = () => setDuration(audio.duration);
+    const onPlay = () => setIsPlaying(true);
+    const onPause = () => setIsPlaying(false);
     const onEnded = () => {
-      setPlaying(false);
-      setProgress(0);
+      setIsPlaying(false);
+      setCurrentTime(0);
     };
 
-    const onTimeUpdate = () => {
-      if (audio.duration && !isNaN(audio.duration)) {
-        const percentage = Math.floor(100 / audio.duration * audio.currentTime);
-        setProgress(percentage);
-      }
-    };
-
-    const onLoadedData = () => {
-      setLoadeddata(true);
-    };
-
-    const onPlaying = () => {
-      setPlaying(true);
-    };
-
-    const onPause = () => {
-      setPlaying(false);
-    };
-
-    audio.addEventListener("ended", onEnded);
-    audio.addEventListener("timeupdate", onTimeUpdate);
-    audio.addEventListener("loadeddata", onLoadedData);
-    audio.addEventListener("playing", onPlaying);
-    audio.addEventListener("pause", onPause);
+    audio.addEventListener('timeupdate', onTimeUpdate);
+    audio.addEventListener('loadedmetadata', onLoadedMetadata);
+    audio.addEventListener('play', onPlay);
+    audio.addEventListener('pause', onPause);
+    audio.addEventListener('ended', onEnded);
 
     return () => {
-      audio.removeEventListener("ended", onEnded);
-      audio.removeEventListener("timeupdate", onTimeUpdate);
-      audio.removeEventListener("loadeddata", onLoadedData);
-      audio.removeEventListener("playing", onPlaying);
-      audio.removeEventListener("pause", onPause);
+      audio.removeEventListener('timeupdate', onTimeUpdate);
+      audio.removeEventListener('loadedmetadata', onLoadedMetadata);
+      audio.removeEventListener('play', onPlay);
+      audio.removeEventListener('pause', onPause);
+      audio.removeEventListener('ended', onEnded);
     };
-  }, [src]);
+  }, []);
 
   const togglePlay = () => {
-    if (!audioRef.current) return;
-    if (!playing) {
-      audioRef.current.play();
-    } else {
-      audioRef.current.pause();
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
     }
   };
 
-  const stop = () => {
+  const handleStop = () => {
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
     }
   };
 
+  const handleScrub = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const time = Number(e.target.value);
+    if (audioRef.current) {
+      audioRef.current.currentTime = time;
+    }
+    setCurrentTime(time);
+  };
+
   return (
     <div className="audio-container">
+      <div className="audio-count-down-container">
+        <span className="audio-font audio-current-time" data-testid="audio-timer">
+          {formatTime(currentTime)}
+        </span>
+      </div>
+      <div className="audio-controls">
+        <Button onClick={togglePlay} className="audio-control-btn" data-testid="play-pause-btn">
+          {isPlaying ? (
+            <div style={{ display: 'flex', gap: '2px' }}>
+              <div style={{ width: '3px', height: '10px', background: 'black' }} />
+              <div style={{ width: '3px', height: '10px', background: 'black' }} />
+            </div>
+          ) : (
+            <Playp16 variant="16x16_4" />
+          )}
+        </Button>
+        <Button onClick={handleStop} className="audio-control-btn" data-testid="stop-btn">
+          <div className="audio-stop-icon" />
+        </Button>
+        <Range
+          min={0}
+          max={duration || 100}
+          value={currentTime}
+          onChange={handleScrub}
+          className="audio-range"
+        />
+      </div>
       <audio
         ref={audioRef}
         src={src}
-        autoPlay={autoPlay}
         className="audio-element"
+        {...audioProps}
       />
-      
-      <div className="audio-count-down-container">
-        <Frame display="flex" flexDirection="column" w="40%">
-          <div className="audio-font audio-duration">
-            {audioRef.current && parseCurrentTime(audioRef.current.duration)}
-          </div>
-          <div className="audio-font audio-opening-text">
-            {!loadeddata && "Opening"}
-          </div>
-        </Frame>
-        
-        <Frame display="flex" flexDirection="column" w="40%">
-          <div className={classNames("audio-font", "audio-current-time")}>
-            {audioRef.current && parseCurrentTime(audioRef.current.currentTime)}
-          </div>
-          <div className={classNames("audio-font", "audio-elapsed-time")}>
-            time
-          </div>
-        </Frame>
-      </div>
-
-      <div className="audio-controls">
-        <Button
-          className={classNames("audio-control-btn", { active: playing })}
-          disabled={!loadeddata}
-          onClick={togglePlay}
-          ref={playPauseRef}
-        >
-          {playing ? <Playp16 /> : <Playd16 />}
-        </Button>
-
-        <Button
-          className="audio-control-btn"
-          disabled={!loadeddata}
-          onClick={stop}
-          ref={stopRef}
-        >
-          <div className="audio-stop-icon" />
-        </Button>
-
-        <Range
-          className="audio-range"
-          ref={progressRef}
-          min="0"
-          max="100"
-          step="1"
-          value={progress}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            if (audioRef.current && audioRef.current.duration) {
-              const value = parseInt(e.target.value);
-              const percent = value / 100;
-              audioRef.current.currentTime = percent * audioRef.current.duration;
-              setProgress(value);
-            }
-          }}
-        />
-      </div>
     </div>
   );
-});
-
-Audio.displayName = "Audio";
+}
 
 export default Audio;
