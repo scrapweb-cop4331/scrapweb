@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Button, Frame, Input , Modal, TitleBar } from '@react95/core'
 import logo from '../../assets/logo_worded.png'
+import { mapResponseToUser, saveUserToCookie, type LoginResponseDTO } from './data'
 
 type Mode = 'login' | 'register'
 
@@ -43,16 +44,18 @@ export default function LoginPage() {
         body: JSON.stringify({ username, password })
       })
 
-      const data = await response.json()
+      const data: LoginResponseDTO = await response.json()
       console.log(data)
 
       if (!response.ok) {
-        setError(data.error || 'Login failed')
+        setError((data as any).error || 'Login failed')
         return
       }
 
-      localStorage.setItem('token', data.token)
-      setSuccess(`Logged in as ${data.user.username}`)
+      const user = mapResponseToUser(data);
+      saveUserToCookie(user);
+      
+      setSuccess(`Logged in as ${user.username}`)
       navigate('/')
 
     } catch (err) {

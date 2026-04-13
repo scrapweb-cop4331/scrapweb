@@ -76,7 +76,6 @@ describe("LoginPage Component", () => {
     fireEvent.click(screen.getByRole("button", { name: "OK" }));
 
     await waitFor(() => {
-      expect(localStorageMock.getItem("token")).toBe("fake-token");
       expect(mockNavigate).toHaveBeenCalledWith("/");
       expect(screen.getByText(/Logged in as testuser/i)).toBeInTheDocument();
     });
