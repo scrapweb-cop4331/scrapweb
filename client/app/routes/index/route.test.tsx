@@ -5,6 +5,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import Route, { loader } from "./route";
 import * as reactRouter from "react-router";
+import { auth } from "../../lib/auth";
 
 // Mock useLoaderData
 vi.mock("react-router", async () => {
@@ -14,6 +15,20 @@ vi.mock("react-router", async () => {
     useLoaderData: vi.fn(),
   };
 });
+
+// Mock auth
+vi.mock("../../lib/auth", () => ({
+  auth: {
+    loadUser: vi.fn(),
+  },
+}));
+
+// Mock Audio component with HTML5 audio player
+vi.mock("~/components/ui/common/Audio", () => ({
+  default: ({ src, autoPlay }: any) => (
+    <audio data-testid="mock-audio" src={src} autoPlay={autoPlay} />
+  ),
+}));
 
 // Mock react95 components
 vi.mock("@react95/core", async () => {
@@ -25,12 +40,12 @@ vi.mock("@react95/core", async () => {
       </div>
     ),
     Button: ({ children, onClick, disabled, className }: any) => (
-      <button onClick={onClick} disabled={disabled} className={className}>
+      <button onClick={onClick} disabled={disabled} className={className} data-testid={className}>
         {children}
       </button>
     ),
     Frame: ({ children, className, as: Component = "div", onClick }: any) => (
-      <Component className={className} onClick={onClick}>
+      <Component className={className} onClick={onClick} data-testid={className}>
         {children}
       </Component>
     ),
@@ -40,12 +55,15 @@ vi.mock("@react95/core", async () => {
         {children}
       </fieldset>
     ),
+    Range: () => <input type="range" />,
   };
 });
 
 // Mock react95 icons
 vi.mock("@react95/icons", () => ({
   Computer: () => <div data-testid="computer-icon" />,
+  Playd16: () => <div data-testid="play-icon" />,
+  Playp16: () => <div data-testid="pause-icon" />,
 }));
 
 // Mock global fetch
@@ -59,6 +77,7 @@ const mockEntries = [
     imageURL: "/test1.png",
     audioURL: "/audio1.mp3",
     timestamp: 20260410,
+    note: "Note 1",
     isInvalid: false,
   },
   {
@@ -67,6 +86,7 @@ const mockEntries = [
     imageURL: "/test2.png",
     audioURL: "/audio2.mp3",
     timestamp: 20251225,
+    note: "Note 2",
     isInvalid: false,
   },
 ];
@@ -75,6 +95,7 @@ describe("Route Component", () => {
   beforeEach(() => {
     vi.mocked(reactRouter.useLoaderData).mockReturnValue(mockEntries);
     mockFetch.mockReset();
+    vi.mocked(auth.loadUser).mockReturnValue({ token: "test-token" } as any);
   });
 
   it("renders entries and allows selection", () => {
@@ -83,14 +104,17 @@ describe("Route Component", () => {
     const buttons = screen.getAllByRole("button", { name: /04-10-2026|12-25-2025/ });
 
     // Placeholder should be visible when no selection
-    expect(screen.getByText("Select an entry to view details")).toBeInTheDocument();
+    expect(screen.getByText("Select an entry.")).toBeInTheDocument();
 
     // Click the first entry
     fireEvent.click(buttons[0]);
 
-    // LargeView should be visible
-    expect(screen.getByText("Hello, world")).toBeInTheDocument();
-    expect(screen.queryByText("Select an entry to view details")).not.toBeInTheDocument();
+    // Current LargeView shows date and note
+    // Multiple elements might have the date, so check that at least one is present
+    expect(screen.getAllByText("04-10-2026").length).toBeGreaterThanOrEqual(1);
+    // Note might be combined with Lorem Ipsum in the same element, so use a regex
+    expect(screen.getByText(/Note 1/)).toBeInTheDocument();
+    expect(screen.queryByText("Select an entry.")).not.toBeInTheDocument();
   });
 
   it("de-selects when the same button is pressed", () => {
@@ -101,15 +125,15 @@ describe("Route Component", () => {
 
     // Click an entry
     fireEvent.click(buttons[0]);
-    expect(screen.queryByText("Hello, world")).toBeInTheDocument();
+    expect(screen.getByText(/Note 1/)).toBeInTheDocument();
 
-    // Click reset
+    // Click reset (same button again)
     fireEvent.click(buttons[0]);
 
     // Should be de-selected
     expect(resetButton).toBeDisabled();
-    expect(screen.getByText("Select an entry to view details")).toBeInTheDocument();
-    expect(screen.queryByText("Hello, world")).not.toBeInTheDocument();
+    expect(screen.getByText("Select an entry.")).toBeInTheDocument();
+    expect(screen.queryByText(/Note 1/)).not.toBeInTheDocument();
   });
 
   it("filters out invalid entries", () => {
@@ -121,6 +145,7 @@ describe("Route Component", () => {
         imageURL: "/test3.png",
         audioURL: "/audio3.mp3",
         timestamp: 0,
+        note: "",
         isInvalid: true,
       },
     ];
@@ -140,6 +165,7 @@ describe("Route Component", () => {
         imageURL: "/test1.png",
         audioURL: "/audio1.mp3",
         timestamp: 20260410,
+        note: "",
         isInvalid: false,
       },
       {
@@ -148,6 +174,7 @@ describe("Route Component", () => {
         imageURL: "/test2.png",
         audioURL: "/audio2.mp3",
         timestamp: 20260315,
+        note: "",
         isInvalid: false,
       },
       {
@@ -156,6 +183,7 @@ describe("Route Component", () => {
         imageURL: "/test3.png",
         audioURL: "/audio3.mp3",
         timestamp: 20251225,
+        note: "",
         isInvalid: false,
       },
     ];
@@ -200,19 +228,18 @@ describe("Route Component", () => {
         json: async () => mockMediaData,
       });
 
-      const result = await loader();
+      const result = await loader({ request: new Request("http://localhost") } as any);
 
       expect(mockFetch).toHaveBeenCalledWith(
         "http://137.184.93.240/api/media",
         expect.objectContaining({
           method: "GET",
           headers: expect.objectContaining({
-            Authorization: expect.stringContaining("Bearer "),
+            Authorization: "Bearer test-token",
           }),
         })
       );
       
-      //todo it should also check for audio. DO NOT IMPLEMENT UNLESS USER REQUESTS A FIX ON TODOS
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual(
         expect.objectContaining({
@@ -220,6 +247,7 @@ describe("Route Component", () => {
           imageURL: "http://137.184.93.240/photo1.jpg",
           date: "04-10-2026",
           timestamp: 20260410,
+          note: "Note 1"
         })
       );
     });

@@ -3,7 +3,7 @@
 */
 import { render, fireEvent } from "@testing-library/react";
 import { test, expect, vi } from "vitest";
-import { MemoryRouter, Router, useLocation } from "react-router";
+import { MemoryRouter, Router, useLocation, useLoaderData } from "react-router";
 import {BrowserRouter } from "react-router-dom";
 import App from "./root";
 
@@ -12,11 +12,18 @@ import App from "./root";
 vi.mock("react-router", () => ({
   useLocation: () => ({ pathname: "/" }),
   useNavigate: () => vi.fn(),
+  useLoaderData: () => ({ user: { username: "testuser" } }),
   Outlet: () => <div data-testid="outlet" />,
   Links: () => null,
   Meta: () => null,
   Scripts: () => null,
   ScrollRestoration: () => null,
+}));
+
+vi.mock("./lib/auth", () => ({
+  auth: {
+    loadUser: vi.fn(),
+  },
 }));
 
 vi.mock("@react95/core", async () => {
