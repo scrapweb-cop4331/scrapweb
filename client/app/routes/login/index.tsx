@@ -98,115 +98,165 @@ export default function LoginPage() {
   }
 
   return (
-      <div className="flex items-center justify-center min-h-screen bg-[#008080]">
-        <Modal
-          boxShadow="$out"
-          padding="0"
-          bgColor="$material"
-          title="ScrapWeb"
-          titleBarOptions={<TitleBar.Close></TitleBar.Close>}
-          style={{ width: '320px' }}
+    <div style={{ display: "flex", justifyContent: "center", height: "80vh" }}>
+      <Modal
+        dragOptions={{ defaultPosition: { x: 0, y: 0 }, bounds: "body" }}
+        boxShadow="$out"
+        padding="0"
+        bgColor="$material"
+        title="ScrapWeb"
+        titleBarOptions={<TitleBar.Close></TitleBar.Close>}
+        style={{ width: "320px"}}
+      >
+        {/* Body */}
+        <div
+          style={{
+            padding: "16px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+          }}
         >
-
-          {/* Body */}
-          <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-
-            {/* Logo */}
-            <div style={{ display: 'flex', justifyContent: 'flex-start', paddingBottom: '4px' }}>
-              <img src={logo} alt="Logo" style={{ height: '50px', width: 'auto', objectFit: 'contain' }} />
-            </div>
-
-            {/* Error */}
-            {error && (
-              <Frame boxShadow="in" padding="4px 6px">
-                <span style={{ color: 'red', fontSize: '12px' }}>⚠ {error}</span>
-              </Frame>
-            )}
-
-            {/* Success */}
-            {success && (
-              <Frame boxShadow="in" padding="4px 6px">
-                <span style={{ fontSize: '12px' }}>✔ {success}</span>
-              </Frame>
-            )}
-
-            {/* Register-only fields */}
-            {mode === 'register' && (
-              <>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                  <label style={{ fontSize: '12px' }} htmlFor="firstName">First Name</label>
-                  <Input
-                    id="firstName"
-                    value={firstName}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFirstName(e.target.value)}
-                    style={{ width: '100%' }}
-                  />
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                  <label style={{ fontSize: '12px' }} htmlFor="lastName">Last Name</label>
-                  <Input
-                    id="lastName"
-                    value={lastName}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLastName(e.target.value)}
-                    style={{ width: '100%' }}
-                  />
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                  <label style={{ fontSize: '12px' }} htmlFor="email">Email</label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-                    style={{ width: '100%' }}
-                  />
-                </div>
-              </>
-            )}
-
-            {/* Shared fields */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-              <label style={{ fontSize: '12px' }} htmlFor="username">Username</label>
-              <Input
-                id="username"
-                value={username}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
-                style={{ width: '100%' }}
-              />
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-              <label style={{ fontSize: '12px' }} htmlFor="password">Password</label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-                style={{ width: '100%' }}
-              />
-            </div>
-
-            {/* Buttons */}
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '4px' }}>
-              <Button
-                onClick={mode === 'login' ? handleLogin : handleRegister}
-                disabled={loading}
-                style={{ minWidth: '75px' }}
-              >
-                {loading ? '...' : mode === 'login' ? 'OK' : 'Register'}
-              </Button>
-              <Button
-                onClick={() => switchMode(mode === 'login' ? 'register' : 'login')}
-                style={{ minWidth: '75px' }}
-              >
-                {mode === 'login' ? 'Register' : 'Back'}
-              </Button>
-            </div>
-
+          {/* Logo */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-start",
+              paddingBottom: "4px",
+            }}
+          >
+            <img
+              src={logo}
+              alt="Logo"
+              style={{ height: "50px", width: "auto", objectFit: "contain" }}
+            />
           </div>
-        </Modal>
-      </div>
-  )
+
+          {/* Error */}
+          {error && (
+            <Frame boxShadow="in" padding="4px 6px">
+              <span style={{ color: "red", fontSize: "12px" }}>⚠ {error}</span>
+            </Frame>
+          )}
+
+          {/* Success */}
+          {success && (
+            <Frame boxShadow="in" padding="4px 6px">
+              <span style={{ fontSize: "12px" }}>✔ {success}</span>
+            </Frame>
+          )}
+
+          {/* Register-only fields */}
+          {mode === "register" && (
+            <>
+              <div
+                style={{ display: "flex", flexDirection: "column", gap: "2px" }}
+              >
+                <label style={{ fontSize: "12px" }} htmlFor="firstName">
+                  First Name
+                </label>
+                <Input
+                  id="firstName"
+                  value={firstName}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setFirstName(e.target.value)
+                  }
+                  style={{ width: "100%" }}
+                />
+              </div>
+
+              <div
+                style={{ display: "flex", flexDirection: "column", gap: "2px" }}
+              >
+                <label style={{ fontSize: "12px" }} htmlFor="lastName">
+                  Last Name
+                </label>
+                <Input
+                  id="lastName"
+                  value={lastName}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setLastName(e.target.value)
+                  }
+                  style={{ width: "100%" }}
+                />
+              </div>
+
+              <div
+                style={{ display: "flex", flexDirection: "column", gap: "2px" }}
+              >
+                <label style={{ fontSize: "12px" }} htmlFor="email">
+                  Email
+                </label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setEmail(e.target.value)
+                  }
+                  style={{ width: "100%" }}
+                />
+              </div>
+            </>
+          )}
+
+          {/* Shared fields */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+            <label style={{ fontSize: "12px" }} htmlFor="username">
+              Username
+            </label>
+            <Input
+              id="username"
+              value={username}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setUsername(e.target.value)
+              }
+              style={{ width: "100%" }}
+            />
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+            <label style={{ fontSize: "12px" }} htmlFor="password">
+              Password
+            </label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setPassword(e.target.value)
+              }
+              style={{ width: "100%" }}
+            />
+          </div>
+
+          {/* Buttons */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: "8px",
+              marginTop: "4px",
+            }}
+          >
+            <Button
+              onClick={mode === "login" ? handleLogin : handleRegister}
+              disabled={loading}
+              style={{ minWidth: "75px" }}
+            >
+              {loading ? "..." : mode === "login" ? "OK" : "Register"}
+            </Button>
+            <Button
+              onClick={() =>
+                switchMode(mode === "login" ? "register" : "login")
+              }
+              style={{ minWidth: "75px" }}
+            >
+              {mode === "login" ? "Register" : "Back"}
+            </Button>
+          </div>
+        </div>
+      </Modal>
+    </div>
+  );
 }

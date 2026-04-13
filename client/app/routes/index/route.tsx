@@ -9,8 +9,7 @@ import { EntrySeparator } from "./EntrySeparator";
 import "./styles.css";
 
 const jwtbase64 =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDk2YjE2YjhhNTkwZWVkMzBiMmI5MyIsImlhdCI6MTc3NTk1NTgzOSwiZXhwIjoxNzc2MDQyMjM5fQ.4FvoxUWeVpZKm-Oer4tPZxyXYX9A6PwvWvnc-YfEZFs";
-
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDk2YjE2YjhhNTkwZWVkMzBiMmI5MyIsImlhdCI6MTc3NjA0NzA2OCwiZXhwIjoxNzc2MTMzNDY4fQ.8q72Z2ZeIUR2mevOxWe5eV4DkBNwpmECcmvguuZYk_Y";
 export async function loader() {
     try {
         const response = await fetch("http://137.184.93.240/api/media", {
