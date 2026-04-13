@@ -7,15 +7,19 @@ import EntryButton from "./EntryButton";
 import LargeView from "./LargeView";
 import { EntrySeparator } from "./EntrySeparator";
 import "./styles.css";
+import { auth } from "../../lib/auth";
+import type { Route } from "./+types/route";
 
-const jwtbase64 =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDk2YjE2YjhhNTkwZWVkMzBiMmI5MyIsImlhdCI6MTc3NjA0NzA2OCwiZXhwIjoxNzc2MTMzNDY4fQ.8q72Z2ZeIUR2mevOxWe5eV4DkBNwpmECcmvguuZYk_Y";
-export async function loader() {
+export async function loader({ request }: Route.LoaderArgs) {
+    const cookieHeader = request.headers.get("Cookie");
+    const user = auth.loadUser(cookieHeader);
+    const token = user?.token;
+
     try {
-        const response = await fetch("http://137.184.93.240/api/media", {
+        const response = await fetch("http://137.184.93.240:80/api/media", {
             method: "GET",
             headers: {
-                "Authorization": `Bearer ${jwtbase64}`
+                "Authorization": `Bearer ${token}`
             },
         });
         if (!response.ok) {
@@ -34,6 +38,7 @@ export async function loader() {
         return [];
     }
 }
+
 
 export default function Route() {
     const rawEntries = useLoaderData<EntryItem[]>();

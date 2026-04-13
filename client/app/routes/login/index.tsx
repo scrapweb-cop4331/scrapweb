@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Button, Frame, Input , Modal, TitleBar } from '@react95/core'
 import logo from '../../assets/logo_worded.png'
-import { mapResponseToUser, saveUserToCookie, type LoginResponseDTO } from './data'
+import { mapResponseToUser, type LoginResponseDTO } from './data'
+import { auth } from '../../lib/auth'
 
 type Mode = 'login' | 'register'
 
@@ -45,7 +46,6 @@ export default function LoginPage() {
       })
 
       const data: LoginResponseDTO = await response.json()
-      console.log(data)
 
       if (!response.ok) {
         setError((data as any).error || 'Login failed')
@@ -53,7 +53,7 @@ export default function LoginPage() {
       }
 
       const user = mapResponseToUser(data);
-      saveUserToCookie(user);
+      auth.saveUser(user);
       
       setSuccess(`Logged in as ${user.username}`)
       navigate('/')
@@ -84,7 +84,6 @@ export default function LoginPage() {
       })
 
       const data = await response.json()
-      console.log(data)
 
       if (!response.ok) {
         setError(data.error || 'Registration failed')

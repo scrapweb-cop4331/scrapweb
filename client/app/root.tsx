@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, createContext, useContext } from "react";
 import {
   isRouteErrorResponse,
   Links,
@@ -7,6 +7,8 @@ import {
   Scripts,
   ScrollRestoration,
   useLocation,
+  redirect,
+  useLoaderData,
 } from "react-router";
 
 import type { Route } from "./+types/root";
@@ -16,10 +18,35 @@ import "@react95/core/GlobalStyle";
 import "@react95/core/themes/win95.css";
 import { DesktopIcon } from "./components/ui/common/DesktopIcon";
 import { AppWindow } from "./components/ui/common/AppWindow";
+import { auth, type User } from "./lib/auth";
 
 export const links: Route.LinksFunction = () => [
   // { rel: "preconnect", href: "https://fonts.googleapis.com" },
 ];
+
+export const loader = async ({ request }: Route.LoaderArgs) => {
+  const url = new URL(request.url);
+  const isLoginPage = url.pathname === "/login";
+  const isIdkPage = url.pathname === "/idk";
+  
+  const cookieHeader = request.headers.get("Cookie");
+  const user = auth.loadUser(cookieHeader);
+
+  if (!user && !isLoginPage && !isIdkPage) {
+    return redirect("/login");
+  }
+
+  // If we are logged in and try to go to login page, redirect to home
+  if (user && isLoginPage) {
+    return redirect("/");
+  }
+
+  return { user };
+};
+
+const AuthContext = createContext<{ user: User | null }>({ user: null });
+
+export const useAuth = () => useContext(AuthContext);
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -40,11 +67,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const { user } = useLoaderData<typeof loader>();
   const [isOpen, setIsOpen] = useState(true);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const location = useLocation();
   const renderOutletDirectly = ["/login", "/idk"].includes(location.pathname);
-  // const isLoginPage = location.pathname === "/login";
+
+  // Initialize auth service on client
+  useEffect(() => {
+    auth.loadUser();
+  }, []);
 
   const onClickScrapwebIcon = () => {
     if (isOpen) {
@@ -52,25 +84,27 @@ export default function App() {
     } else setIsOpen(true);
   };
 
-  if (renderOutletDirectly) {
-    return <Outlet />;
-  }
-
   return (
-    <div className="center-div">
-      <DesktopIcon onClick={onClickScrapwebIcon} />
-      <AppWindow
-        dragOptions={{
-          position,
-          onDrag: ({ offsetX, offsetY }) =>
-            setPosition({ x: offsetX, y: offsetY }),
-        }}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-      >
+    <AuthContext.Provider value={{ user }}>
+      {renderOutletDirectly ? (
         <Outlet />
-      </AppWindow>
-    </div>
+      ) : (
+        <div className="center-div">
+          <DesktopIcon onClick={onClickScrapwebIcon} />
+          <AppWindow
+            dragOptions={{
+              position,
+              onDrag: ({ offsetX, offsetY }) =>
+                setPosition({ x: offsetX, y: offsetY }),
+            }}
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+          >
+            <Outlet />
+          </AppWindow>
+        </div>
+      )}
+    </AuthContext.Provider>
   );
 }
 
