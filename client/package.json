@@ -10,6 +10,7 @@
     "test": "vitest --coverage --ui"
   },
   "dependencies": {
+    "@neodrag/react": "^2.3.1",
     "@react-router/fs-routes": "^7.14.0",
     "@react-router/node": "7.14.0",
     "@react-router/serve": "7.14.0",

@@ -42,8 +42,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   const [isOpen, setIsOpen] = useState(true);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
   const location = useLocation();
   const isLoginPage = location.pathname === "/login";
+
+  const onClickScrapwebIcon = () => {
+    if (isOpen) {
+      setPosition({ x: 0, y: 0 });
+    } else setIsOpen(true);
+  };
 
   if (isLoginPage) {
     return <Outlet />;
@@ -51,8 +58,16 @@ export default function App() {
 
   return (
     <div className="center-div">
-      <DesktopIcon onClick={() => setIsOpen(true)} />
-      <AppWindow isOpen={isOpen} setIsOpen={setIsOpen}>
+      <DesktopIcon onClick={onClickScrapwebIcon} />
+      <AppWindow
+        dragOptions={{
+          position,
+          onDrag: ({ offsetX, offsetY }) =>
+            setPosition({ x: offsetX, y: offsetY }),
+        }}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      >
         <Outlet />
       </AppWindow>
     </div>
