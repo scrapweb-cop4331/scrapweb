@@ -51,3 +51,9 @@ exports[`entry is unpressed 1`] = `
   </ForwardRef(FrameComponent)>
 </React.Fragment>
 `;
+
+exports[`this is it right? 1`] = `
+<div>
+  this is whatever I want
+</div>
+`;

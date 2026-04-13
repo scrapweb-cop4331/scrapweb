@@ -1,5 +1,7 @@
-import { test, expect } from "vitest";
+import { test, expect, vi } from "vitest";
 import EntryButton from "./EntryButton";
+import { useLocation } from "react-router";
+import { useState } from "react";
 
 test("entry is unpressed", () => {
   expect(EntryButton({
@@ -20,3 +22,4 @@ test("entry is pressed", () => {
     }),
   ).toMatchSnapshot();
 });
+
