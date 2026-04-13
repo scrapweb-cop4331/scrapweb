@@ -15,6 +15,7 @@ export type EntryItem = {
   audioURL: string;
   timestamp: number;
   date: string;
+  note: string;
   isInvalid: boolean; // Errors should be hidden, so if this is true then remove this entry from the list before rendering
 }
 
@@ -68,5 +69,6 @@ export function mapMediaToEntry(dto: MediaDTO): EntryItem {
     timestamp: timestamp,
     date: dateString,
     isInvalid: isInvalid,
+    note: dto.notes ? dto.notes : ""
   };
 }

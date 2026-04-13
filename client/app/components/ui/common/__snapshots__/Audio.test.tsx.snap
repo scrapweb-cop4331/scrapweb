@@ -87,3 +87,179 @@ exports[`Audio snapshot 1`] = `
   </div>
 </DocumentFragment>
 `;
+
+exports[`Play button stays pressed while playing > paused 1`] = `
+<DocumentFragment>
+  <div
+    class="audio-container"
+  >
+    <audio
+      class="audio-element"
+      src="test.mp3"
+    />
+    <div
+      class="audio-count-down-container"
+    >
+      <div
+        class="r95_iuzg895f r95_iuzg893 r95_iuzg893f"
+        style="--r95_iuzg895c: 40%; --r95_iuzg890: flex; --r95_iuzg893c: column;"
+      >
+        <div
+          class="audio-font audio-duration"
+        >
+          00:00
+        </div>
+        <div
+          class="audio-font audio-opening-text"
+        />
+      </div>
+      <div
+        class="r95_iuzg895f r95_iuzg893 r95_iuzg893f"
+        style="--r95_iuzg895c: 40%; --r95_iuzg890: flex; --r95_iuzg893c: column;"
+      >
+        <div
+          class="audio-font audio-current-time"
+        >
+          00:00
+        </div>
+        <div
+          class="audio-font audio-elapsed-time"
+        >
+          time
+        </div>
+      </div>
+    </div>
+    <div
+      class="audio-controls"
+    >
+      <button
+        class="r95_1bzq74l0 audio-control-btn"
+      >
+        <svg
+          height="16"
+          shape-rendering="crispEdges"
+          viewBox="0 -0.5 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M2 1h2M2 2h1m1 0h1M2 3h1m2 0h1M2 4h1m3 0h1M2 5h1m4 0h1M2 6h1m5 0h1M2 7h1m6 0h1M2 8h1m5 0h1M2 9h1m4 0h1m-6 1h1m3 0h1m-5 1h1m2 0h1m-4 1h1m1 0h1m-3 1h2"
+            stroke="#000"
+          />
+          <path
+            d="M3 2h1M3 3h2M3 4h3M3 5h4M3 6h5M3 7h6M3 8h5M3 9h4m-4 1h3m-3 1h2m-2 1h1"
+            stroke="#0f0"
+          />
+          <path
+            d="M10 9h1m-2 1h2m-3 1h6m-5 1h2m-1 1h1"
+            stroke="#0ff"
+          />
+        </svg>
+      </button>
+      <button
+        class="r95_1bzq74l0 audio-control-btn"
+      >
+        <div
+          class="audio-stop-icon"
+        />
+      </button>
+      <input
+        class="r95_1i4w9z20 audio-range"
+        max="100"
+        min="0"
+        step="1"
+        type="range"
+        value="0"
+      />
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`Play button stays pressed while playing > playing 1`] = `
+<DocumentFragment>
+  <div
+    class="audio-container"
+  >
+    <audio
+      class="audio-element"
+      src="test.mp3"
+    />
+    <div
+      class="audio-count-down-container"
+    >
+      <div
+        class="r95_iuzg895f r95_iuzg893 r95_iuzg893f"
+        style="--r95_iuzg895c: 40%; --r95_iuzg890: flex; --r95_iuzg893c: column;"
+      >
+        <div
+          class="audio-font audio-duration"
+        >
+          00:00
+        </div>
+        <div
+          class="audio-font audio-opening-text"
+        />
+      </div>
+      <div
+        class="r95_iuzg895f r95_iuzg893 r95_iuzg893f"
+        style="--r95_iuzg895c: 40%; --r95_iuzg890: flex; --r95_iuzg893c: column;"
+      >
+        <div
+          class="audio-font audio-current-time"
+        >
+          00:00
+        </div>
+        <div
+          class="audio-font audio-elapsed-time"
+        >
+          time
+        </div>
+      </div>
+    </div>
+    <div
+      class="audio-controls"
+    >
+      <button
+        class="r95_1bzq74l0 audio-control-btn"
+      >
+        <svg
+          height="16"
+          shape-rendering="crispEdges"
+          viewBox="0 -0.5 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M11 0h1m-1 1h2M8 2h6m-3 1h2m-2 1h1"
+            stroke="#0ff"
+          />
+          <path
+            d="M2 1h2M2 2h1m1 0h1M2 3h1m2 0h1M2 4h1m3 0h1M2 5h1m4 0h1M2 6h1m5 0h1M2 7h1m6 0h1M2 8h1m5 0h1M2 9h1m4 0h1m-6 1h1m3 0h1m-5 1h1m2 0h1m-4 1h1m1 0h1m-3 1h2"
+            stroke="#000"
+          />
+          <path
+            d="M3 2h1M3 3h2M3 4h3M3 5h4M3 6h5M3 7h6M3 8h5M3 9h4m-4 1h3m-3 1h2m-2 1h1"
+            stroke="#0f0"
+          />
+        </svg>
+      </button>
+      <button
+        class="r95_1bzq74l0 audio-control-btn"
+      >
+        <div
+          class="audio-stop-icon"
+        />
+      </button>
+      <input
+        class="r95_1i4w9z20 audio-range"
+        max="100"
+        min="0"
+        step="1"
+        type="range"
+        value="0"
+      />
+    </div>
+  </div>
+</DocumentFragment>
+`;

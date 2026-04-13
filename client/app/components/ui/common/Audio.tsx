@@ -139,7 +139,7 @@ const Audio = forwardRef<AudioRefs, AudioProps>(({ src, autoPlay = false }, ref)
 
       <div className="audio-controls">
         <Button
-          className="audio-control-btn"
+          className={classNames("audio-control-btn", { active: playing })}
           disabled={!loadeddata}
           onClick={togglePlay}
           ref={playPauseRef}

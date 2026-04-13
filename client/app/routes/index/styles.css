@@ -33,16 +33,20 @@
     display:flex;
     flex: 2;
     overflow: hidden;
+    min-width: 0;
   }
 
   .largeview-section {
     flex: 1;
+    padding: 0rem 2rem;
     overflow: auto;
     min-width: 0;
+    min-height: 0;
+    max-height: 80%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    /* justify-content: center; */
     background-color: var(--color-material);
     border: 1px solid var(--color-border-dark);
     box-shadow: inset 1px 1px 0 var(--color-border-lightest), 
@@ -199,16 +203,18 @@
   }
 
 
-.large-view {
-font-size: 2rem;
-}
 
 /* EntrySeparator Styles */
 .entry-separator {
-grid-column: 1 / -1;
-display: flex;
-flex-direction: column;
-margin: 16px 0 8px 0;
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  margin: 16px 0 8px 0;
+  padding: 8px;
+  background-color: var(--color-material);
+  border: 1px solid var(--color-border-dark);
+  box-shadow: inset 1px 1px 0 var(--color-border-lightest), 
+              inset -1px -1px 0 var(--color-border-dark);
 }
 
 .entry-separator.year {
@@ -219,6 +225,7 @@ margin-top: 32px;
 margin: 0 0 8px 0;
 font-family: "MS Sans Serif", sans-serif;
 color: var(--color-material-text);
+text-shadow: 1px 1px 0 var(--color-border-lightest);
 }
 
 .month .separator-heading {
@@ -238,4 +245,26 @@ width: 100%;
 border-top: 1px solid var(--color-border-dark);
 border-bottom: 1px solid var(--color-border-lightest);
 }
+.right-panel {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
 
+.largeview-date {
+  font-size: 24px;
+  padding-top: 10px;
+}
+
+.audio-player-container {
+  flex-shrink: 0;
+  padding: 10px;
+}
+
+
+.largeview-header > * {
+  text-align: center;
+  min-width: 8rem;
+  max-width: 18rem;
+}

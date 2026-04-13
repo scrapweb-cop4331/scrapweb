@@ -12,12 +12,6 @@ const EntryButton = ({
   isActive,
   onClick,
 }: EntryButtonProps) => {
-  console.log({
-    date,
-    imageURL,
-    isActive,
-    onClick
-  })
   return (
     <>
       <Frame
