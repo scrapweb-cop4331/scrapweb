@@ -9,7 +9,6 @@ import { EntrySeparator } from "./EntrySeparator";
 import "./styles.css";
 import { auth } from "../../lib/auth";
 import type { Route } from "./+types/route";
-import Audio from "~/components/ui/common/Audio";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const cookieHeader = request.headers.get("Cookie");
