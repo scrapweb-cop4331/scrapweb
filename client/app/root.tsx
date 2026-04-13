@@ -43,7 +43,8 @@ export default function App() {
   const [isOpen, setIsOpen] = useState(true);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const location = useLocation();
-  const isLoginPage = location.pathname === "/login";
+  const renderOutletDirectly = ["/login", "/idk"].includes(location.pathname);
+  // const isLoginPage = location.pathname === "/login";
 
   const onClickScrapwebIcon = () => {
     if (isOpen) {
@@ -51,7 +52,7 @@ export default function App() {
     } else setIsOpen(true);
   };
 
-  if (isLoginPage) {
+  if (renderOutletDirectly) {
     return <Outlet />;
   }
 
