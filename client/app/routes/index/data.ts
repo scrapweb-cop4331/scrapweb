@@ -36,7 +36,7 @@ export function mapMediaToEntry(dto: MediaDTO): EntryItem {
 
   if (dto.audio) {
     if (URL.parse(base + dto.audio)) {
-      audioURL = base+  dto.audio;
+      audioURL = base + dto.audio;
     }
   }
 

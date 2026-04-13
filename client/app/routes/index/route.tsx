@@ -114,9 +114,8 @@ export default function Route() {
         date: "",
         note: "",
         isInvalid: true,
-    }
+      }
   }, [entries, selectedId]);
-
   return (
     <div className="modal-content">
       <div className="main-layout">
