@@ -3,6 +3,7 @@
 exports[`AppWindow matches snapshot 1`] = `
 <Modal
   className="app-modal"
+  dragOptions={{}}
   icon={
     <Memo(Computer)
       variant="16x16_4"

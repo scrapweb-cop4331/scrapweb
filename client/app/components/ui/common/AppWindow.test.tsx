@@ -33,5 +33,5 @@ vi.mock("@react95/core", async () => {
 });
 
 test("AppWindow matches snapshot", () => {
-  expect(AppWindow({ children: <div />, isOpen: true, setIsOpen: () => {} })).toMatchSnapshot();
+  expect(AppWindow({ children: <div />, dragOptions: {}, isOpen: true, setIsOpen: () => {}})).toMatchSnapshot();
 });
