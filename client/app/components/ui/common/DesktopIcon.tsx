@@ -7,7 +7,7 @@ interface DesktopIconProps {
 export function DesktopIcon({ onClick }: DesktopIconProps) {
   return (
     <button className="desktop-icon" onClick={onClick}>
-      <Computer variant="32x32_4" />
+      <img src={"/app/assets/logo-icon.png"} alt="" />
       <span className="desktop-icon-label">Scrapweb</span>
     </button>
   );

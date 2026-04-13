@@ -5,8 +5,9 @@ exports[`DesktopIcon matches snapshot 1`] = `
   className="desktop-icon"
   onClick={[Function]}
 >
-  <Memo(Computer)
-    variant="32x32_4"
+  <img
+    alt=""
+    src="/app/assets/logo-icon.png"
   />
   <span
     className="desktop-icon-label"

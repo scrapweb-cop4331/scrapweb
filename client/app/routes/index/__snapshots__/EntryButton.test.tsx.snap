@@ -14,7 +14,7 @@ exports[`entry is pressed 1`] = `
     >
       <img
         className="entry-image"
-        src="/app/assets/logo_worded.jpg"
+        src="/app/assets/logo-icon.png"
       />
     </ForwardRef(FrameComponent)>
     <label
@@ -40,7 +40,7 @@ exports[`entry is unpressed 1`] = `
     >
       <img
         className="entry-image"
-        src="/app/assets/logo_worded.jpg"
+        src="/app/assets/logo-icon.png"
       />
     </ForwardRef(FrameComponent)>
     <label
@@ -50,10 +50,4 @@ exports[`entry is unpressed 1`] = `
     </label>
   </ForwardRef(FrameComponent)>
 </React.Fragment>
-`;
-
-exports[`this is it right? 1`] = `
-<div>
-  this is whatever I want
-</div>
 `;

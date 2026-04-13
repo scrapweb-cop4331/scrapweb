@@ -23,7 +23,7 @@ export function mapMediaToEntry(dto: MediaDTO): EntryItem {
 
   const base = "http://137.184.93.240";
 
-  let imgURL = "/app/assets/logo_worded.jpg";
+  let imgURL = "/app/assets/logo-icon.png";
 
   if (dto.photo) {
     if (URL.parse(base + dto.photo)) {
