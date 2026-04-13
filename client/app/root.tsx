@@ -12,14 +12,13 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 
-import '@react95/core/GlobalStyle';
-import '@react95/core/themes/win95.css';
+import "@react95/core/GlobalStyle";
+import "@react95/core/themes/win95.css";
 import { DesktopIcon } from "./components/ui/common/DesktopIcon";
 import { AppWindow } from "./components/ui/common/AppWindow";
 
 export const links: Route.LinksFunction = () => [
   // { rel: "preconnect", href: "https://fonts.googleapis.com" },
-
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
