@@ -11,14 +11,14 @@ export type AudioProps = {
 };
 
 export type AudioRefs = {
-  audio: React.RefObject<HTMLAudioElement>;
-  progress: React.RefObject<HTMLInputElement>;
-  playpause: React.RefObject<HTMLButtonElement>;
-  stop: React.RefObject<HTMLButtonElement>;
+  audio: React.RefObject<HTMLAudioElement | null>;
+  progress: React.RefObject<HTMLInputElement | null>;
+  playpause: React.RefObject<HTMLButtonElement | null>;
+  stop: React.RefObject<HTMLButtonElement | null>;
 };
 
 function parseCurrentTime(secs: number) {
-  if (!secs) {
+  if (!secs || isNaN(secs)) {
     return "00:00";
   }
   const sec = parseInt(secs.toString(), 10);
@@ -49,14 +49,20 @@ const Audio = forwardRef<AudioRefs, AudioProps>(({ src, autoPlay = false }, ref)
     const audio = audioRef.current;
     if (!audio) return;
 
+    // Reset state when src changes
+    setLoadeddata(audio.readyState >= 3);
+    setPlaying(!audio.paused);
+
     const onEnded = () => {
       setPlaying(false);
       setProgress(0);
     };
 
     const onTimeUpdate = () => {
-      const percentage = Math.floor(100 / audio.duration * audio.currentTime);
-      setProgress(percentage);
+      if (audio.duration && !isNaN(audio.duration)) {
+        const percentage = Math.floor(100 / audio.duration * audio.currentTime);
+        setProgress(percentage);
+      }
     };
 
     const onLoadedData = () => {
@@ -67,18 +73,24 @@ const Audio = forwardRef<AudioRefs, AudioProps>(({ src, autoPlay = false }, ref)
       setPlaying(true);
     };
 
+    const onPause = () => {
+      setPlaying(false);
+    };
+
     audio.addEventListener("ended", onEnded);
     audio.addEventListener("timeupdate", onTimeUpdate);
     audio.addEventListener("loadeddata", onLoadedData);
     audio.addEventListener("playing", onPlaying);
+    audio.addEventListener("pause", onPause);
 
     return () => {
       audio.removeEventListener("ended", onEnded);
       audio.removeEventListener("timeupdate", onTimeUpdate);
       audio.removeEventListener("loadeddata", onLoadedData);
       audio.removeEventListener("playing", onPlaying);
+      audio.removeEventListener("pause", onPause);
     };
-  }, []);
+  }, [src]);
 
   const togglePlay = () => {
     if (!audioRef.current) return;
@@ -87,7 +99,6 @@ const Audio = forwardRef<AudioRefs, AudioProps>(({ src, autoPlay = false }, ref)
     } else {
       audioRef.current.pause();
     }
-    setPlaying(!playing);
   };
 
   const stop = () => {
@@ -95,7 +106,6 @@ const Audio = forwardRef<AudioRefs, AudioProps>(({ src, autoPlay = false }, ref)
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
     }
-    setPlaying(false);
   };
 
   return (
@@ -153,9 +163,9 @@ const Audio = forwardRef<AudioRefs, AudioProps>(({ src, autoPlay = false }, ref)
           max="100"
           step="1"
           value={progress}
-          onChange={({ target }) => {
-            if (audioRef.current) {
-              const value = parseInt(target.value);
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            if (audioRef.current && audioRef.current.duration) {
+              const value = parseInt(e.target.value);
               const percent = value / 100;
               audioRef.current.currentTime = percent * audioRef.current.duration;
               setProgress(value);
