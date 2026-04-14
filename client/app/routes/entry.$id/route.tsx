@@ -1,8 +1,11 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { useNavigate } from 'react-router'
+import { useLoaderData, useNavigate } from 'react-router'
 import { Button, Frame, Modal, TitleBar } from '@react95/core'
 import { Inetcpl1305, Lock, Progman9 } from '@react95/icons'
 import placeholder from "~/assets/logo-icon.png";
+import AudioPlayer from '~/components/ui/common/AudioPlayer';
+import { getEntries } from '~/lib/api';
+import type { Route } from './+types/entry.$id';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -135,9 +138,22 @@ function ImagePlaceholder() {
   )
 }
 
-// ─── Main Component ───────────────────────────────────────────────────────────
+export async function clientLoader({request, params}: Route.ClientLoaderArgs ) {
+  if (!params.id) {
+    return null;
+  }
+  
+  const entries = await getEntries();
+  const entry = entries.find((value) => {
+    return (value.id === params.id)
+  })
+  if (!entry) return null;
+  return entry;
+}
 
-export default function MediaDetail({
+
+// ─── Main Component ───────────────────────────────────────────────────────────
+export default function MediaDetailRoute({
   mediaItem,
   songTitle = 'Untitled',
   artist = 'Unknown Artist',
@@ -145,8 +161,9 @@ export default function MediaDetail({
 }: MediaDetailProps) {
   const getToken = () => typeof window !== 'undefined' ? localStorage.getItem('token') || '' : ''
   const navigate = useNavigate()
-
+  
   // ── State ──
+  const entry = useLoaderData<typeof clientLoader>();
   const [editMode, setEditMode] = useState(false)
   const [text, setText] = useState(mediaItem?.text ?? '')
   const [audioUrl, setAudioUrl] = useState(mediaItem?.audio ? `${BASE}${mediaItem.audio}` : '')
@@ -307,11 +324,7 @@ export default function MediaDetail({
 
   // ── Routing on close ──
   const handleClose = () => {
-    if (player.playing) {
-      navigate('/split-screen')
-    } else {
-      navigate('/large-view')
-    }
+    navigate('/')
   }
 
   // ── Logout ──
@@ -518,7 +531,8 @@ export default function MediaDetail({
             <hr style={{ border: 'none', borderTop: '1px solid #808080', borderBottom: '1px solid #fff', margin: '0' }} />
 
             {/* Audio player */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+            <AudioPlayer audioURL={audioUrl} />
+            {/* <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <Button
                   onClick={player.toggle}
@@ -538,7 +552,7 @@ export default function MediaDetail({
               {!player.hasAudio && (
                 <div style={{ fontSize: '10px', color: '#999', fontStyle: 'italic', paddingLeft: '2px' }}>No audio file</div>
               )}
-            </div>
+            </div> */}
 
             {/* Edit mode: replace audio */}
             {editMode && (

@@ -1,57 +1,31 @@
 import { useState, useMemo } from "react";
 import { EntryGrid } from "./components/EntryGrid";
-import { Button } from "@react95/core";
+import { Button, Modal } from "@react95/core";
 import { useLoaderData, useNavigate } from "react-router";
-import { mapMediaToEntry, type MediaDTO, type EntryItem } from "./utils/data";
+import { type EntryItem } from "./utils/data";
 import EntryButton from "./components/EntryButton";
 import LargeView from "./components/LargeView";
 import { EntrySeparator } from "./components/EntrySeparator";
 import "./styles.css";
-import { auth } from "../../lib/auth";
+import { getEntries } from "~/lib/api";
 import type { Route } from "./+types/route";
-import { Footer } from "../../components/ui/common/AppWindow";
-
-
+import scrapwebicon from "~/assets/logo-icon.png"
 
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
-  const user = auth.loadUser();
-  const token = user?.token;
-
-  try {
-    const response = await fetch("https://scrapweb.kite-keeper.com/api/media", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    if (!response.ok) {
-      console.error("Failed to fetch media data");
-      return [];
-    }
-
-    const data = await response.json();
-    const results: MediaDTO[] = data.media || [];
-    return results.map((e) => {
-      const res = mapMediaToEntry(e);
-      return res;
-    });
-  } catch (error) {
-    console.error("Error loading media:", error);
-    return [];
-  }
+  return getEntries();
 }
 
 export default function Route() {
-  const rawEntries = useLoaderData<typeof clientLoader>();
+  const unsortedEntries = useLoaderData<typeof clientLoader>();
   const navigate = useNavigate();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const entries = useMemo(() => {
-    if (!rawEntries) return [];
-    return rawEntries
+  const entriesSorted = useMemo(() => {
+    if (!unsortedEntries) return [];
+    return unsortedEntries
       .filter((entry) => !entry.isInvalid)
       .sort((a, b) => b.timestamp - a.timestamp);
-  }, [rawEntries]);
+  }, [unsortedEntries]);
 
   const entriesWithSeparators = useMemo(() => {
     const result: (
@@ -76,7 +50,7 @@ export default function Route() {
       "December",
     ];
 
-    entries.forEach((entry) => {
+    entriesSorted.forEach((entry) => {
       const [month, , year] = entry.date.split("-");
       const monthName = monthNames[parseInt(month, 10) - 1];
 
@@ -105,73 +79,78 @@ export default function Route() {
     });
 
     return result;
-  }, [entries]);
+  }, [entriesSorted]);
 
   const selectedEntry = useMemo(() => {
-    const entry = entries.find((e) => e.id === selectedId);
-    return entry ? entry : {
-        id: "",
-        imageURL: "",
-        audioURL: "",
-        timestamp: 0,
-        date: "",
-        note: "",
-        isInvalid: true,
-      }
-  }, [entries, selectedId]);
+    const entry = entriesSorted.find((e) => e.id === selectedId);
+    return entry
+      ? entry
+      : {
+          id: "",
+          imageURL: "",
+          audioURL: "",
+          timestamp: 0,
+          date: "",
+          note: "",
+          isInvalid: true,
+        };
+  }, [entriesSorted, selectedId]);
+
   return (
-    <div className="modal-content">
-      <div className="main-layout">
-        <div className="grid-section">
-          <EntryGrid>
-            {entriesWithSeparators.length > 0 ? (
-              entriesWithSeparators.map((item) => {
-                if ("isSeparator" in item) {
+    <Modal icon=<img src={scrapwebicon} /> title="Scrapweb.exe" style={{ width: "80%", height: "80%" }} className="app-modal">
+      <div className="modal-content">
+        <div className="main-layout">
+          <div className="grid-section">
+            <EntryGrid>
+              {entriesWithSeparators.length > 0 ? (
+                entriesWithSeparators.map((item) => {
+                  if ("isSeparator" in item) {
+                    return (
+                      <EntrySeparator
+                        key={item.id}
+                        type={item.type}
+                        label={item.label}
+                      />
+                    );
+                  }
                   return (
-                    <EntrySeparator
+                    <EntryButton
                       key={item.id}
-                      type={item.type}
-                      label={item.label}
+                      date={item.date}
+                      imageURL={item.imageURL}
+                      isActive={selectedId === item.id}
+                      onClick={() =>
+                        setSelectedId(selectedId === item.id ? null : item.id)
+                      }
                     />
                   );
-                }
-                return (
-                  <EntryButton
-                    key={item.id}
-                    date={item.date}
-                    imageURL={item.imageURL}
-                    isActive={selectedId === item.id}
-                    onClick={() =>
-                      setSelectedId(selectedId === item.id ? null : item.id)
-                    }
-                  />
-                );
-              })
-            ) : (
-              <div className="no-entries">No entries found.</div>
-            )}
-          </EntryGrid>
+                })
+              ) : (
+                <div className="no-entries">No entries found.</div>
+              )}
+            </EntryGrid>
+          </div>
+          <div className="right-panel">
+            <LargeView {...selectedEntry} />
+          </div>
         </div>
-        <div className="right-panel">
-          <LargeView {...selectedEntry} />
+
+        <div style={{ display: "flex", gap: "8px" }}>
+          <Button
+            className="reset-button"
+            onClick={() => setSelectedId(null)}
+            disabled={selectedId === null}
+          >
+            Reset Selection
+          </Button>
+          <Button
+            onClick={() => navigate(`/entry/${selectedId}`)}
+            disabled={selectedId === null}
+          >
+            Edit
+          </Button>
         </div>
       </div>
-
-      <Footer>
-        <Button
-          className="reset-button"
-          onClick={() => setSelectedId(null)}
-          disabled={selectedId === null}
-        >
-          Reset Selection
-        </Button>
-        <Button
-          onClick={() => navigate(`/edit/${selectedId}`)}
-          disabled={selectedId === null}
-        >
-          Edit
-        </Button>
-      </Footer>
-    </div>
+    </Modal>
   );
 }
