@@ -20,10 +20,6 @@ export const LargeView = (props: LargeViewProps) => {
             </div>
             <p>
               {props!.note}
-              <br />
-                DEBUG Audio URL: {props!.audioURL}
-              <br />
-              {props.id}
             </p>
           </div>
 
