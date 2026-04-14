@@ -49,7 +49,7 @@ router.post('/register', async (req, res) => {
     const userBody = { first_name, last_name, username, email, password: hashed_password, verification_token };
     const newUser = await User.create(userBody);
 
-    const verificationLink = `http://${SERVER_HOST}/api/verify-email?token=${verification_token}`;
+    const verificationLink = `https://${SERVER_HOST}/api/verify-email?token=${verification_token}`;
 
     const msg = {
         to: newUser.email,
@@ -148,7 +148,7 @@ router.post('/forgot-password', async (req, res) => {
     user.reset_password_expires = Date.now() + 3600000;
     await user.save();
 
-    const resetLink = `http://${SERVER_HOST}/api/reset-password?token=${resetToken}`;
+    const resetLink = `https://${SERVER_HOST}/api/reset-password?token=${resetToken}`;
 
     const msg = {
         to: user.email,
