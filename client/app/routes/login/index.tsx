@@ -4,8 +4,9 @@ import { Button, Frame, Input , Modal, TitleBar } from '@react95/core'
 import logo from '../../assets/logo_worded.png'
 import { mapResponseToUser, type LoginResponseDTO } from './utils/data'
 import { auth } from '../../lib/auth'
+import { forgotPassword } from '../../lib/api'
 
-type Mode = 'login' | 'register'
+type Mode = 'login' | 'register' | 'forgot'
 
 export default function LoginPage() {
   const [mode, setMode] = useState<Mode>('login')
@@ -17,6 +18,7 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
+  const [forgotEmail, setForgotEmail] = useState('')
   const navigate = useNavigate()
 
   const clearFields = () => {
@@ -25,6 +27,7 @@ export default function LoginPage() {
     setFirstName('')
     setLastName('')
     setEmail('')
+    setForgotEmail('')
     setError('')
     setSuccess('')
   }
@@ -64,6 +67,7 @@ export default function LoginPage() {
       setLoading(false)
     }
   }
+  
 
   const handleRegister = async () => {
     setError('')
@@ -94,6 +98,22 @@ export default function LoginPage() {
 
     } catch (err) {
       setError('Could not connect to server')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleForgotPassword = async () => {
+    setError('')
+    setSuccess('')
+    setLoading(true)
+    try {
+      const response = await forgotPassword(forgotEmail)
+      if (!response) {
+        setError('Could not send reset email. Please try again.')
+      } else {
+        setSuccess('Check your email for reset instructions.')
+      }
     } finally {
       setLoading(false)
     }
@@ -232,19 +252,55 @@ export default function LoginPage() {
             />
           </div>
 
+          {mode === 'forgot' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+              <label style={{ fontSize: '12px' }} htmlFor="forgotEmail">
+                Email Address
+              </label>
+              <Input
+                id="forgotEmail"
+                type="email"
+                value={forgotEmail}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setForgotEmail(e.target.value)
+                }
+                style={{ width: '100%' }}
+              />
+            </div>
+          )}
+
+          
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
+            {/* Forgot password link — only show on login screen */}
+            {mode === 'login' && (
+              <button
+                onClick={() => switchMode('forgot')}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  padding: 0,
+                  fontSize: '11px',
+                  color: 'inherit',
+                  cursor: 'pointer',
+                  textDecoration: 'underline',
+                }}
+              >
+                Forgot Password?
+              </button>
+            )}
+          
           {/* Buttons */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              gap: "8px",
-              marginTop: "4px",
-            }}
-          >
+          <div style={{ display: 'flex', gap: '8px', marginLeft: 'auto' }}>
             <Button
-              onClick={mode === "login" ? handleLogin : handleRegister}
+              onClick={
+                mode === 'login'
+                  ? handleLogin
+                  : mode === 'register'
+                  ? handleRegister
+                  : handleForgotPassword
+              }
               disabled={loading}
-              style={{ minWidth: "75px" }}
+              style={{ minWidth: '75px' }}
             >
               {loading ? "..." : mode === "login" ? "OK" : "Register"}
             </Button>
@@ -257,6 +313,7 @@ export default function LoginPage() {
               {mode === "login" ? "Register" : "Back"}
             </Button>
           </div>
+        </div>
         </div>
       </Modal>
     </div>
