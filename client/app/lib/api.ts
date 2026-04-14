@@ -162,16 +162,17 @@ export async function updateUser(
   const token = user?.token;
 
   const body: Record<string, string> = {};
-  if (firstname) body.firstname = firstname;
-  if (lastname) body.lastname = lastname;
+  if (firstname) body.first_name = firstname;
+  if (lastname) body.last_name = lastname;
   if (username) body.username = username;
   if (email) body.email = email;
+  console.log(body);
 
   try {
     const response = await fetch(
       `https://scrapweb.kite-keeper.com/api/users/${id}`,
       {
-        method: "POST",
+        method: "PATCH",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
