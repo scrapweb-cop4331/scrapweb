@@ -33,7 +33,7 @@ export function LogoutButton() {
 
   const handleLogout = () => {
     auth.logout()
-    navigate('/index')
+    navigate('/login')
   }
 
   return (

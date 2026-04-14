@@ -7,7 +7,6 @@ import AudioPlayer from '~/components/ui/common/AudioPlayer';
 import { getEntries } from '~/lib/api';
 import { auth } from '~/lib/auth';
 import type { Route } from './+types/entry.$id';
-import { LogoutButton } from './components/LogoutButton';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -189,35 +188,6 @@ export default function MediaDetailRoute() {
   const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [audioFile, setAudioFile] = useState<File | null>(null)
   
-  // Refactored to LogoutButton component
-  /*
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
-  const [iconPos, setIconPos] = useState({ x: 16, y: 16 })
-  const iconDragRef = useRef<{ startMouseX: number; startMouseY: number; startX: number; startY: number } | null>(null)
-  const iconRef = useRef<HTMLDivElement>(null)
-  const wasDragged = useRef(false)
-
-  const handleIconMouseDown = (e: React.MouseEvent) => {
-    e.preventDefault()
-    wasDragged.current = false
-    iconDragRef.current = { startMouseX: e.clientX, startMouseY: e.clientY, startX: iconPos.x, startY: iconPos.y }
-    const onMove = (ev: MouseEvent) => {
-      if (!iconDragRef.current) return
-      const dx = ev.clientX - iconDragRef.current.startMouseX
-      const dy = ev.clientY - iconDragRef.current.startMouseY
-      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) wasDragged.current = true
-      setIconPos({ x: iconDragRef.current.startX + dx, y: iconDragRef.current.startY + dy })
-    }
-    const onUp = () => {
-      iconDragRef.current = null
-      window.removeEventListener('mousemove', onMove)
-      window.removeEventListener('mouseup', onUp)
-    }
-    window.addEventListener('mousemove', onMove)
-    window.addEventListener('mouseup', onUp)
-  }
-  */
-
   // ── About icon drag ──
   const [aboutPos, setAboutPos] = useState({ x: 16, y: 100 })
   const aboutDragRef = useRef<{ startMouseX: number; startMouseY: number; startX: number; startY: number } | null>(null)
@@ -561,7 +531,6 @@ export default function MediaDetailRoute() {
       </Modal>
 
       {/* ── Desktop logout icon (draggable) ── */}
-      <LogoutButton />
 
       {/* Refactored to LogoutButton component
       <div
