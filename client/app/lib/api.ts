@@ -21,19 +21,19 @@ export type EntryItem = {
 
 
 export async function getEntries() {
-  const user = auth.loadUser();
-  const token = user?.token;
+    const user = auth.loadUser();
+    const token = user?.token;
 
   try {
     const response = await fetch("https://scrapweb.kite-keeper.com/api/media", {
-      method: "GET",
+      method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
     if (!response.ok) {
-      console.error("Failed to fetch media data");
-      return [];
+      console.error("Failed to add media");
+      return false;
     }
 
     const data = await response.json();
@@ -99,4 +99,34 @@ export function mapMediaToEntry(dto: MediaDTO): EntryItem {
     isInvalid: isInvalid,
     note: dto.notes ? dto.notes : "",
   };
+}
+
+
+export async function newEntry() {
+      const user = auth.loadUser();
+      const token = user?.token;
+      const formData = new FormData();
+        formData.append("date", "YYYY-MM-DD");
+
+     try {
+       const response = await fetch(
+         "https://scrapweb.kite-keeper.com/api/media",
+         {
+           method: "POST",
+           headers: {
+             Authorization: `Bearer ${token}`,
+           },
+           body: formData
+         },
+       );
+       if (!response.ok) {
+         console.error("Failed to add empty entry");
+         return false;
+       }
+
+       return true;
+     } catch (error) {
+       console.error("Error adding empty entry:", error);
+       return false;
+     }
 }
