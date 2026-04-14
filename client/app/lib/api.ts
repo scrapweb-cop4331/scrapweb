@@ -19,7 +19,6 @@ export type EntryItem = {
   isInvalid: boolean; // Errors should be hidden, so if this is true then remove this entry from the list before rendering
 };
 
-
 export async function getEntries() {
   const user = auth.loadUser();
   const token = user?.token;
@@ -118,4 +117,31 @@ export function mapMediaToEntry(dto: MediaDTO): EntryItem {
     isInvalid: isInvalid,
     note: dto.notes ? dto.notes : "",
   };
+}
+
+
+export async function newEntry() {
+  const user = auth.loadUser();
+  const token = user?.token;
+
+  const req = {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+
+}
+    console.log(req);
+  try {
+    const response = await fetch("https://scrapweb.kite-keeper.com/api/media", req);
+    if (!response.ok) {
+      console.error("Failed to add empty entry");
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error adding empty entry:", error);
+    return false;
+  }
 }

@@ -1,13 +1,13 @@
 import { useState, useMemo } from "react";
 import { EntryGrid } from "./components/EntryGrid";
 import { Button, Modal } from "@react95/core";
-import { useLoaderData, useNavigate } from "react-router";
+import { useLoaderData, useNavigate, useRevalidator } from "react-router";
 import { type EntryItem } from "./utils/data";
 import EntryButton from "./components/EntryButton";
 import LargeView from "./components/LargeView";
 import { EntrySeparator } from "./components/EntrySeparator";
 import "./styles.css";
-import { getEntries } from "~/lib/api";
+import { getEntries, newEntry } from "~/lib/api";
 import type { Route } from "./+types/route";
 import scrapwebicon from "~/assets/logo-icon.png"
 
@@ -18,6 +18,7 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
 export default function Route() {
   const unsortedEntries = useLoaderData<typeof clientLoader>();
   const navigate = useNavigate();
+  const revalidator = useRevalidator();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const entriesSorted = useMemo(() => {
@@ -136,6 +137,16 @@ export default function Route() {
         </div>
 
         <div style={{ display: "flex", gap: "8px" }}>
+          <Button
+            onClick={async () => {
+              const success = await newEntry();
+              if (success) {
+                revalidator.revalidate();
+              }
+            }}
+          >
+            New Entry
+          </Button>
           <Button
             className="reset-button"
             onClick={() => setSelectedId(null)}
