@@ -5,24 +5,11 @@ import { Inetcpl1305, Lock, Progman9 } from '@react95/icons'
 import placeholder from "~/assets/logo-icon.png";
 import AudioPlayer from '~/components/ui/common/AudioPlayer';
 import { getEntries } from '~/lib/api';
+import { auth } from '~/lib/auth';
 import type { Route } from './+types/entry.$id';
+import { LogoutButton } from './components/LogoutButton';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-
-interface MediaItem {
-  id: string
-  photo: string
-  audio: string
-  text: string
-  createdAt: string
-}
-
-interface MediaDetailProps {
-  mediaItem?: MediaItem | null
-  songTitle?: string
-  artist?: string
-  onClose: () => void
-}
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
 
@@ -153,33 +140,57 @@ export async function clientLoader({request, params}: Route.ClientLoaderArgs ) {
 
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-export default function MediaDetailRoute({
-  mediaItem,
-  songTitle = 'Untitled',
-  artist = 'Unknown Artist',
-  onClose
-}: MediaDetailProps) {
-  const getToken = () => typeof window !== 'undefined' ? localStorage.getItem('token') || '' : ''
+export default function MediaDetailRoute() {
   const navigate = useNavigate()
   
-  // ── State ──
+  // ── Data ──
   const entry = useLoaderData<typeof clientLoader>();
+
+  if (!entry) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-[#008080]">
+        <Modal
+          boxShadow="$out"
+          padding="16px"
+          bgColor="$material"
+          title="Error"
+          titleBarOptions={<TitleBar.Close onClick={() => navigate('/')} />}
+        >
+          <div style={{ fontSize: '12px' }}>Entry not found.</div>
+          <Button onClick={() => navigate('/')} style={{ marginTop: '12px' }}>Go Back</Button>
+        </Modal>
+      </div>
+    )
+  }
+
+  // ── State ──
   const [editMode, setEditMode] = useState(false)
-  const [text, setText] = useState(mediaItem?.text ?? '')
-  const [audioUrl, setAudioUrl] = useState(mediaItem?.audio ? `${BASE}${mediaItem.audio}` : '')
-  const [photoPreview, setPhotoPreview] = useState(mediaItem?.photo ? `${BASE}${mediaItem.photo}` : '')
-  const [displayTitle, setDisplayTitle] = useState(songTitle || 'Untitled')
-  const [displayArtist, setDisplayArtist] = useState(artist || 'Unknown Artist')
+  const [text, setText] = useState(entry.note ?? '')
+  const [audioUrl, setAudioUrl] = useState(entry.audioURL ?? '')
+  const [photoPreview, setPhotoPreview] = useState(entry.imageURL ?? '')
+  
+  // Try to parse artist/title from filename if possible, otherwise use defaults
+  const [displayTitle, setDisplayTitle] = useState('Untitled')
+  const [displayArtist, setDisplayArtist] = useState('Unknown Artist')
+  
   const [entryDate, setEntryDate] = useState(() => {
-    const d = mediaItem?.createdAt ? new Date(mediaItem.createdAt) : new Date()
-    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+    // entry.date is in MM-DD-YYYY format from api.ts
+    const [m, d, y] = entry.date.split('-').map(Number);
+    const dateObj = new Date(y, m - 1, d);
+    return isNaN(dateObj.getTime()) 
+      ? new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+      : dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   })
+
   const [editingDate, setEditingDate] = useState(false)
   const [dateInput, setDateInput] = useState('')
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle')
   const [savedTime, setSavedTime] = useState('')
   const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [audioFile, setAudioFile] = useState<File | null>(null)
+  
+  // Refactored to LogoutButton component
+  /*
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
   const [iconPos, setIconPos] = useState({ x: 16, y: 16 })
   const iconDragRef = useRef<{ startMouseX: number; startMouseY: number; startX: number; startY: number } | null>(null)
@@ -205,6 +216,7 @@ export default function MediaDetailRoute({
     window.addEventListener('mousemove', onMove)
     window.addEventListener('mouseup', onUp)
   }
+  */
 
   // ── About icon drag ──
   const [aboutPos, setAboutPos] = useState({ x: 16, y: 100 })
@@ -247,7 +259,7 @@ export default function MediaDetailRoute({
 
   // ── Save ──
   const save = useCallback(async (t: string, pf: File | null, af: File | null) => {
-    if (!mediaItem?.id) {
+    if (!entry?.id) {
       setSaveStatus('error')
       return
     }
@@ -257,21 +269,20 @@ export default function MediaDetailRoute({
       form.append('text', t)
       if (pf) form.append('photo', pf)
       if (af) form.append('audio', af)
-      const res = await fetch(`${BASE}/api/media/${mediaItem.id}`, {
+      const res = await fetch(`${BASE}/api/media/${entry.id}`, {
         method: 'PATCH',
-        headers: { Authorization: `Bearer ${getToken()}` },
+        headers: { ...auth.getAuthHeader() },
         body: form
       })
       if (!res.ok) throw new Error()
       const data = await res.json()
-      if (data.token && typeof window !== 'undefined') localStorage.setItem('token', data.token)
       const now = new Date()
       setSavedTime(`${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`)
       setSaveStatus('saved')
     } catch {
       setSaveStatus('error')
     }
-  }, [mediaItem?.id])
+  }, [entry?.id])
 
   const scheduleAutosave = useCallback((t: string, pf: File | null, af: File | null) => {
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
@@ -327,26 +338,29 @@ export default function MediaDetailRoute({
     navigate('/')
   }
 
+  // Refactored to LogoutButton component
+  /*
   // ── Logout ──
   const handleLogout = () => {
-    if (typeof window !== 'undefined') localStorage.removeItem('token')
+    auth.logout()
     navigate('/index')
   }
+  */
 
   // ── Delete ──
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleting, setDeleting] = useState(false)
 
   const handleDelete = async () => {
-    if (!mediaItem?.id) return
+    if (!entry?.id) return
     setDeleting(true)
     try {
-      const res = await fetch(`${BASE}/api/media/${mediaItem.id}`, {
+      const res = await fetch(`${BASE}/api/media/${entry.id}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${getToken()}` }
+        headers: { ...auth.getAuthHeader() }
       })
       if (!res.ok) throw new Error()
-      navigate('/large-view')
+      navigate('/')
     } catch {
       setDeleting(false)
       setShowDeleteConfirm(false)
@@ -532,27 +546,6 @@ export default function MediaDetailRoute({
 
             {/* Audio player */}
             <AudioPlayer audioURL={audioUrl} />
-            {/* <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Button
-                  onClick={player.toggle}
-                  disabled={!player.hasAudio}
-                  style={{ minWidth: '32px', padding: '2px 4px', fontSize: '12px', flexShrink: 0 }}
-                >
-                  {player.playing ? '⏸' : '▶'}
-                </Button>
-                <span style={{ fontSize: '10px', color: '#444', flexShrink: 0, fontFamily: 'monospace' }}>
-                  {player.hasAudio ? player.fmt(player.progress * player.duration) : '0:00'}
-                </span>
-                <ProgressBar progress={player.progress} onSeek={player.seek} disabled={!player.hasAudio} />
-                <span style={{ fontSize: '10px', color: '#444', flexShrink: 0, fontFamily: 'monospace' }}>
-                  {player.hasAudio ? player.fmt(player.duration) : '0:00'}
-                </span>
-              </div>
-              {!player.hasAudio && (
-                <div style={{ fontSize: '10px', color: '#999', fontStyle: 'italic', paddingLeft: '2px' }}>No audio file</div>
-              )}
-            </div> */}
 
             {/* Edit mode: replace audio */}
             {editMode && (
@@ -568,6 +561,9 @@ export default function MediaDetailRoute({
       </Modal>
 
       {/* ── Desktop logout icon (draggable) ── */}
+      <LogoutButton />
+
+      {/* Refactored to LogoutButton component
       <div
         ref={iconRef}
         onMouseDown={handleIconMouseDown}
@@ -586,6 +582,7 @@ export default function MediaDetailRoute({
           Log Out
         </span>
       </div>
+      */}
 
       {/* ── About icon (draggable) ── */}
       <div
@@ -638,7 +635,7 @@ export default function MediaDetailRoute({
         </div>
       )}
 
-      {/* ── Logout confirmation modal ── */}
+      {/* Refactored to LogoutButton component
       {showLogoutConfirm && (
         <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200 }}>
           <Modal
@@ -662,6 +659,7 @@ export default function MediaDetailRoute({
           </Modal>
         </div>
       )}
+      */}
     </div>
   )
 }
