@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Button, Frame, Input , Modal, TitleBar } from '@react95/core'
 import logo from '../../assets/logo_worded.png'
-import { mapResponseToUser, type LoginResponseDTO } from './data'
+import { mapResponseToUser, type LoginResponseDTO } from './utils/data'
 import { auth } from '../../lib/auth'
 
 type Mode = 'login' | 'register'
