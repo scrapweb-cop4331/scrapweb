@@ -72,7 +72,7 @@ export default function App() {
   const [isOpen, setIsOpen] = useState(true);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const location = useLocation();
-  const renderOutletDirectly = ["/login", "/idk"].includes(location.pathname);
+  const renderOutletDirectly = ["/login", "/idk", '/song'].includes(location.pathname);
 
   // Initialize auth service on client
   useEffect(() => {
