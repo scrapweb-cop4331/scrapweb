@@ -19,21 +19,20 @@ export type EntryItem = {
   isInvalid: boolean; // Errors should be hidden, so if this is true then remove this entry from the list before rendering
 };
 
-
 export async function getEntries() {
-    const user = auth.loadUser();
-    const token = user?.token;
+  const user = auth.loadUser();
+  const token = user?.token;
 
   try {
     const response = await fetch("https://scrapweb.kite-keeper.com/api/media", {
-      method: "POST",
+      method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
     if (!response.ok) {
-      console.error("Failed to add media");
-      return false;
+      console.error("Failed to fetch media data");
+      return [];
     }
 
     const data = await response.json();
@@ -103,30 +102,28 @@ export function mapMediaToEntry(dto: MediaDTO): EntryItem {
 
 
 export async function newEntry() {
-      const user = auth.loadUser();
-      const token = user?.token;
-      const formData = new FormData();
-        formData.append("date", "YYYY-MM-DD");
+  const user = auth.loadUser();
+  const token = user?.token;
+  const formData = new FormData();
+  formData.append("date", "YYYY-MM-DD");
+  const req = {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+}
+    console.log(req);
+  try {
+    const response = await fetch("https://scrapweb.kite-keeper.com/api/media", req);
+    if (!response.ok) {
+      console.error("Failed to add empty entry");
+      return false;
+    }
 
-     try {
-       const response = await fetch(
-         "https://scrapweb.kite-keeper.com/api/media",
-         {
-           method: "POST",
-           headers: {
-             Authorization: `Bearer ${token}`,
-           },
-           body: formData
-         },
-       );
-       if (!response.ok) {
-         console.error("Failed to add empty entry");
-         return false;
-       }
-
-       return true;
-     } catch (error) {
-       console.error("Error adding empty entry:", error);
-       return false;
-     }
+    return true;
+  } catch (error) {
+    console.error("Error adding empty entry:", error);
+    return false;
+  }
 }
