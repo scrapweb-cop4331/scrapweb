@@ -92,6 +92,7 @@ export default function App() {
       ) : (
         <div className="center-div">
           <DesktopIcon onClick={onClickScrapwebIcon} />
+          
           <EditProvider>
             <AppWindow
               dragOptions={{
