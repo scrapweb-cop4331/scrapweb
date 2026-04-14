@@ -4,7 +4,7 @@ import { Button, Input, TextArea, Alert } from "@react95/core";
 import { Footer } from "../../components/ui/common/AppWindow";
 import { auth } from "../../lib/auth";
 import { validateDate, formatISOToDisplay } from "./data";
-import { mapMediaToEntry, type MediaDTO, type EntryItem } from "../index/data";
+import { mapMediaToEntry, type MediaDTO, type EntryItem } from "../index/utils/data";
 import type { Route } from "./+types/route";
 import { useEdit } from "../../lib/edit-context";
 

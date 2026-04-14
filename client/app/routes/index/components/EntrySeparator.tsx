@@ -1,6 +1,3 @@
-import React from "react";
-import "./styles.css";
-
 interface EntrySeparatorProps {
   type: "month" | "year";
   label: string;

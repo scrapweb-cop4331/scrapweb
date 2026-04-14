@@ -20,11 +20,13 @@ export type EntryItem = {
 }
 
 
+import placeholder from "~/assets/logo-icon.png";
+
 export function mapMediaToEntry(dto: MediaDTO): EntryItem {
 
   const base = "https://scrapweb.kite-keeper.com";
 
-  let imgURL = "/app/assets/logo-icon.png";
+  let imgURL = placeholder;
 
   if (dto.photo) {
     if (URL.parse(base + dto.photo)) {

@@ -1,15 +1,17 @@
 import { useState, useMemo } from "react";
-import { EntryGrid } from "./EntryGrid";
+import { EntryGrid } from "./components/EntryGrid";
 import { Button } from "@react95/core";
 import { useLoaderData, useNavigate } from "react-router";
-import { mapMediaToEntry, type MediaDTO, type EntryItem } from "./data";
-import EntryButton from "./EntryButton";
-import LargeView from "./LargeView";
-import { EntrySeparator } from "./EntrySeparator";
+import { mapMediaToEntry, type MediaDTO, type EntryItem } from "./utils/data";
+import EntryButton from "./components/EntryButton";
+import LargeView from "./components/LargeView";
+import { EntrySeparator } from "./components/EntrySeparator";
 import "./styles.css";
 import { auth } from "../../lib/auth";
 import type { Route } from "./+types/route";
 import { Footer } from "../../components/ui/common/AppWindow";
+
+
 
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   const user = auth.loadUser();

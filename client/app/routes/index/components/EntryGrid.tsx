@@ -1,5 +1,4 @@
 import { Frame, Fieldset } from "@react95/core";
-import "./styles.css";
 import type { ReactNode } from "react";
 
 interface EntryGridProps {

@@ -1,1 +1,0 @@
-import{a as s,R as t}from"./chunk-QFMPRPBF-C_CrB9I7.js";import{F as e,c as o}from"./Modal-DG_4y46i.js";var c="r95_taf7or0 r95_22fi81";const f=s.forwardRef((a,r)=>t.createElement(e,{...a,ref:r,className:o(c,a.className),as:"input"}));export{f as I,c as i};
