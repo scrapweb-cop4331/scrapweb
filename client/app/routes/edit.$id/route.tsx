@@ -15,7 +15,7 @@ export async function clientLoader({ params, request }: Route.ClientLoaderArgs) 
     console.log(`Loading entry ${params.id}...`);
 
     try {
-        const response = await fetch("http://137.184.93.240/api/media", {
+        const response = await fetch("https://scrapweb.kite-keeper.com/api/media", {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -94,7 +94,7 @@ export default function EditRoute() {
         if (audio) formData.append("audio", audio);
 
         const token = auth.getToken();
-        const url = `http://137.184.93.240/api/media/${params.id}`;
+        const url = `https://scrapweb.kite-keeper.com/api/media/${params.id}`;
 
         const requestLog: any = {
             url,

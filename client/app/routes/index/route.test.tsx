@@ -231,7 +231,7 @@ describe("Route Component", () => {
       const result = await loader({ request: new Request("http://localhost") } as any);
 
       expect(mockFetch).toHaveBeenCalledWith(
-        "http://137.184.93.240/api/media",
+        "https://scrapweb.kite-keeper.com/api/media",
         expect.objectContaining({
           method: "GET",
           headers: expect.objectContaining({
@@ -244,7 +244,7 @@ describe("Route Component", () => {
       expect(result[0]).toEqual(
         expect.objectContaining({
           id: "1",
-          imageURL: "http://137.184.93.240/photo1.jpg",
+          imageURL: "https://scrapweb.kite-keeper.com/photo1.jpg",
           date: "04-10-2026",
           timestamp: 20260410,
           note: "Note 1"

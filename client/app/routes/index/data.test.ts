@@ -38,7 +38,7 @@ const testCases: Array<TestSchema> = [
     },
     output: {
       id: "69d98d38b8a590eed30b2ba6",
-      imageURL: "http://137.184.93.240/api/media/file/69d98d38b8a590eed30b2ba3",
+      imageURL: "https://scrapweb.kite-keeper.com/api/media/file/69d98d38b8a590eed30b2ba3",
       audioURL: "/app/assets/500-milliseconds-of-silence.mp3",
       timestamp: 20260410,
       date: "04-10-2026",
@@ -59,7 +59,7 @@ const testCases: Array<TestSchema> = [
     output: {
       id: "69da6d15b8a590eed30b2bbc",
       imageURL: "/app/assets/logo-icon.png",
-      audioURL: "http://137.184.93.240/api/media/file/69da6d15b8a590eed30b2bba",
+      audioURL: "https://scrapweb.kite-keeper.com/api/media/file/69da6d15b8a590eed30b2bba",
       timestamp: 20251225,
       date: "12-25-2025",
       note: "",

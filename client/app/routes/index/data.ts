@@ -22,7 +22,7 @@ export type EntryItem = {
 
 export function mapMediaToEntry(dto: MediaDTO): EntryItem {
 
-  const base = "http://137.184.93.240";
+  const base = "https://scrapweb.kite-keeper.com";
 
   let imgURL = "/app/assets/logo-icon.png";
 

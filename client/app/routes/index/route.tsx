@@ -16,7 +16,7 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   const token = user?.token;
 
   try {
-    const response = await fetch("http://137.184.93.240/api/media", {
+    const response = await fetch("https://scrapweb.kite-keeper.com/api/media", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
