@@ -6,5 +6,5 @@
 /.react-router/
 # /build/
 
-build
+# build
 # coverage
