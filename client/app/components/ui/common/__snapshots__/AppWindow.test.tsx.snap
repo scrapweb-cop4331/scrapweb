@@ -1,36 +1,30 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`AppWindow matches snapshot 1`] = `
-<Modal
-  className="app-modal"
-  dragOptions={{}}
-  icon={
-    <Memo(Computer)
-      variant="16x16_4"
-    />
-  }
-  menu={[]}
-  title="Scrapweb"
-  titleBarOptions={
-    [
-      <Close
-        onClick={[Function]}
-      />,
-    ]
-  }
->
-  <Tabs
-    defaultActiveTab="Home"
-    onChange={[Function]}
+<DocumentFragment>
+  <div
+    data-testid="modal"
   >
-    <Tab
-      title="Home"
+    <div
+      data-testid="modal-title"
     >
-      <div />
-    </Tab>
-    <Tab
-      title="Explore"
-    />
-  </Tabs>
-</Modal>
+      Scrapweb
+    </div>
+    <div
+      data-active-tab="Home"
+      data-testid="tabs"
+    >
+      <div
+        data-testid="tab"
+        data-title="Home"
+      >
+        <div />
+      </div>
+      <div
+        data-testid="tab"
+        data-title="__hidden"
+      />
+    </div>
+  </div>
+</DocumentFragment>
 `;

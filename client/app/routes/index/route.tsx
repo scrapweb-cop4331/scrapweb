@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { EntryGrid } from "./EntryGrid";
 import { Button } from "@react95/core";
-import { useLoaderData } from "react-router";
+import { useLoaderData, useNavigate } from "react-router";
 import { mapMediaToEntry, type MediaDTO, type EntryItem } from "./data";
 import EntryButton from "./EntryButton";
 import LargeView from "./LargeView";
@@ -9,6 +9,7 @@ import { EntrySeparator } from "./EntrySeparator";
 import "./styles.css";
 import { auth } from "../../lib/auth";
 import type { Route } from "./+types/route";
+import { Footer } from "../../components/ui/common/AppWindow";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const cookieHeader = request.headers.get("Cookie");
@@ -41,6 +42,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 export default function Route() {
   const rawEntries = useLoaderData<EntryItem[]>();
+  const navigate = useNavigate();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const entries = useMemo(() => {
@@ -154,7 +156,7 @@ export default function Route() {
         </div>
       </div>
 
-      <div className="footer-buttons">
+      <Footer>
         <Button
           className="reset-button"
           onClick={() => setSelectedId(null)}
@@ -162,7 +164,13 @@ export default function Route() {
         >
           Reset Selection
         </Button>
-      </div>
+        <Button
+          onClick={() => navigate(`/edit/${selectedId}`)}
+          disabled={selectedId === null}
+        >
+          Edit
+        </Button>
+      </Footer>
     </div>
   );
 }

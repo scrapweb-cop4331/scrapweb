@@ -19,6 +19,7 @@ import "@react95/core/themes/win95.css";
 import { DesktopIcon } from "./components/ui/common/DesktopIcon";
 import { AppWindow } from "./components/ui/common/AppWindow";
 import { auth, type User } from "./lib/auth";
+import { EditProvider } from "./lib/edit-context";
 
 export const links: Route.LinksFunction = () => [
   // { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -91,17 +92,19 @@ export default function App() {
       ) : (
         <div className="center-div">
           <DesktopIcon onClick={onClickScrapwebIcon} />
-          <AppWindow
-            dragOptions={{
-              position,
-              onDrag: ({ offsetX, offsetY }) =>
-                setPosition({ x: offsetX, y: offsetY }),
-            }}
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-          >
-            <Outlet />
-          </AppWindow>
+          <EditProvider>
+            <AppWindow
+              dragOptions={{
+                position,
+                onDrag: ({ offsetX, offsetY }) =>
+                  setPosition({ x: offsetX, y: offsetY }),
+              }}
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+            >
+              <Outlet />
+            </AppWindow>
+          </EditProvider>
         </div>
       )}
     </AuthContext.Provider>

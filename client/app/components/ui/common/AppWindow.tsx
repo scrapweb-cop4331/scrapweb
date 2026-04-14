@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router";
 import React from "react";
 import "./AppWindow.css";
 import type { DragOptions } from "@neodrag/react";
+import { useEdit } from "../../../lib/edit-context";
 
 interface AppWindowProps {
   children: React.ReactNode;
@@ -12,18 +13,25 @@ interface AppWindowProps {
   setIsOpen: (isOpen: boolean) => void;
 }
 
+export function Footer({ children }: { children: React.ReactNode }) {
+  return <div className="footer-buttons">{children}</div>;
+}
 
 export function AppWindow({ children, isOpen, setIsOpen, dragOptions}: AppWindowProps) {
   const location = useLocation();
   const navigate = useNavigate();
+  const { isDirty, entryDate, entryId } = useEdit();
 
   if (!isOpen) return null;
 
   const currentPath = location.pathname;
+  const isEditing = currentPath.startsWith("/edit/");
+
+  const editingTabTitle = `Editing: ${entryDate || "..."}`;
 
   return (
     <Modal
-      title="Scrapweb"
+      title={`Scrapweb${isDirty ? " *" : ""}`}
       className="app-modal"
       dragOptions={dragOptions}
       titleBarOptions={[
@@ -34,22 +42,28 @@ export function AppWindow({ children, isOpen, setIsOpen, dragOptions}: AppWindow
     >
       <Tabs
         key={currentPath}
-        defaultActiveTab={currentPath === "/" ? "Home" : "Explore"}
+        defaultActiveTab={isEditing ? editingTabTitle : "Home"}
         onChange={
           ((tab: string) => {
             if (tab === "Home") navigate("/");
-            else if (tab === "Explore") {
-              navigate("/explore");
+            else if (tab === editingTabTitle) {
+              if (!isEditing && entryId) {
+                navigate(`/edit/${entryId}`);
+              }
             } else navigate("/login");
           }) as any
         }
       >
         <Tab title="Home">
-          {currentPath === "/" ? children : null}
+          {currentPath === "/" ? <>{children}</> : <div />}
         </Tab>
-        <Tab title="Explore">
-          {currentPath === "/explore" ? children : null}
-        </Tab>
+        {(isEditing || isDirty) ? (
+          <Tab title={editingTabTitle}>
+            <>{children}</>
+          </Tab>
+        ) : (
+          <Tab title="__hidden" style={{ display: 'none' }} />
+        )}
       </Tabs>
     </Modal>
   );

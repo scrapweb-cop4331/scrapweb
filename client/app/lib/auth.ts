@@ -75,4 +75,12 @@ export const auth = {
     }
     return {};
   },
+
+  getToken(): string | null {
+    if (currentUser && currentUser.token) {
+        return currentUser.token;
+    }
+    const user = this.loadUser();
+    return user?.token || null;
+  },
 };

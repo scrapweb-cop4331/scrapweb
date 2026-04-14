@@ -158,16 +158,6 @@
     background-color: aqua;
   }
 
-  .footer-buttons {
-    display: flex;
-    gap: 8px;
-    align-self: flex-start;
-  }
-
-  .reset-button {
-    width: fit-content;
-  }
-
   .desktop-icon {
     position: absolute;
     top: 20px;

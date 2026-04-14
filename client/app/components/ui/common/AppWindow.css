@@ -9,4 +9,14 @@
 .app-modal > div:nth-of-type(2) {
     flex: 1;
     overflow: hidden;
-}  
+}
+
+.footer-buttons {
+  display: flex;
+  gap: 8px;
+  align-self: flex-start;
+}
+
+.reset-button {
+  width: fit-content;
+}

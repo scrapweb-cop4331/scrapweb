@@ -1,0 +1,143 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Edit Route Component > matches snapshot in read-only and edit view > edit-view 1`] = `
+<DocumentFragment>
+  <div
+    class="modal-content"
+  >
+    <div
+      class="edit-form"
+    >
+      <div
+        class="form-field"
+      >
+        <label>
+          Date (MM-DD-YYYY):
+        </label>
+        <input
+          data-testid="MM-DD-YYYY"
+          placeholder="MM-DD-YYYY"
+          value="04-10-2026"
+        />
+      </div>
+      <div
+        class="form-field"
+      >
+        <label>
+          Note:
+        </label>
+        <textarea
+          data-testid="Original Note"
+          placeholder="Original Note"
+        >
+          Updated Note
+        </textarea>
+      </div>
+      <div
+        class="form-field"
+      >
+        <label>
+          Photo:
+        </label>
+        <input
+          accept="image/png, image/jpeg, image/jpg"
+          type="file"
+        />
+      </div>
+      <div
+        class="form-field"
+      >
+        <label>
+          Audio:
+        </label>
+        <input
+          accept="audio/mpeg"
+          type="file"
+        />
+      </div>
+    </div>
+    <div
+      class="footer-buttons"
+    >
+      <button>
+        Save
+      </button>
+      <button>
+        Close
+      </button>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`Edit Route Component > matches snapshot in read-only and edit view > read-only 1`] = `
+<DocumentFragment>
+  <div
+    class="modal-content"
+  >
+    <div
+      class="edit-form"
+    >
+      <div
+        class="form-field"
+      >
+        <label>
+          Date (MM-DD-YYYY):
+        </label>
+        <input
+          data-testid="MM-DD-YYYY"
+          placeholder="MM-DD-YYYY"
+          value="04-10-2026"
+        />
+      </div>
+      <div
+        class="form-field"
+      >
+        <label>
+          Note:
+        </label>
+        <textarea
+          data-testid="Original Note"
+          placeholder="Original Note"
+        >
+          Original Note
+        </textarea>
+      </div>
+      <div
+        class="form-field"
+      >
+        <label>
+          Photo:
+        </label>
+        <input
+          accept="image/png, image/jpeg, image/jpg"
+          type="file"
+        />
+      </div>
+      <div
+        class="form-field"
+      >
+        <label>
+          Audio:
+        </label>
+        <input
+          accept="audio/mpeg"
+          type="file"
+        />
+      </div>
+    </div>
+    <div
+      class="footer-buttons"
+    >
+      <button
+        disabled=""
+      >
+        Save
+      </button>
+      <button>
+        Close
+      </button>
+    </div>
+  </div>
+</DocumentFragment>
+`;
