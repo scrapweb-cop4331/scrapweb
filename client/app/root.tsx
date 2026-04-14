@@ -12,6 +12,13 @@ import {
 import ohnoes from "~/assets/jail.jpg";
 import type { Route } from "./+types/root";
 import "./app.css";
+
+import {
+  Modal,
+  Frame,
+  Button,
+  TitleBar,
+} from "@react95/core";
 import "@react95/core/GlobalStyle";
 import "@react95/core/themes/win95.css";
 import { auth, type User } from "./lib/auth";
@@ -91,7 +98,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let stack: string | undefined;
 
   if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Error";
+    message = error.status === 404 ? "404 — Page Not Found" : `Error ${error.status}`;
     details =
       error.status === 404
         ? "The requested page could not be found."
@@ -102,15 +109,52 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main >
-      <h1>{message}</h1>
-      <img src={ohnoes} alt="" />
-      <p>{details}</p>
-      {stack && (
-        <pre>
-          <code>{stack}</code>
-        </pre>
-      )}
-    </main>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#008080",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "2rem",
+      }}
+    >
+      <Modal
+        width="480px"
+        title="ScrapWeb — Error"
+        titleBarOptions={
+          <TitleBar.Close onClick={() => window.history.back()} />
+        }
+      >
+        <div style={{ padding: "16px" }}>
+          <Frame
+            boxShadow="$in"
+            style={{ display: "flex", gap: 12, alignItems: "flex-start", marginBottom: 12, padding: 12 }}
+          >
+            <span style={{ fontSize: 32 }}>⛔</span>
+            <div>
+              <p style={{ fontWeight: "bold", marginBottom: 6 }}>{message}</p>
+              <p>{details}</p>
+            </div>
+          </Frame>
+        </div>
+
+        <div style={{ padding: "0 16px 16px" }}>
+          <Frame 
+            boxShadow="$in"
+            style={{ marginBottom: 12, lineHeight: 0 }}>
+            <img
+              src={ohnoes}
+              alt=""
+              style={{ width: "100%", maxHeight: 400, objectFit: "cover", display: "block" }}
+            />
+          </Frame>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "center", gap: 8, padding: "8px 0" }}>
+          <Button onClick={() => window.history.back()}>« Back</Button>
+        </div>
+      </Modal>
+    </div>
   );
 }
