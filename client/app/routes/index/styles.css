@@ -8,7 +8,12 @@
     width: 100vw;
     background-color: var(--color-backdrop);
   }
-
+  
+/* I hate UI apis that don't fully expose internals */
+/* .app-modal > div:nth-of-type(2) {
+    flex: 1;
+    overflow: hidden;
+} */
 
 
   .modal-content {
