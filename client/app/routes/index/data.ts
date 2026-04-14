@@ -1,7 +1,7 @@
 import { dateData } from "@react95/icons";
 
 // import "/app/assets/logo_worded.png";
-export type MediaDTO ={
+export type MediaDTO = {
   _id: string;
   audio: string | null;
   photo: string | null;
