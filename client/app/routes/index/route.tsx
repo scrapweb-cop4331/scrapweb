@@ -160,6 +160,7 @@ export default function Route() {
           >
             Edit
           </Button>
+          <Button onClick={() => {navigate("/account")}}>Account</Button>
         </div>
       </div>
     </Modal>
