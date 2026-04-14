@@ -165,14 +165,14 @@ export default function AudioPlayer({ audioURL }: AudioPlayerProps) {
         gap: "8px",
       }}
     >
-      <hr
+      {/* <hr
         style={{
           border: "none",
           borderTop: "1px solid #808080",
           borderBottom: "1px solid #fff",
           margin: "0",
         }}
-      />
+      /> */}
 
       <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
