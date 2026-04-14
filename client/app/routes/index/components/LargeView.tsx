@@ -1,5 +1,6 @@
 import type { EntryItem } from "../utils/data";
 import AudioPlayer from "~/components/ui/common/AudioPlayer";
+import Audio from "~/components/ui/common/Audio";
 
 export type LargeViewProps = EntryItem;
 
@@ -27,7 +28,7 @@ export const LargeView = (props: LargeViewProps) => {
           </div>
 
           <div className="audio-player-container">
-            <AudioPlayer audioURL={props!.audioURL}></AudioPlayer>
+            <Audio src={props!.audioURL}></Audio>
           </div>
         </>
       )}
