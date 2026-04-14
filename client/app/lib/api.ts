@@ -104,14 +104,13 @@ export function mapMediaToEntry(dto: MediaDTO): EntryItem {
 export async function newEntry() {
   const user = auth.loadUser();
   const token = user?.token;
-  const formData = new FormData();
-  formData.append("date", "YYYY-MM-DD");
+
   const req = {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
     },
-    body: formData,
+
 }
     console.log(req);
   try {
