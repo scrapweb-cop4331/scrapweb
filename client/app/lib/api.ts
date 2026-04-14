@@ -157,16 +157,37 @@ export async function updateUser(
   lastname: string | null = null,
   username: string | null = null,
   email: string | null = null,
-
 ) {
   const user = auth.loadUser();
   const token = user?.token;
 
+  const body: Record<string, string> = {};
+  if (firstname) body.firstname = firstname;
+  if (lastname) body.lastname = lastname;
+  if (username) body.username = username;
+  if (email) body.email = email;
 
-  // Simulate API call
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, 500);
-  });
+  try {
+    const response = await fetch(
+      `https://scrapweb.kite-keeper.com/api/users/${id}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      },
+    );
+
+    if (!response.ok) {
+      console.error("Failed to update user");
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error updating user:", error);
+    return false;
+  }
 }
