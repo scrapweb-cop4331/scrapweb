@@ -1,5 +1,6 @@
 import placeholder from "~/assets/logo-icon.png";
 import { auth } from "./auth";
+import type { User } from "~/routes/login/utils/data";
 
 type MediaDTO = {
   _id: string;
@@ -48,11 +49,14 @@ export async function getEntries() {
 }
 export async function forgotPassword(email: string): Promise<boolean> {
   try {
-    const response = await fetch("https://scrapweb.kite-keeper.com/api/forgot-password", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
+    const response = await fetch(
+      "https://scrapweb.kite-keeper.com/api/forgot-password",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      },
+    );
 
     if (!response.ok) {
       console.error("Failed to send password reset email");
@@ -119,7 +123,6 @@ export function mapMediaToEntry(dto: MediaDTO): EntryItem {
   };
 }
 
-
 export async function newEntry() {
   const user = auth.loadUser();
   const token = user?.token;
@@ -129,11 +132,13 @@ export async function newEntry() {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-
-}
-    console.log(req);
+  };
+  console.log(req);
   try {
-    const response = await fetch("https://scrapweb.kite-keeper.com/api/media", req);
+    const response = await fetch(
+      "https://scrapweb.kite-keeper.com/api/media",
+      req,
+    );
     if (!response.ok) {
       console.error("Failed to add empty entry");
       return false;
@@ -144,4 +149,24 @@ export async function newEntry() {
     console.error("Error adding empty entry:", error);
     return false;
   }
+}
+
+export async function updateUser(
+  id: string,
+  firstname: string | null = null,
+  lastname: string | null = null,
+  username: string | null = null,
+  email: string | null = null,
+
+) {
+  const user = auth.loadUser();
+  const token = user?.token;
+
+
+  // Simulate API call
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true);
+    }, 500);
+  });
 }
