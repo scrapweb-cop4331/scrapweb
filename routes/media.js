@@ -59,7 +59,18 @@ router.get('/', authenticate, async (req, res) => {
     try {
         const user = await User.findById(req.userId);
         if (!user) return res.status(404).json({ error: 'User not found' });
-        res.json({ media: user.media });
+        
+        const mediaWithFormattedDate = user.media.map(item => {
+            if (item.date) {
+                const dateObj = new Date(item.date);
+                if (!Number.isNaN(dateObj.getTime())) {
+                    return { ...item, date: dateObj.toISOString().split('T')[0] };
+                }
+            }
+            return item;
+        });
+
+        res.json({ media: mediaWithFormattedDate });
     } catch (err) {
         res.status(500).json({ error: 'Server error', details: err.message });
     }
@@ -97,7 +108,16 @@ router.post('/', authenticate, upload.fields([{ name: 'photo', maxCount: 1 }, { 
     try {
         let photoUrl = '';
         let audioUrl = '';
-        const text = req.body.text || '';
+        const notes = req.body.notes || '';
+        const hasDate = req.body.date !== undefined && req.body.date !== null && req.body.date !== '';
+        let parsedDate;
+
+        if (hasDate) {
+            parsedDate = new Date(req.body.date);
+            if (Number.isNaN(parsedDate.getTime())) {
+                return res.status(400).json({ error: 'Invalid date format' });
+            }
+        }
 
         if (req.files && req.files['photo']) {
             photoUrl = await uploadToGridFS(req.files['photo'][0]);
@@ -108,11 +128,11 @@ router.post('/', authenticate, upload.fields([{ name: 'photo', maxCount: 1 }, { 
         }
         
         const newMediaItem = {
-            id: crypto.randomUUID(),
+            _id: new mongoose.Types.ObjectId(),
             photo: photoUrl,
             audio: audioUrl,
-            text: text,
-            createdAt: new Date()
+            notes: notes,
+            date: hasDate ? parsedDate : new Date()
         };
 
         const user = await User.findById(req.userId);
@@ -123,9 +143,14 @@ router.post('/', authenticate, upload.fields([{ name: 'photo', maxCount: 1 }, { 
 
         const newToken = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1h' });
 
+        const formattedMediaItem = { ...newMediaItem };
+        if (formattedMediaItem.date) {
+            formattedMediaItem.date = new Date(formattedMediaItem.date).toISOString().split('T')[0];
+        }
+
         res.status(201).json({ 
             message: 'Media added to user', 
-            mediaItem: newMediaItem,
+            mediaItem: formattedMediaItem,
             token: newToken
         });
     } catch (err) {
@@ -139,14 +164,22 @@ router.patch('/:id', authenticate, upload.fields([{ name: 'photo', maxCount: 1 }
         if (!user) return res.status(404).json({ error: 'User not found' });
 
         const mediaId = req.params.id;
-        const mediaIndex = user.media.findIndex(item => item.id === mediaId);
+        const mediaIndex = user.media.findIndex(item => item._id && item._id.toString() === mediaId);
 
         if (mediaIndex === -1) {
             return res.status(404).json({ error: 'Media item not found' });
         }
 
-        if (req.body.text !== undefined) {
-            user.media[mediaIndex].text = req.body.text;
+        if (req.body.notes !== undefined) {
+            user.media[mediaIndex].notes = req.body.notes;
+        }
+
+        if (req.body.date !== undefined && req.body.date !== null && req.body.date !== '') {
+            const parsedDate = new Date(req.body.date);
+            if (Number.isNaN(parsedDate.getTime())) {
+                return res.status(400).json({ error: 'Invalid date format' });
+            }
+            user.media[mediaIndex].date = parsedDate;
         }
 
         if (req.files && req.files['photo']) {
@@ -164,9 +197,14 @@ router.patch('/:id', authenticate, upload.fields([{ name: 'photo', maxCount: 1 }
 
         const newToken = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1h' });
 
+        const formattedMediaItem = { ...user.media[mediaIndex] };
+        if (formattedMediaItem.date) {
+            formattedMediaItem.date = new Date(formattedMediaItem.date).toISOString().split('T')[0];
+        }
+
         res.json({ 
             message: 'Media updated', 
-            mediaItem: user.media[mediaIndex],
+            mediaItem: formattedMediaItem,
             token: newToken
         });
     } catch (err) {
@@ -180,7 +218,7 @@ router.delete('/:id', authenticate, async (req, res) => {
         if (!user) return res.status(404).json({ error: 'User not found' });
 
         const mediaId = req.params.id;
-        const mediaIndex = user.media.findIndex(item => item.id === mediaId);
+        const mediaIndex = user.media.findIndex(item => item._id && item._id.toString() === mediaId);
         
         if (mediaIndex === -1) {
             return res.status(404).json({ error: 'Media item not found' });
