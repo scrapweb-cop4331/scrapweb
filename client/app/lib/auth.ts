@@ -17,7 +17,7 @@ export const auth = {
     if (typeof document !== "undefined") {
       const userJson = JSON.stringify(user);
       const expires = new Date();
-      expires.setTime(expires.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days
+      expires.setTime(expires.getTime() + 1 *24 * 60 * 60 * 1000); // 1 days
       document.cookie = `${COOKIE_NAME}=${encodeURIComponent(userJson)};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
     }
   },
