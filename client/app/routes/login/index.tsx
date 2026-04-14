@@ -222,35 +222,39 @@ export default function LoginPage() {
             </>
           )}
 
-          {/* Shared fields */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-            <label style={{ fontSize: "12px" }} htmlFor="username">
-              Username
-            </label>
-            <Input
-              id="username"
-              value={username}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setUsername(e.target.value)
-              }
-              style={{ width: "100%" }}
-            />
-          </div>
+          {mode !== 'forgot' && (
+            <>
+              {/* Shared fields */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                <label style={{ fontSize: "12px" }} htmlFor="username">
+                  Username
+                </label>
+                <Input
+                  id="username"
+                  value={username}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setUsername(e.target.value)
+                  }
+                  style={{ width: "100%" }}
+                />
+              </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-            <label style={{ fontSize: "12px" }} htmlFor="password">
-              Password
-            </label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setPassword(e.target.value)
-              }
-              style={{ width: "100%" }}
-            />
-          </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                <label style={{ fontSize: "12px" }} htmlFor="password">
+                  Password
+                </label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setPassword(e.target.value)
+                  }
+                  style={{ width: "100%" }}
+                />
+              </div>
+            </>
+          )}
 
           {mode === 'forgot' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
@@ -271,25 +275,24 @@ export default function LoginPage() {
 
           
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
-            {/* Forgot password link — only show on login screen */}
-            {mode === 'login' && (
-              <button
-                onClick={() => switchMode('forgot')}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  padding: 0,
-                  fontSize: '11px',
-                  color: 'inherit',
-                  cursor: 'pointer',
-                  textDecoration: 'underline',
-                }}
-              >
-                Forgot Password?
-              </button>
-            )}
-          
-          {/* Buttons */}
+          {/* Forgot password link — only show on login screen */}
+          {mode === 'login' && (
+            <button
+              onClick={() => switchMode('forgot')}
+              style={{
+                background: 'none',
+                border: 'none',
+                padding: 0,
+                fontSize: '11px',
+                color: 'inherit',
+                cursor: 'pointer',
+                textDecoration: 'underline',
+              }}
+            >
+              Forgot Password?
+            </button>
+          )}
+
           <div style={{ display: 'flex', gap: '8px', marginLeft: 'auto' }}>
             <Button
               onClick={
@@ -302,15 +305,13 @@ export default function LoginPage() {
               disabled={loading}
               style={{ minWidth: '75px' }}
             >
-              {loading ? "..." : mode === "login" ? "OK" : "Register"}
+              {loading ? '...' : mode === 'login' ? 'OK' : mode === 'register' ? 'Register' : 'Send'}
             </Button>
             <Button
-              onClick={() =>
-                switchMode(mode === "login" ? "register" : "login")
-              }
-              style={{ minWidth: "75px" }}
+              onClick={() => switchMode(mode === 'login' ? 'register' : 'login')}
+              style={{ minWidth: '75px' }}
             >
-              {mode === "login" ? "Register" : "Back"}
+              {mode === 'login' ? 'Register' : 'Back'}
             </Button>
           </div>
         </div>
