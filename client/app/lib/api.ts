@@ -47,6 +47,25 @@ export async function getEntries() {
     return [];
   }
 }
+export async function forgotPassword(email: string): Promise<boolean> {
+  try {
+    const response = await fetch("https://scrapweb.kite-keeper.com/api/forgot-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+
+    if (!response.ok) {
+      console.error("Failed to send password reset email");
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error sending password reset email:", error);
+    return false;
+  }
+}
 export function mapMediaToEntry(dto: MediaDTO): EntryItem {
   const base = "https://scrapweb.kite-keeper.com";
 
