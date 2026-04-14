@@ -6,20 +6,16 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useLocation,
   redirect,
-  useLoaderData,
+
 } from "react-router";
 import ohnoes from "~/assets/jail.jpg";
 import type { Route } from "./+types/root";
 import "./app.css";
-
 import "@react95/core/GlobalStyle";
 import "@react95/core/themes/win95.css";
-import { DesktopIcon } from "./components/ui/common/DesktopIcon";
-import { AppWindow } from "./components/ui/common/AppWindow";
 import { auth, type User } from "./lib/auth";
-import { EditProvider } from "./lib/edit-context";
+
 
 export const links: Route.LinksFunction = () => [
   // { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -48,6 +44,22 @@ const AuthContext = createContext<{ user: User | null }>({ user: null });
 
 export const useAuth = () => useContext(AuthContext);
 
+export function HydrateFallback() {
+  return (
+    <div style={{ 
+      display: 'flex', 
+      justifyContent: 'center', 
+      alignItems: 'center', 
+      height: '100vh',
+      backgroundColor: '#008080' 
+    }}>
+      <div style={{ color: 'white', fontFamily: 'monospace' }}>
+        Starting ScrapWeb...
+      </div>
+    </div>
+  );
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -66,61 +78,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function HydrateFallback() {
-  return (
-    <div style={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      height: '100vh',
-      backgroundColor: '#008080' 
-    }}>
-      <div style={{ color: 'white', fontFamily: 'monospace' }}>
-        Starting ScrapWeb...
-      </div>
-    </div>
-  );
-}
-
 export default function App() {
-  const { user } = useLoaderData<typeof clientLoader>();
-  const [isOpen, setIsOpen] = useState(true);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const location = useLocation();
-  const renderOutletDirectly = ["/login", "/idk", '/song'].includes(location.pathname);
-
-  const onClickScrapwebIcon = () => {
-    if (isOpen) {
-      setPosition({ x: 0, y: 0 });
-    } else setIsOpen(true);
-  };
-
   return (
-    <AuthContext.Provider value={{ user }}>
-      {renderOutletDirectly ? (
-        <Outlet />
-      ) : (
-        <div className="center-div">
-          <DesktopIcon onClick={onClickScrapwebIcon} />
-          
-          <EditProvider>
-            <AppWindow
-              dragOptions={{
-                position,
-                onDrag: ({ offsetX, offsetY }) =>
-                  setPosition({ x: offsetX, y: offsetY }),
-              }}
-              isOpen={isOpen}
-              setIsOpen={setIsOpen}
-            >
-              <Outlet />
-            </AppWindow>
-          </EditProvider>
-        </div>
-      )}
-    </AuthContext.Provider>
+    <Outlet />
   );
-}
+};
+
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let message = "Oops!";

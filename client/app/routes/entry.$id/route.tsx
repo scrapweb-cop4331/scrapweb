@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router'
 import { Button, Frame, Modal, TitleBar } from '@react95/core'
 import { Inetcpl1305, Lock, Progman9 } from '@react95/icons'
+import placeholder from "~/assets/logo-icon.png";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -22,7 +23,7 @@ interface MediaDetailProps {
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
 
-const BASE = 'http://137.184.93.240:80'
+const BASE = 'https://scrapweb.kite-keeper.com'
 
 // ─── Audio Player Hook ────────────────────────────────────────────────────────
 
@@ -124,7 +125,7 @@ function ProgressBar({ progress, onSeek, disabled }: { progress: number; onSeek:
 function ImagePlaceholder() {
   return (
     <div style={{ width: '100%', minHeight: '180px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#c0c0c0', gap: '8px' }}>
-      <svg width="52" height="52" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg width="52" height="52" viewBox="0 0 48 48" fill="none" xmlns={placeholder}>
         <path d="M18 34V14l20-4v20" stroke="#606060" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         <circle cx="14" cy="34" r="4" stroke="#606060" strokeWidth="2"/>
         <circle cx="34" cy="30" r="4" stroke="#606060" strokeWidth="2"/>
