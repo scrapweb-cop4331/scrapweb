@@ -25,13 +25,12 @@ export const links: Route.LinksFunction = () => [
   // { rel: "preconnect", href: "https://fonts.googleapis.com" },
 ];
 
-export const loader = async ({ request }: Route.LoaderArgs) => {
+export const clientLoader = async ({ request }: Route.ClientLoaderArgs) => {
   const url = new URL(request.url);
   const isLoginPage = url.pathname === "/login";
   const isIdkPage = url.pathname === "/idk";
   
-  const cookieHeader = request.headers.get("Cookie");
-  const user = auth.loadUser(cookieHeader);
+  const user = auth.loadUser();
 
   if (!user && !isLoginPage && !isIdkPage) {
     return redirect("/login");
@@ -67,17 +66,28 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+export function HydrateFallback() {
+  return (
+    <div style={{ 
+      display: 'flex', 
+      justifyContent: 'center', 
+      alignItems: 'center', 
+      height: '100vh',
+      backgroundColor: '#008080' 
+    }}>
+      <div style={{ color: 'white', fontFamily: 'monospace' }}>
+        Starting ScrapWeb...
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
-  const { user } = useLoaderData<typeof loader>();
+  const { user } = useLoaderData<typeof clientLoader>();
   const [isOpen, setIsOpen] = useState(true);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const location = useLocation();
   const renderOutletDirectly = ["/login", "/idk", '/song'].includes(location.pathname);
-
-  // Initialize auth service on client
-  useEffect(() => {
-    auth.loadUser();
-  }, []);
 
   const onClickScrapwebIcon = () => {
     if (isOpen) {

@@ -8,9 +8,8 @@ import { mapMediaToEntry, type MediaDTO, type EntryItem } from "../index/data";
 import type { Route } from "./+types/route";
 import { useEdit } from "../../lib/edit-context";
 
-export async function loader({ params, request }: Route.LoaderArgs) {
-    const cookieHeader = request.headers.get("Cookie");
-    const user = auth.loadUser(cookieHeader);
+export async function clientLoader({ params, request }: Route.ClientLoaderArgs) {
+    const user = auth.loadUser();
     const token = user?.token;
 
     console.log(`Loading entry ${params.id}...`);
@@ -46,7 +45,7 @@ export async function loader({ params, request }: Route.LoaderArgs) {
 }
 
 export default function EditRoute() {
-    const initialEntry = useLoaderData<EntryItem | null>();
+    const initialEntry = useLoaderData<typeof clientLoader>();
     const navigate = useNavigate();
     const params = useParams();
     const { setIsDirty, setEntryDate, setEntryId } = useEdit();

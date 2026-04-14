@@ -11,9 +11,8 @@ import { auth } from "../../lib/auth";
 import type { Route } from "./+types/route";
 import { Footer } from "../../components/ui/common/AppWindow";
 
-export async function loader({ request }: Route.LoaderArgs) {
-  const cookieHeader = request.headers.get("Cookie");
-  const user = auth.loadUser(cookieHeader);
+export async function clientLoader({ request }: Route.ClientLoaderArgs) {
+  const user = auth.loadUser();
   const token = user?.token;
 
   try {
@@ -41,7 +40,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export default function Route() {
-  const rawEntries = useLoaderData<EntryItem[]>();
+  const rawEntries = useLoaderData<typeof clientLoader>();
   const navigate = useNavigate();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
