@@ -1,0 +1,22 @@
+  .app-modal {
+    width: 80%;
+    height: 80%;
+
+  }
+
+
+/* I hate UI apis that don't fully expose internals */
+.app-modal > div:nth-of-type(2) {
+    flex: 1;
+    overflow: hidden;
+}
+
+.footer-buttons {
+  display: flex;
+  gap: 8px;
+  align-self: flex-start;
+}
+
+.reset-button {
+  width: fit-content;
+}

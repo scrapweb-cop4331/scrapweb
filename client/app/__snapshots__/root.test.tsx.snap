@@ -1,0 +1,87 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`scrapweb icon resets window's position. 1`] = `
+<DocumentFragment>
+  <div
+    class="center-div"
+  >
+    <div
+      data-testid="desktop-icon"
+    />
+    <div
+      data-position="{"x":0,"y":0}"
+      data-testid="modal"
+    >
+      <div
+        data-testid="modal-title"
+      >
+        Scrapweb
+      </div>
+      <div
+        data-testid="title-bar-options"
+      >
+        <button
+          data-testid="close-button"
+        />
+      </div>
+      <div
+        data-testid="tabs"
+      >
+        <div
+          data-testid="tab"
+        >
+          <div
+            data-testid="outlet"
+          />
+        </div>
+        <div
+          data-testid="tab"
+        />
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`scrapweb icon unminimizes the window 1`] = `
+<DocumentFragment>
+  <div
+    class="center-div"
+  >
+    <div
+      data-testid="desktop-icon"
+    />
+    <div
+      data-position="{"x":0,"y":0}"
+      data-testid="modal"
+    >
+      <div
+        data-testid="modal-title"
+      >
+        Scrapweb
+      </div>
+      <div
+        data-testid="title-bar-options"
+      >
+        <button
+          data-testid="close-button"
+        />
+      </div>
+      <div
+        data-testid="tabs"
+      >
+        <div
+          data-testid="tab"
+        >
+          <div
+            data-testid="outlet"
+          />
+        </div>
+        <div
+          data-testid="tab"
+        />
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

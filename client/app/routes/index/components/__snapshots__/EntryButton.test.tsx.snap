@@ -1,0 +1,53 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`entry is pressed 1`] = `
+<React.Fragment>
+  <ForwardRef(FrameComponent)
+    as="button"
+    boxShadow="$in"
+    className="entry-button active"
+    onClick={[Function]}
+  >
+    <ForwardRef(FrameComponent)
+      boxShadow="$in"
+      className="entry-image-frame"
+    >
+      <img
+        className="entry-image"
+        src="/app/assets/logo-icon.png"
+      />
+    </ForwardRef(FrameComponent)>
+    <label
+      className="entry-label"
+    >
+      12-24-2025
+    </label>
+  </ForwardRef(FrameComponent)>
+</React.Fragment>
+`;
+
+exports[`entry is unpressed 1`] = `
+<React.Fragment>
+  <ForwardRef(FrameComponent)
+    as="button"
+    boxShadow="$out"
+    className="entry-button "
+    onClick={[Function]}
+  >
+    <ForwardRef(FrameComponent)
+      boxShadow="$in"
+      className="entry-image-frame"
+    >
+      <img
+        className="entry-image"
+        src="/app/assets/logo-icon.png"
+      />
+    </ForwardRef(FrameComponent)>
+    <label
+      className="entry-label"
+    >
+      12-24-2025
+    </label>
+  </ForwardRef(FrameComponent)>
+</React.Fragment>
+`;
