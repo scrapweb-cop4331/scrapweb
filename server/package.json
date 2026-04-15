@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "dev": ""
   },
   "dependencies": {
     "@sendgrid/mail": "^8.1.6",
@@ -12,11 +13,11 @@
     "cors": "^2.8.6",
     "debug": "~2.6.9",
     "dotenv": "^17.4.0",
-    "express": "~4.16.1",
+    "express": "^4.22.1",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.4.1",
-    "morgan": "~1.9.1",
+    "morgan": "^1.10.1",
     "multer": "^2.1.1",
     "nodemailer": "^8.0.4"
   }
