@@ -223,9 +223,9 @@ export type entryPatch = {
   entry?: EntryItem;
 }
 
-function mapDTOEntryPatch(dto: dtoEntryPatchSuccessful | dtoEntryPatchSuccessful, status: number): entryPatch {
+function mapDTOEntryPatch(dto: dtoEntryPatchSuccessful | dtoEntryPatchFailure, status: number): entryPatch {
   let r: entryPatch;
-  if (status == 200) {
+  if (!("error" in dto)) {
     r = {
       success: true,
       message: dto.message,
@@ -234,6 +234,7 @@ function mapDTOEntryPatch(dto: dtoEntryPatchSuccessful | dtoEntryPatchSuccessful
   } else {
     r = {
       success: false,
+      message: dto.error
     }
   }
   return r;
@@ -259,7 +260,7 @@ async function updateEntry(id: string, date?: string, notes?: string, audio?: Fi
     })
   } catch (error) {
     console.error("I have literally no idea how this happened");
-    res = {ok: false, status: 0, json: () => {error: "something went wrong with the browswer"}}
+    res = {ok: false, status: 0, json: () => {return {error: "something went wrong with the browswer"}}}
   }
 
   const body = await res.json();
