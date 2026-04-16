@@ -211,7 +211,7 @@ export default function MediaDetailRoute() {
     }
     window.addEventListener('mousemove', onMove)
     window.addEventListener('mouseup', onUp)
-  }
+  } 
 
   const photoInputRef = useRef<HTMLInputElement>(null)
   const audioInputRef = useRef<HTMLInputElement>(null)
@@ -228,7 +228,7 @@ export default function MediaDetailRoute() {
   const player = useAudioPlayer(audioUrl)
 
   // ── Save ──
-  const save = useCallback(async (t: string, pf: File | null, af: File | null) => {
+  const save = useCallback(async (text: string, pf: File | null, af: File | null) => {
     if (!entry?.id) {
       setSaveStatus('error')
       return
@@ -236,7 +236,7 @@ export default function MediaDetailRoute() {
     setSaveStatus('saving')
     try {
       const form = new FormData()
-      form.append('text', t)
+      form.append("notes", text)
       if (pf) form.append('photo', pf)
       if (af) form.append('audio', af)
       const res = await fetch(`${BASE}/api/media/${entry.id}`, {
@@ -244,14 +244,21 @@ export default function MediaDetailRoute() {
         headers: { ...auth.getAuthHeader() },
         body: form
       })
-      if (!res.ok) throw new Error()
-      const data = await res.json()
       const now = new Date()
-      setSavedTime(`${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`)
-      setSaveStatus('saved')
-    } catch {
-      setSaveStatus('error')
+      if (res.ok) {
+        setSaveStatus('saved')
+        setSavedTime(`${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`)
+      } else {
+        const data = await res.json()
+        setSaveStatus('error')
+        setSavedTime(`${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`)
+
+      }
+    } catch (error: any) {
+      console.log("error: " + error.toString());
+      setSaveStatus("error");
     }
+    
   }, [entry?.id])
 
   const scheduleAutosave = useCallback((t: string, pf: File | null, af: File | null) => {
