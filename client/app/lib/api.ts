@@ -190,3 +190,80 @@ export async function updateUser(
     return false;
   }
 }
+
+export function debounce<T extends (...args: any[]) => void>(
+  func: T,
+  delayInMilliseconds: number,
+): (...args: Parameters<T>) => void {
+  let timeoutId: NodeJS.Timeout;
+
+  return function (this: ThisParameterType<T>, ...args: Parameters<T>) {
+    clearTimeout(timeoutId);
+    
+    timeoutId = setTimeout(() => {
+      func.apply(this, args);
+    }, delayInMilliseconds);
+  };
+}
+
+
+type dtoEntryPatchSuccessful = {
+  message: string;
+  mediaItem: MediaDTO;
+  token: string;
+}
+
+type dtoEntryPatchFailure = {
+  error: string
+}
+
+export type entryPatch = {
+  success: boolean;
+  message?: string;
+  entry?: EntryItem;
+}
+
+function mapDTOEntryPatch(dto: dtoEntryPatchSuccessful | dtoEntryPatchSuccessful, status: number): entryPatch {
+  let r: entryPatch;
+  if (status == 200) {
+    r = {
+      success: true,
+      message: dto.message,
+      entry: mapMediaToEntry(dto.mediaItem)
+    }
+  } else {
+    r = {
+      success: false,
+    }
+  }
+  return r;
+}
+
+async function updateEntry(id: string, date?: string, notes?: string, audio?: File, photo?: File) {
+  const user = auth.loadUser();
+  const token = user?.token;
+  const form = new FormData();
+  if (notes) form.append("notes", notes);
+  if (photo) form.append("photo", photo);
+  if (audio) form.append("audio", audio);
+  if (date) form.append("date", date);
+
+  let res;
+  try {
+    res = await fetch(`https://scrapweb.kite-keeper.com/api/media/${id}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer: ${token}`
+      },
+      body: form
+    })
+  } catch (error) {
+    console.error("I have literally no idea how this happened");
+    res = {ok: false, status: 0, json: () => {error: "something went wrong with the browswer"}}
+  }
+
+  const body = await res.json();
+  return mapDTOEntryPatch(body, res.status);
+}
+
+
