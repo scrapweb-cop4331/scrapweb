@@ -6,7 +6,7 @@ import placeholder from "~/assets/logo-icon.png";
 import AudioPlayer from '~/components/ui/common/AudioPlayer';
 import { getEntries } from '~/lib/api';
 import { auth } from '~/lib/auth';
-import type { Route } from './+types/entry.$id';
+import type { Route } from './+types/route';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
