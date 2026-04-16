@@ -5,8 +5,6 @@ import Audio from "~/components/ui/common/Audio";
 export type LargeViewProps = EntryItem;
 
 export const LargeView = (props: LargeViewProps) => {
-    console.log(props!.audioURL);
-    console.log("hi\n\n\n\n\n");
   return (
     <>
       {props.isInvalid ? (

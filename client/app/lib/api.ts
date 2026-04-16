@@ -133,7 +133,6 @@ export async function newEntry() {
       Authorization: `Bearer ${token}`,
     },
   };
-  console.log(req);
   try {
     const response = await fetch(
       "https://scrapweb.kite-keeper.com/api/media",
@@ -166,7 +165,6 @@ export async function updateUser(
   if (lastname) body.last_name = lastname;
   if (username) body.username = username;
   if (email) body.email = email;
-  console.log(body);
 
   try {
     const response = await fetch(
