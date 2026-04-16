@@ -245,14 +245,15 @@ export default function MediaDetailRoute() {
         body: form
       })
       const now = new Date()
+      await res.json(); 
+      setSavedTime(`${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`)
       if (res.ok) {
         setSaveStatus('saved')
-        setSavedTime(`${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`)
       } else {
-        const data = await res.json()
         setSaveStatus('error')
-        setSavedTime(`${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`)
-
+        if (res.status == 404) {
+          // todo
+        }
       }
     } catch (error: any) {
       console.log("error: " + error.toString());
