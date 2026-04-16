@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { useLoaderData, useNavigate } from 'react-router'
 import { Button, Frame, Modal, TitleBar } from '@react95/core'
-import { Inetcpl1305, Lock, Progman9 } from '@react95/icons'
+import { Progman9 } from '@react95/icons'
 import placeholder from "~/assets/logo-icon.png";
 import AudioPlayer from '~/components/ui/common/AudioPlayer';
 import { getEntries } from '~/lib/api';
@@ -359,6 +359,7 @@ export default function MediaDetailRoute() {
       className="flex items-center justify-center min-h-screen bg-[#008080]"
       style={{ position: 'relative' }}
     >
+
       {/* ── Main modal ── */}
       <Modal
         boxShadow="$out"
