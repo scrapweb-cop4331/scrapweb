@@ -4,7 +4,7 @@ import { Button, Frame, Modal, TitleBar } from '@react95/core'
 import { Progman9 } from '@react95/icons'
 import placeholder from "~/assets/logo-icon.png";
 import AudioPlayer from '~/components/ui/common/AudioPlayer';
-import { getEntries } from '~/lib/api';
+import { getEntries, updateEntry } from '~/lib/api';
 import { auth } from '~/lib/auth';
 import type { Route } from './+types/route';
 
@@ -228,39 +228,23 @@ export default function MediaDetailRoute() {
   const player = useAudioPlayer(audioUrl)
 
   // ── Save ──
-  const save = useCallback(async (text: string, pf: File | null, af: File | null) => {
-    if (!entry?.id) {
-      setSaveStatus('error')
-      return
-    }
+  const save =  async (text: string, pf: File | null, af: File | null) => {
+    console.assert(entry.id)
+
     setSaveStatus('saving')
-    try {
-      const form = new FormData()
-      form.append("notes", text)
-      if (pf) form.append('photo', pf)
-      if (af) form.append('audio', af)
-      const res = await fetch(`${BASE}/api/media/${entry.id}`, {
-        method: 'PATCH',
-        headers: { ...auth.getAuthHeader() },
-        body: form
-      })
-      const now = new Date()
-      await res.json(); 
-      setSavedTime(`${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`)
-      if (res.ok) {
-        setSaveStatus('saved')
+    const patchedEntry = await updateEntry(entry.id, "0", text, af ?? undefined, pf ?? undefined);
+    if (patchedEntry.success) {
+      setSaveStatus('saved')
+      if (patchedEntry?.entry) {
+        setAudioUrl(patchedEntry.entry.audioURL);
+        setPhotoPreview(patchedEntry.entry.imageURL);
       } else {
-        setSaveStatus('error')
-        if (res.status == 404) {
-          // todo
-        }
+        setSaveStatus('error');
+        console.error(patchedEntry.message);
       }
-    } catch (error: any) {
-      console.log("error: " + error.toString());
-      setSaveStatus("error");
     }
     
-  }, [entry?.id])
+  }
 
   const scheduleAutosave = useCallback((t: string, pf: File | null, af: File | null) => {
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current)

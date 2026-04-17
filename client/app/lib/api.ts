@@ -218,7 +218,7 @@ type dtoEntryPatchFailure = {
 
 export type entryPatch = {
   success: boolean;
-  message?: string;
+  message: string;
   entry?: EntryItem;
 };
 
@@ -242,7 +242,7 @@ function mapDTOEntryPatch(
   return r;
 }
 
-async function updateEntry(
+export async function updateEntry(
   id: string,
   date?: string,
   notes?: string,
@@ -272,7 +272,7 @@ async function updateEntry(
       ok: false,
       status: 0,
       json: () => {
-        return { error: "something went wrong with the browswer" };
+        return { error: "something went wrong with the browser" };
       },
     };
   }
