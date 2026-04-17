@@ -69,6 +69,18 @@ export async function forgotPassword(email: string): Promise<boolean> {
     return false;
   }
 }
+
+
+export function formatDateFoo(date: Date) {
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  const yyyy = date.getFullYear();
+
+  return `${mm}-${dd}-${yyyy}`;
+}
+
+
+
 export function mapMediaToEntry(dto: MediaDTO): EntryItem {
   const base = "https://scrapweb.kite-keeper.com";
 

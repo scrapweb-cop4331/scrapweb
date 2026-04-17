@@ -4,12 +4,17 @@ import { Button, Frame, Modal, TitleBar } from "@react95/core";
 import { Progman9 } from "@react95/icons";
 import placeholder from "~/assets/logo-icon.png";
 import AudioPlayer from "~/components/ui/common/AudioPlayer";
-import { getEntries, updateEntry } from "~/lib/api";
+import { formatDateFoo, getEntries, updateEntry, type EntryItem } from "~/lib/api";
 import { auth } from "~/lib/auth";
 import type { Route } from "./+types/route";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-
+type ChangedEntry = {
+  text?: string ;
+  date?: string;
+  audioFile?: File;
+  imageFile?: File;
+}
 type SaveStatus = "idle" | "saving" | "saved" | "error";
 
 const BASE = "https://scrapweb.kite-keeper.com";
@@ -162,7 +167,7 @@ export default function MediaDetailRoute() {
   const [displayTitle, setDisplayTitle] = useState("Untitled");
   const [displayArtist, setDisplayArtist] = useState("Unknown Artist");
 
-  const [entryDate, setEntryDate] = useState(() => {
+  function formatDateTitle(entry: EntryItem) {
     // entry.date is in MM-DD-YYYY format from api.ts
     const [m, d, y] = entry.date.split("-").map(Number);
     const dateObj = new Date(y, m - 1, d);
@@ -177,15 +182,16 @@ export default function MediaDetailRoute() {
           month: "long",
           day: "numeric",
         });
-  });
+  }
 
+  const [entryDate, setEntryDate] = useState(formatDateTitle(entry));
+  const [dateDTO, setDateDTO] = useState(entry.date);
   const [editingDate, setEditingDate] = useState(false);
   const [dateInput, setDateInput] = useState("");
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [savedTime, setSavedTime] = useState("");
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [audioFile, setAudioFile] = useState<File | null>(null);
-
   // ── About icon drag ──
   const [aboutPos, setAboutPos] = useState({ x: 16, y: 100 });
   const aboutDragRef = useRef<{
@@ -248,16 +254,14 @@ export default function MediaDetailRoute() {
 
   // ── Save ──
   const save = async (
-    text: string,
-    photoFile: File | null,
-    audioFile: File | null,
   ) => {
+    console.log(text);
     console.assert(entry.id);
 
     setSaveStatus("saving");
     const patchedEntry = await updateEntry(
       entry.id,
-      "0",
+      dateDTO,
       text,
       audioFile ?? undefined,
       photoFile ?? undefined,
@@ -278,15 +282,14 @@ export default function MediaDetailRoute() {
     );
   };
 
-  const scheduleAutosave = useCallback(
-    (t: string, pf: File | null, af: File | null) => {
+  const scheduleAutosave = 
+    () => {
       clearTimeout(saveTimerRef.current);
       setSaveStatus("saving");
       setSavedTime("");
-      saveTimerRef.current = setTimeout(() => save(t, pf, af), 1500);
-    },
-    [save],
-  );
+      saveTimerRef.current = setTimeout(() => save(), 1500);
+    }
+  ;
 
   // ── Toggle edit: save immediately on exit ──
   const toggleEdit = () => {
@@ -295,16 +298,17 @@ export default function MediaDetailRoute() {
       if (saveTimerRef.current) {
         clearTimeout(saveTimerRef.current);
       }
-      save(textRef.current, photoFileRef.current, audioFileRef.current);
+      save();
     }
     setEditMode((prev) => !prev);
   };
 
   // ── Handlers ──
+  useEffect(scheduleAutosave, [text]);
+  useEffect(() => {save()}, [photoFile, audioFile, dateInput])
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value;
     setText(val);
-    scheduleAutosave(val, photoFile, audioFile);
   };
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -312,7 +316,6 @@ export default function MediaDetailRoute() {
     if (!file) return;
     setPhotoFile(file);
     setPhotoPreview(URL.createObjectURL(file));
-    scheduleAutosave(text, file, audioFile);
   };
 
   const handleAudioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -329,8 +332,8 @@ export default function MediaDetailRoute() {
       setDisplayTitle(nameWithoutExt);
       setDisplayArtist("Unknown Artist");
     }
-    scheduleAutosave(text, photoFile, file);
   };
+
 
   // ── Routing on close ──
   const handleClose = () => {
@@ -493,6 +496,7 @@ export default function MediaDetailRoute() {
                 onChange={(e) => {
                   if (!e.target.value) return;
                   const d = new Date(e.target.value + "T12:00:00");
+                  setDateDTO(formatDateFoo(d))
                   setDateInput(
                     d.toLocaleDateString("en-US", {
                       year: "numeric",
