@@ -199,48 +199,56 @@ export function debounce<T extends (...args: any[]) => void>(
 
   return function (this: ThisParameterType<T>, ...args: Parameters<T>) {
     clearTimeout(timeoutId);
-    
+
     timeoutId = setTimeout(() => {
       func.apply(this, args);
     }, delayInMilliseconds);
   };
 }
 
-
 type dtoEntryPatchSuccessful = {
   message: string;
   mediaItem: MediaDTO;
   token: string;
-}
+};
 
 type dtoEntryPatchFailure = {
-  error: string
-}
+  error: string;
+};
 
 export type entryPatch = {
   success: boolean;
   message?: string;
   entry?: EntryItem;
-}
+};
 
-function mapDTOEntryPatch(dto: dtoEntryPatchSuccessful | dtoEntryPatchFailure, status: number): entryPatch {
+function mapDTOEntryPatch(
+  dto: dtoEntryPatchSuccessful | dtoEntryPatchFailure,
+  status: number,
+): entryPatch {
   let r: entryPatch;
   if (!("error" in dto)) {
     r = {
       success: true,
       message: dto.message,
-      entry: mapMediaToEntry(dto.mediaItem)
-    }
+      entry: mapMediaToEntry(dto.mediaItem),
+    };
   } else {
     r = {
       success: false,
-      message: dto.error
-    }
+      message: dto.error,
+    };
   }
   return r;
 }
 
-async function updateEntry(id: string, date?: string, notes?: string, audio?: File, photo?: File) {
+async function updateEntry(
+  id: string,
+  date?: string,
+  notes?: string,
+  audio?: File,
+  photo?: File,
+) {
   const user = auth.loadUser();
   const token = user?.token;
   const form = new FormData();
@@ -254,17 +262,21 @@ async function updateEntry(id: string, date?: string, notes?: string, audio?: Fi
     res = await fetch(`https://scrapweb.kite-keeper.com/api/media/${id}`, {
       method: "PATCH",
       headers: {
-        Authorization: `Bearer: ${token}`
+        Authorization: `Bearer: ${token}`,
       },
-      body: form
-    })
+      body: form,
+    });
   } catch (error) {
     console.error("I have literally no idea how this happened");
-    res = {ok: false, status: 0, json: () => {return {error: "something went wrong with the browswer"}}}
+    res = {
+      ok: false,
+      status: 0,
+      json: () => {
+        return { error: "something went wrong with the browswer" };
+      },
+    };
   }
 
   const body = await res.json();
   return mapDTOEntryPatch(body, res.status);
 }
-
-
