@@ -25,7 +25,7 @@ export default function Route() {
     if (!unsortedEntries) return [];
     return unsortedEntries
       .filter((entry) => !entry.isInvalid)
-      .sort((a, b) => b.timestamp - a.timestamp);
+      .sort((b, a) => b.timestamp - a.timestamp);
   }, [unsortedEntries]);
 
   const entriesWithSeparators = useMemo(() => {
