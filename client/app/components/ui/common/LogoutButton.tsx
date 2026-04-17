@@ -1,10 +1,13 @@
 import { useState, useRef } from 'react'
-import { useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import { Button, Modal, TitleBar } from '@react95/core'
 import { Inetcpl1305, Lock } from '@react95/icons'
 import { auth } from '~/lib/auth'
 
 export function LogoutButton() {
+  if (useLocation().pathname == "/login") {
+    return <></>
+  }
   const navigate = useNavigate()
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
   const [iconPos, setIconPos] = useState({ x: 16, y: 16 })
