@@ -243,7 +243,10 @@ export default function MediaDetailRoute() {
         console.error(patchedEntry.message);
       }
     }
-    
+  const now = new Date();
+  setSavedTime(
+    `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`,
+);
   }
 
   const scheduleAutosave = useCallback((t: string, pf: File | null, af: File | null) => {
