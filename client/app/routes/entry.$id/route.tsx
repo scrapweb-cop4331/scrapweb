@@ -215,7 +215,7 @@ export default function MediaDetailRoute() {
 
   const photoInputRef = useRef<HTMLInputElement>(null)
   const audioInputRef = useRef<HTMLInputElement>(null)
-  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   // Refs to latest values for save-on-exit
   const textRef = useRef(text)
@@ -228,11 +228,11 @@ export default function MediaDetailRoute() {
   const player = useAudioPlayer(audioUrl)
 
   // ── Save ──
-  const save =  async (text: string, pf: File | null, af: File | null) => {
+  const save =  async (text: string, photoFile: File | null, audioFile: File | null) => {
     console.assert(entry.id)
 
     setSaveStatus('saving')
-    const patchedEntry = await updateEntry(entry.id, "0", text, af ?? undefined, pf ?? undefined);
+    const patchedEntry = await updateEntry(entry.id, "0", text, audioFile ?? undefined, photoFile ?? undefined);
     if (patchedEntry.success) {
       setSaveStatus('saved')
       if (patchedEntry?.entry) {
@@ -250,7 +250,7 @@ export default function MediaDetailRoute() {
   }
 
   const scheduleAutosave = useCallback((t: string, pf: File | null, af: File | null) => {
-    if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+    clearTimeout(saveTimerRef.current)
     setSaveStatus('saving')
     setSavedTime('')
     saveTimerRef.current = setTimeout(() => save(t, pf, af), 1500)
@@ -260,7 +260,7 @@ export default function MediaDetailRoute() {
   const toggleEdit = () => {
     if (editMode) {
       // Cancel any pending autosave and save right now
-      if (saveTimerRef.current) { clearTimeout(saveTimerRef.current); saveTimerRef.current = null }
+      if (saveTimerRef.current) { clearTimeout(saveTimerRef.current); }
       save(textRef.current, photoFileRef.current, audioFileRef.current)
     }
     setEditMode(prev => !prev)
