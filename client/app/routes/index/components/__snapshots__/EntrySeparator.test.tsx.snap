@@ -1,0 +1,35 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`EntrySeparator > renders a month separator correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="entry-separator month"
+  >
+    <h2
+      class="separator-heading"
+    >
+      April
+    </h2>
+    <div
+      class="separator-bar"
+    />
+  </div>
+</DocumentFragment>
+`;
+
+exports[`EntrySeparator > renders a year separator correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="entry-separator year"
+  >
+    <h2
+      class="separator-heading"
+    >
+      2026
+    </h2>
+    <div
+      class="separator-bar"
+    />
+  </div>
+</DocumentFragment>
+`;

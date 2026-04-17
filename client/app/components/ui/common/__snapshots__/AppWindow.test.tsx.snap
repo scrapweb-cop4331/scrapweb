@@ -1,0 +1,30 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`AppWindow matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    data-testid="modal"
+  >
+    <div
+      data-testid="modal-title"
+    >
+      Scrapweb
+    </div>
+    <div
+      data-active-tab="Home"
+      data-testid="tabs"
+    >
+      <div
+        data-testid="tab"
+        data-title="Home"
+      >
+        <div />
+      </div>
+      <div
+        data-testid="tab"
+        data-title="__hidden"
+      />
+    </div>
+  </div>
+</DocumentFragment>
+`;
