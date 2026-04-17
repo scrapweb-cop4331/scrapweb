@@ -191,20 +191,6 @@ export async function updateUser(
   }
 }
 
-export function debounce<T extends (...args: any[]) => void>(
-  func: T,
-  delayInMilliseconds: number,
-): (...args: Parameters<T>) => void {
-  let timeoutId: NodeJS.Timeout;
-
-  return function (this: ThisParameterType<T>, ...args: Parameters<T>) {
-    clearTimeout(timeoutId);
-
-    timeoutId = setTimeout(() => {
-      func.apply(this, args);
-    }, delayInMilliseconds);
-  };
-}
 
 type dtoEntryPatchSuccessful = {
   message: string;
@@ -280,3 +266,6 @@ export async function updateEntry(
   const body = await res.json();
   return mapDTOEntryPatch(body, res.status);
 }
+
+
+ 
