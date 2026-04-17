@@ -89,7 +89,10 @@ export default function App() {
   return (
     <>
       <LogoutButton />
-      <Outlet />
+      <div style={{display: "flex", justifyContent: "center"}}>
+
+        <Outlet />
+      </div>
     </>
   );
 };
