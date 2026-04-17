@@ -383,8 +383,7 @@ export default function MediaDetailRoute() {
 
   return (
     <div
-      className="flex items-center justify-center min-h-screen bg-[#008080]"
-      style={{ position: "relative" }}
+    style={{display: "flex", justifyContent: "center"}}
     >
       {/* ── Main modal ── */}
       <Modal
@@ -394,6 +393,7 @@ export default function MediaDetailRoute() {
         title={titleText}
         titleBarOptions={<TitleBar.Close onClick={handleClose} />}
         style={{ width: "600px", maxWidth: "95vw" }}
+        dragOptions={{ defaultPosition: { x: 0, y: 0 }, bounds: "body" }}
       >
         {/* Win95 menu bar */}
         <div
@@ -496,7 +496,7 @@ export default function MediaDetailRoute() {
                 onChange={(e) => {
                   if (!e.target.value) return;
                   const d = new Date(e.target.value + "T12:00:00");
-                  setDateDTO(formatDateFoo(d))
+                  setDateDTO(formatDateFoo(d));
                   setDateInput(
                     d.toLocaleDateString("en-US", {
                       year: "numeric",

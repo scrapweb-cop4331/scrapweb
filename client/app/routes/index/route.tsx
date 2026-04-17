@@ -98,71 +98,84 @@ export default function Route() {
   }, [entriesSorted, selectedId]);
 
   return (
-    <Modal icon=<img src={scrapwebicon} /> title="Scrapweb.exe" style={{ width: "80%", height: "80%" }} className="app-modal">
-      <div className="modal-content">
-        <div className="main-layout">
-          <div className="grid-section">
-            <EntryGrid>
-              {entriesWithSeparators.length > 0 ? (
-                entriesWithSeparators.map((item) => {
-                  if ("isSeparator" in item) {
+    <div style={{ display: "flex", justifyContent: "center" }}>
+      <Modal
+        icon=<img src={scrapwebicon} />
+        title="Scrapweb.exe"
+        style={{ width: "80%", height: "80%" }}
+        className="app-modal"
+      >
+        <div className="modal-content">
+          <div className="main-layout">
+            <div className="grid-section">
+              <EntryGrid>
+                {entriesWithSeparators.length > 0 ? (
+                  entriesWithSeparators.map((item) => {
+                    if ("isSeparator" in item) {
+                      return (
+                        <EntrySeparator
+                          key={item.id}
+                          type={item.type}
+                          label={item.label}
+                        />
+                      );
+                    }
                     return (
-                      <EntrySeparator
+                      <EntryButton
                         key={item.id}
-                        type={item.type}
-                        label={item.label}
+                        date={item.date}
+                        imageURL={item.imageURL}
+                        isActive={selectedId === item.id}
+                        onClick={() =>
+                          setSelectedId(selectedId === item.id ? null : item.id)
+                        }
                       />
                     );
-                  }
-                  return (
-                    <EntryButton
-                      key={item.id}
-                      date={item.date}
-                      imageURL={item.imageURL}
-                      isActive={selectedId === item.id}
-                      onClick={() =>
-                        setSelectedId(selectedId === item.id ? null : item.id)
-                      }
-                    />
-                  );
-                })
-              ) : (
-                <div className="no-entries">No entries found.</div>
-              )}
-            </EntryGrid>
+                  })
+                ) : (
+                  <div className="no-entries">No entries found.</div>
+                )}
+              </EntryGrid>
+            </div>
+            <div className="right-panel">
+              <LargeView {...selectedEntry} />
+            </div>
           </div>
-          <div className="right-panel">
-            <LargeView {...selectedEntry} />
-          </div>
-        </div>
 
-        <div style={{ display: "flex", gap: "8px" }}>
-          <Button
-            onClick={async () => {
-              const success = await newEntry();
-              if (success) {
-                revalidator.revalidate();
-              }
-            }}
-          >
-            New Entry
-          </Button>
-          <Button
-            className="reset-button"
-            onClick={() => setSelectedId(null)}
-            disabled={selectedId === null}
-          >
-            Reset Selection
-          </Button>
-          <Button
-            onClick={() => navigate(`/entry/${selectedId}`)}
-            disabled={selectedId === null}
-          >
-            Edit
-          </Button>
-          <Button onClick={() => {navigate("/account")}}>Account</Button>
+          <div style={{ display: "flex", gap: "8px" }}>
+            <Button
+              onClick={async () => {
+                const success = await newEntry();
+                if (success) {
+                  revalidator.revalidate();
+                }
+              }}
+            >
+              New Entry
+            </Button>
+            <Button
+              className="reset-button"
+              onClick={() => setSelectedId(null)}
+              disabled={selectedId === null}
+            >
+              Reset Selection
+            </Button>
+            <Button
+              onClick={() => navigate(`/entry/${selectedId}`)}
+              disabled={selectedId === null}
+            >
+              Edit
+            </Button>
+            <Button
+              onClick={() => {
+                navigate("/account");
+              }}
+            >
+              Account
+            </Button>
+          </div>
         </div>
-      </div>
-    </Modal>
+      </Modal>
+    </div>
   );
 }
