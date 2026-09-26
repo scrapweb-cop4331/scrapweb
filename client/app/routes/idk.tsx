@@ -12,7 +12,7 @@ export default function Idk() {
       justifyContent="center"
     >
 
-      <AudioPlayer audioURL="https://scrapweb.kite-keeper.com/api/media/file/69de4e2cc2237b5e67495ca6" />
+      <AudioPlayer audioURL="/api/media/file/69de4e2cc2237b5e67495ca6" />
     </Frame>
   );
 }

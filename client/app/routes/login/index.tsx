@@ -42,7 +42,7 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const response = await fetch('https://scrapweb.kite-keeper.com:443/api/login', {
+      const response = await fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -75,7 +75,7 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const response = await fetch('https://scrapweb.kite-keeper.com:443/api/register', {
+      const response = await fetch('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

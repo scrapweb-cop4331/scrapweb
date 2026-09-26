@@ -12,4 +12,12 @@ export default defineConfig({
   ssr: {
     noExternal: ["@react95/core", "@react95/icons"],
   },
+  server: {
+    proxy: {
+      "/api": {
+        target: process.env.VITE_PROXY_TARGET || "http://localhost:5000",
+        changeOrigin: true,
+      },
+    },
+  },
 });

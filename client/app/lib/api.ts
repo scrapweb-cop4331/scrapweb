@@ -25,7 +25,7 @@ export async function getEntries() {
   const token = user?.token;
 
   try {
-    const response = await fetch("https://scrapweb.kite-keeper.com/api/media", {
+    const response = await fetch("/api/media", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -50,7 +50,7 @@ export async function getEntries() {
 export async function forgotPassword(email: string): Promise<boolean> {
   try {
     const response = await fetch(
-      "https://scrapweb.kite-keeper.com/api/forgot-password",
+      "/api/forgot-password",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -82,21 +82,19 @@ export function formatDateFoo(date: Date) {
 
 
 export function mapMediaToEntry(dto: MediaDTO): EntryItem {
-  const base = "https://scrapweb.kite-keeper.com";
-
   let imgURL = placeholder;
 
   if (dto.photo) {
-    if (URL.parse(base + dto.photo)) {
-      imgURL = base + dto.photo;
+    if (URL.parse(dto.photo, window.location.origin)) {
+      imgURL = dto.photo;
     }
   }
 
   let audioURL = "/app/assets/500-milliseconds-of-silence.mp3";
 
   if (dto.audio) {
-    if (URL.parse(base + dto.audio)) {
-      audioURL = base + dto.audio;
+    if (URL.parse(dto.audio, window.location.origin)) {
+      audioURL = dto.audio;
     }
   }
 
@@ -147,7 +145,7 @@ export async function newEntry() {
   };
   try {
     const response = await fetch(
-      "https://scrapweb.kite-keeper.com/api/media",
+      "/api/media",
       req,
     );
     if (!response.ok) {
@@ -180,7 +178,7 @@ export async function updateUser(
 
   try {
     const response = await fetch(
-      `https://scrapweb.kite-keeper.com/api/users/${id}`,
+      `/api/users/${id}`,
       {
         method: "PATCH",
         headers: {
@@ -257,7 +255,7 @@ export async function updateEntry(
 
   let res;
   try {
-    res = await fetch(`https://scrapweb.kite-keeper.com/api/media/${id}`, {
+    res = await fetch(`/api/media/${id}`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer: ${token}`,

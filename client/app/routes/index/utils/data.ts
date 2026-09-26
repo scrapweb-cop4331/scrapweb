@@ -24,21 +24,19 @@ import placeholder from "~/assets/logo-icon.png";
 
 export function mapMediaToEntry(dto: MediaDTO): EntryItem {
 
-  const base = "https://scrapweb.kite-keeper.com";
-
   let imgURL = placeholder;
 
   if (dto.photo) {
-    if (URL.parse(base + dto.photo)) {
-      imgURL = base + dto.photo;
+    if (URL.parse(dto.photo, window.location.origin)) {
+      imgURL = dto.photo;
     }
   }
 
   let audioURL = "/app/assets/500-milliseconds-of-silence.mp3";
 
   if (dto.audio) {
-    if (URL.parse(base + dto.audio)) {
-      audioURL = base + dto.audio;
+    if (URL.parse(dto.audio, window.location.origin)) {
+      audioURL = dto.audio;
     }
   }
 

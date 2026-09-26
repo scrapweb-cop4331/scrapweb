@@ -17,8 +17,6 @@ type ChangedEntry = {
 }
 type SaveStatus = "idle" | "saving" | "saved" | "error";
 
-const BASE = "https://scrapweb.kite-keeper.com";
-
 // ─── Audio Player Hook ────────────────────────────────────────────────────────
 
 function useAudioPlayer(src: string) {
@@ -357,7 +355,7 @@ export default function MediaDetailRoute() {
     if (!entry?.id) return;
     setDeleting(true);
     try {
-      const res = await fetch(`${BASE}/api/media/${entry.id}`, {
+      const res = await fetch(`/api/media/${entry.id}`, {
         method: "DELETE",
         headers: { ...auth.getAuthHeader() },
       });
