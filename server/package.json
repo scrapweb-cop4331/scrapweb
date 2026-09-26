@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./server.js",
-    "dev": ""
+    "dev": "",
+    "verify-users": "node ./scripts/verify-all-users.js"
   },
   "dependencies": {
     "@sendgrid/mail": "^8.1.6",
