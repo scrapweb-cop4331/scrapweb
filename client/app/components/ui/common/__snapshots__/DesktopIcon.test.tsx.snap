@@ -1,0 +1,18 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DesktopIcon matches snapshot 1`] = `
+<button
+  className="desktop-icon"
+  onClick={[Function]}
+>
+  <img
+    alt=""
+    src="/app/assets/logo-icon.png"
+  />
+  <span
+    className="desktop-icon-label"
+  >
+    Scrapweb
+  </span>
+</button>
+`;

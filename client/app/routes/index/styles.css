@@ -1,0 +1,265 @@
+
+  .center-div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    background-color: var(--color-backdrop);
+  }
+  
+/* I hate UI apis that don't fully expose internals */
+/* .app-modal > div:nth-of-type(2) {
+    flex: 1;
+    overflow: hidden;
+} */
+
+
+  .modal-content {
+    flex:1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .main-layout {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    overflow: hidden;
+    gap: 16px;
+  }
+
+  .grid-section {
+    display:flex;
+    flex: 2;
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  .largeview-section {
+    flex: 1;
+    padding: 0rem 2rem;
+    overflow: auto;
+    min-width: 0;
+    min-height: 0;
+    max-height: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* justify-content: center; */
+    background-color: var(--color-material);
+    border: 1px solid var(--color-border-dark);
+    box-shadow: inset 1px 1px 0 var(--color-border-lightest), 
+                inset -1px -1px 0 var(--color-border-dark);
+  }
+
+  @media (max-width: 768px) {
+    .modal-content {
+      overflow-y: auto;
+    }
+
+    .main-layout {
+      flex-direction: column;
+      flex: none;
+      overflow: visible;
+      height: 200%; /* Two sections, each 100% */
+    }
+    
+    .grid-section, .largeview-section {
+      display: flex;
+      flex: none;
+      height: 50%; /* Each takes 50% of the 200% height, so 100% of the modal viewport */
+    }
+  }
+
+.foo {
+  display: flex;
+  background-color: aqua;
+  /* margin: 10px; */
+}
+
+  .entries-grid {
+    flex:1;
+    overflow: scroll;
+    padding: 10px;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+    grid-auto-rows: min-content;
+    background-color: var(--color-canvas-text);
+  }
+
+
+
+  /* Custom EntryButton Styles */
+  .entry-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 8px;
+    /* padding: 16px 8px; */
+    gap: 8px;
+    aspect-ratio: 1;
+    cursor: pointer;
+    border: none;
+    background-color: var(--color-material);
+    outline: none;
+    user-select: none;
+    position: relative;
+  }
+
+  /* The dotted line for focus/selection */
+  .entry-button.active::after {
+    content: "";
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    right: 4px;
+    bottom: 4px;
+    outline: 1px dotted #000;
+    pointer-events: none;
+  }
+
+  .entry-image-frame {
+    width: 100%;
+    height: 70%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-material);
+    overflow: clip;
+    padding: 2px;
+  }
+
+  .entry-image {
+    flex: 1;
+    width: auto;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .entry-label {
+    font-size: 24px;
+    text-align: center;
+    /* overflow: hidden; */
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+    color: (var(--color-material-text));
+  }
+
+  .no-entries {
+    /* grid-column: 1 / -1; */
+    text-align: center;
+    padding: 40px;
+    font-family: "MS Sans Serif", sans-serif;
+    color: #000;
+    background-color: aqua;
+  }
+
+  .desktop-icon {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 80px;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    padding: 8px;
+    outline: none;
+    user-select: none;
+  }
+
+  .desktop-icon:focus {
+    outline: 1px dotted #fff;
+  }
+
+  .desktop-icon-label {
+    color: #fff;
+    font-size: 14px;
+    text-shadow: 1px 1px #000;
+    text-align: center;
+    background-color: transparent;
+    padding: 2px 4px;
+  }
+
+  .desktop-icon:focus .desktop-icon-label {
+    background-color: #000080;
+  }
+
+
+
+/* EntrySeparator Styles */
+.entry-separator {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  margin: 16px 0 8px 0;
+  padding: 8px;
+  background-color: var(--color-material);
+  border: 1px solid var(--color-border-dark);
+  box-shadow: inset 1px 1px 0 var(--color-border-lightest), 
+              inset -1px -1px 0 var(--color-border-dark);
+}
+
+.entry-separator.year {
+margin-top: 32px;
+}
+
+.separator-heading {
+margin: 0 0 8px 0;
+font-family: "MS Sans Serif", sans-serif;
+color: var(--color-material-text);
+text-shadow: 1px 1px 0 var(--color-border-lightest);
+}
+
+.month .separator-heading {
+text-align: left;
+font-size: 24px;
+}
+
+.year .separator-heading {
+text-align: center;
+font-size: 32px;
+font-weight: bold;
+}
+
+.separator-bar {
+height: 2px;
+width: 100%;
+border-top: 1px solid var(--color-border-dark);
+border-bottom: 1px solid var(--color-border-lightest);
+}
+.right-panel {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.largeview-date {
+  font-size: 24px;
+  padding-top: 10px;
+}
+
+.audio-player-container {
+  flex-shrink: 0;
+  padding: 10px;
+}
+
+
+.largeview-header > * {
+  text-align: center;
+  min-width: 8rem;
+  max-width: 18rem;
+}

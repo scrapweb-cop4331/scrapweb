@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  # The Node.js environment for React and Express
+  app:
+    image: mcr.microsoft.com/devcontainers/javascript-node:18
+    # Keeps the container running so VS Code can attach to it
+    command: sleep infinity
+    volumes:
+      - ..:/workspace:cached
+    working_dir: /workspace
+    ports:
+      - "3000:3000" # Default port for React
+      - "5000:5000" # Standard port for Express API
+    environment:
+      # This tells your Express API how to find the database
+      - MONGO_URI=mongodb://mongo:27017/mydatabase 
+    depends_on:
+      - mongo
+
+  # The MongoDB Database
+  mongo:
+    image: mongo:latest
+    restart: unless-stopped
+    ports:
+      - "27017:27017" # Standard MongoDB port
+    volumes:
+      - mongo-data:/data/db # Keeps your database data from deleting on restart
+
+volumes:
+  mongo-data:
